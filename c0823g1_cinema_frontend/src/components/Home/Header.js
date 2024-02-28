@@ -3,10 +3,10 @@ import {useNavigate} from "react-router-dom";
 export default function Header(){
     const navigate = useNavigate();
     const handleLogin = () => {
-        navigate('')
+        navigate('/login')
     }
     return(
-        <><button>Đăng nhập</button>
+        <><button onClick={handleLogin}>Đăng nhập</button>
         </>
     )
 }
