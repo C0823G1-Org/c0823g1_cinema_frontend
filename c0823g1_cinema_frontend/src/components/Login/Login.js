@@ -7,6 +7,8 @@ import {LoginLogoutService} from "../../service/LoginLogoutService";
 import {auth, provider} from "../config/config";
 import {signInWithPopup} from "firebase/auth";
 import SweetAlert from 'sweetalert';
+import {Button, Modal} from "react-bootstrap";
+import {ColorRing} from "react-loader-spinner";
 
 export default function Login() {
     const navigate = useNavigate();
@@ -34,12 +36,12 @@ export default function Login() {
 
     const handleLogin = async () => {
         try {
-            if (params.password === "" || params.accountName === ""){
+            if (params.password === "" || params.accountName === "") {
                 setError("Tên đăng nhập và mật khẩu không được để trống!")
             } else {
                 const req = await LoginLogoutService.loginAccount(params);
                 setError("");
-                if (req.data.iAccountDTO.isDeleted === true){
+                if (req.data.iAccountDTO.isDeleted === true) {
                     await SweetAlert("Đăng nhập thất bại!", `Tài khoản của bạn đã bị khóa bởi hệ thống, mọi thắc mắc xin liên hệ đến số điện thoại 090564325 để được giải đáp. Trân trọng cám ơn!`, "error");
                 } else {
                     sessionStorage.setItem("accessToken", req.data.accessToken);
@@ -48,6 +50,7 @@ export default function Login() {
                     sessionStorage.setItem("userId", req.data.iAccountDTO.id);
                     sessionStorage.setItem("userPhoto", req.data.iAccountDTO.profilePicture);
                     await SweetAlert("Đăng nhập thành công!", `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`, "success")
+                    setError("");
                     navigate('/home');
                 }
             }
@@ -112,6 +115,100 @@ export default function Login() {
         }
     }
 
+    const [isSubmit, setIsSubmit] = useState(false);
+    const [error1, setError1] = useState("");
+    const [error2, setError2] = useState("");
+    const [show, setShow] = useState(false);
+    const [email, setEmail] = useState("");
+    const [show1, setShow1] = useState(false);
+    const [password, setPassword] = useState("");
+    const handleClose = () => {
+        setShow(false);
+        setError("");
+        setError1("");
+        setError2("");
+        setIsSubmit(false);
+        setEmail("");
+        setPassword("");
+    }
+    const handleShow = () => setShow(true);
+
+    const handleClose1 = () => {
+        setShow1(false);
+        setError("");
+        setError1("");
+        setError2("");
+        setIsSubmit(false);
+        setEmail("");
+        setPassword("");
+    }
+
+    const handleEmailChange = (e) => {
+        setEmail(e.target.value);
+    }
+    const handlePasswordChange = (e) => {
+        setPassword(e.target.value);
+    }
+    const handleForgetPassword = async () => {
+        if (email === "") {
+            setError1("Vui lòng nhập email để tìm kiếm tài khoản!")
+        } else {
+            try {
+                setIsSubmit(true);
+                const req = await LoginLogoutService.forgetPassword({email: email});
+                console.log(req);
+                setShow(false);
+                setShow1(true);
+                setError1("");
+                setIsSubmit(false);
+            } catch (err) {
+                setIsSubmit(false);
+                setError1("Email này không tồn tại trong hệ thống!")
+                console.log(err);
+            }
+        }
+    }
+    const handleForgetPassword1 = async () => {
+        let param = {
+            email: email,
+            password: password
+        }
+        try {
+            if (param.password === "") {
+                setError2("Xin vui lòng nhập mật khẩu!");
+            } else {
+                setIsSubmit(true);
+                const req = await LoginLogoutService.loginEmail(param);
+                if(req.data.iAccountDTO.isDeleted === true){
+                    await SweetAlert("Đăng nhập thất bại!", `Tài khoản của bạn đã bị khóa bởi hệ thống, mọi thắc mắc xin liên hệ đến số điện thoại 090564325 để được giải đáp. Trân trọng cám ơn!`, "error");
+                    setShow1(false);
+                    setShow(false);
+                    setError("");
+                    setError1("");
+                    setError2("");
+                    setIsSubmit(false);
+                    setEmail("");
+                    setPassword("");
+                } else {
+                    sessionStorage.setItem("accessToken", req.data.accessToken);
+                    sessionStorage.setItem("roleUser", req.data.roleUser);
+                    sessionStorage.setItem("user", req.data.iAccountDTO.accountName);
+                    sessionStorage.setItem("userId", req.data.iAccountDTO.id);
+                    sessionStorage.setItem("userPhoto", req.data.iAccountDTO.profilePicture);
+                    await SweetAlert("Đăng nhập thành công!", `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`, "success");
+                    setError2("");
+                    setIsSubmit(false);
+                    navigate('/home')
+                }
+            }
+
+        } catch (err) {
+            setIsSubmit(false);
+            setError2("Mật khẩu bạn nhập không chính xác! Xin nhập lại!")
+        }
+
+    }
+
     return (
         <>
             <div className={`container ${status ? "" : "right-panel-active"}`} id="container">
@@ -140,11 +237,13 @@ export default function Login() {
                         <h1 style={{marginBottom: "15px"}}>Đăng Nhập</h1>
                         <input id="accountName" type="text" placeholder="Tên đăng nhập" name="accountName"
                                onChange={handleParamsChange}/>
-                        <input id="password" type="password" placeholder="Mật khẩu" name="password" onChange={handleParamsChange}/>
+                        <input id="password" type="password" placeholder="Mật khẩu" name="password"
+                               onChange={handleParamsChange}/>
                         <div>
                             <span style={{color: "red", fontSize: "1em"}}>{error}</span>
                         </div>
-                        <a href="#">Quên Mật Khẩu?</a>
+                        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+                        <a href="#" onClick={handleShow}>Quên Mật Khẩu?</a>
                         <button type="button" className="button" onClick={handleLogin}>Đăng Nhập</button>
                         <hr color="black"></hr>
                         <span>hoặc sử dụng tài khoản của bạn</span>
@@ -183,6 +282,70 @@ export default function Login() {
                     </div>
                 </div>
             </div>
+            <Modal
+                show={show}
+                onHide={handleClose}
+                backdrop="static"
+                keyboard={false}
+            >
+                <Modal.Header>
+                    <Modal.Title>Tìm tài khoản của bạn</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <label htmlFor="email">Vui lòng nhập email để tìm lại tài khoản của bạn</label>
+                    <input id="email" type="email" placeholder="Email" name="email" onChange={handleEmailChange}/>
+                    <div>
+                        <span style={{color: "red", fontSize: "1em"}}>{error1}</span>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button className="button1" onClick={handleClose}>
+                        Đóng
+                    </Button>
+                    {isSubmit ? <ColorRing
+                        visible={true}
+                        height="40"
+                        width="40"
+                        ariaLabel="color-ring-loading"
+                        wrapperStyle={{}}
+                        wrapperClass="color-ring-wrapper"
+                        colors={['#e15b64', '#f47e60', '#f8b26a', '#abbd81', '#849b87']}
+                    /> : <Button className="button" onClick={handleForgetPassword}>Gửi</Button>}
+                </Modal.Footer>
+            </Modal>
+            <Modal
+                show={show1}
+                onHide={handleClose1}
+                backdrop="static"
+                keyboard={false}
+            >
+                <Modal.Header>
+                    <Modal.Title>Xác nhận mật khẩu</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <label htmlFor="email">Chúng tôi đã cung cấp mật khẩu đến {email}. Xin nhập lại mật khẩu để vào hệ
+                        thống!</label>
+                    <input id="password1" type="password" placeholder="Mật khẩu" name="password"
+                           onChange={handlePasswordChange}/>
+                    <div>
+                        <span style={{color: "red", fontSize: "1em"}}>{error2}</span>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose1}>
+                        Đóng
+                    </Button>
+                    {isSubmit ? <ColorRing
+                        visible={true}
+                        height="40"
+                        width="40"
+                        ariaLabel="color-ring-loading"
+                        wrapperStyle={{}}
+                        wrapperClass="color-ring-wrapper"
+                        colors={['#e15b64', '#f47e60', '#f8b26a', '#abbd81', '#849b87']}
+                    /> : <Button className="button" onClick={handleForgetPassword1}>Gửi</Button>}
+                </Modal.Footer>
+            </Modal>
         </>
     )
 }
