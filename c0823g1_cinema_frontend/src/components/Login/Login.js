@@ -17,19 +17,21 @@ import * as Yup from 'yup';
 import { ErrorMessage, Field, Form, Formik } from "formik";
 
 export default function Login() {
-  const navigate = useNavigate();
-  const [status, setStatus] = useState(true);
-  const handleGetRegister = () => {
-    setStatus(false);
-  };
-  const handleGetLogin = () => {
-    setStatus(true);
-  };
-  const [error, setError] = useState("");
-  const [params, setParams] = useState({
-    accountName: "",
-    password: "",
-  });
+    const navigate = useNavigate();
+    const [status, setStatus] = useState(true);
+    const [isSubmitLogin, setIsSubmitLogin] = useState(false);
+    const handleGetRegister = () => {
+        setStatus(false);
+    }
+    const handleGetLogin = () => {
+        setStatus(true);
+    }
+    const [error, setError] = useState("");
+    const [params, setParams] = useState({
+        accountName: "",
+        password: ""
+    });
+
 
   const handleParamsChange = (e) => {
     const { name, value } = e.target;
@@ -40,71 +42,84 @@ export default function Login() {
     console.log(params);
   };
 
-  const handleLogin = async () => {
-    try {
-      if (params.password === "" || params.accountName === "") {
-        setError("Tên đăng nhập và mật khẩu không được để trống!");
-      } else {
-        const req = await LoginLogoutService.loginAccount(params);
-        setError("");
-        if (req.data.iAccountDTO.isDeleted === true) {
-          await SweetAlert(
-            "Đăng nhập thất bại!",
-            `Tài khoản của bạn đã bị khóa bởi hệ thống, mọi thắc mắc xin liên hệ đến số điện thoại 090564325 để được giải đáp. Trân trọng cám ơn!`,
-            "error"
-          );
-        } else {
-          sessionStorage.setItem("accessToken", req.data.accessToken);
-          sessionStorage.setItem("roleUser", req.data.roleUser);
-          sessionStorage.setItem("user", req.data.iAccountDTO.accountName);
-          sessionStorage.setItem("userId", req.data.iAccountDTO.id);
-          sessionStorage.setItem(
-            "userPhoto",
-            req.data.iAccountDTO.profilePicture
-          );
-          await SweetAlert(
-            "Đăng nhập thành công!",
-            `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`,
-            "success"
-          );
-          setError("");
-          navigate("/home");
+    const handleLogin = async () => {
+        try {
+            setIsSubmitLogin(true);
+            if (params.password === "" || params.accountName === "") {
+                setError("Tên đăng nhập và mật khẩu không được để trống!");
+                setIsSubmitLogin(false);
+            } else {
+                const req = await LoginLogoutService.loginAccount(params);
+                setError("");
+                if (req.data.iAccountDTO.isDeleted === true) {
+                    await SweetAlert("Đăng nhập thất bại!", `Tài khoản của bạn đã bị khóa bởi hệ thống, mọi thắc mắc xin liên hệ đến số điện thoại 090564325 để được giải đáp. Trân trọng cám ơn!`, "error");
+                    setIsSubmitLogin(false);
+                } else {
+                    sessionStorage.setItem("accessToken", req.data.accessToken);
+                    sessionStorage.setItem("roleUser", req.data.roleUser);
+                    sessionStorage.setItem("user", req.data.iAccountDTO.accountName);
+                    sessionStorage.setItem("userId", req.data.iAccountDTO.id);
+                    sessionStorage.setItem("userPhoto", req.data.iAccountDTO.profilePicture);
+                    await SweetAlert("Đăng nhập thành công!", `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`, "success")
+                    setError("");
+                    setIsSubmitLogin(false);
+                    navigate('/home');
+                }
+            }
+        } catch (err) {
+            setError("Tên đăng nhập hoặc mật khẩu không chính xác!");
+            setIsSubmitLogin(false);
+        }
+    };
+    const handleLoginGoogle = async () => {
+        setIsSubmitLogin(true);
+        let param;
+        try {
+            const req = await signInWithPopup(auth, provider);
+            sessionStorage.setItem("accessTokenGG", req.user.accessToken);
+            param = {
+                value: req._tokenResponse.oauthAccessToken
+            }
+            const req1 = await LoginLogoutService.loginGoogle(param);
+            sessionStorage.setItem("accessToken", req1.data.accessToken);
+            sessionStorage.setItem("roleUser", req1.data.roleUser);
+            sessionStorage.setItem("user", req1.data.iAccountDTO.accountName);
+            sessionStorage.setItem("userId", req1.data.iAccountDTO.id);
+            sessionStorage.setItem("userPhoto", req1.data.iAccountDTO.profilePicture);
+            await SweetAlert("Đăng nhập thành công!", `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`, "success")
+            setIsSubmitLogin(false);
+            navigate('/home');
+        } catch (err) {
+            sessionStorage.clear();
+            await SweetAlert("Đăng nhập thất bại!", `Tài khoản của bạn đã bị khóa bởi hệ thống, mọi thắc mắc xin liên hệ đến số điện thoại 090564325 để được giải đáp. Trân trọng cám ơn!`, "error")
+            setIsSubmitLogin(false);
         }
       }
     } catch (err) {
       setError("Tên đăng nhập hoặc mật khẩu không chính xác!");
     }
-  };
-  const handleLoginGoogle = async () => {
-    let param;
-    try {
-      const req = await signInWithPopup(auth, provider);
-      sessionStorage.setItem("accessTokenGG", req.user.accessToken);
-      param = {
-        email: req.user.email,
-        googleId: req.user.uid,
-        fullName: req.user.displayName,
-        phoneNumber: req.user.phoneNumber,
-        profilePicture: req.user.photoURL,
-      };
-      const req1 = await LoginLogoutService.loginGoogle(param);
-      sessionStorage.setItem("accessToken", req1.data.accessToken);
-      sessionStorage.setItem("roleUser", req1.data.roleUser);
-      sessionStorage.setItem("user", req1.data.iAccountDTO.accountName);
-      sessionStorage.setItem("userId", req1.data.iAccountDTO.id);
-      await SweetAlert(
-        "Đăng nhập thành công!",
-        `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`,
-        "success"
-      );
-      navigate("/home");
-    } catch (err) {
-      sessionStorage.clear();
-      await SweetAlert(
-        "Đăng nhập thất bại!",
-        `Tài khoản của bạn đã bị khóa bởi hệ thống, mọi thắc mắc xin liên hệ đến số điện thoại 090564325 để được giải đáp. Trân trọng cám ơn!`,
-        "error"
-      );
+
+    const handleLoginFacebookSuccess = async (response) => {
+        let param;
+        sessionStorage.setItem("accessTokenFB", response.data.accessToken);
+        try {
+            param = {
+                value: response.data.accessToken
+            }
+            const res = await LoginLogoutService.loginFacebook(param);
+            sessionStorage.setItem("accessToken", res.data.accessToken);
+            sessionStorage.setItem("roleUser", res.data.roleUser);
+            sessionStorage.setItem("user", res.data.iAccountDTO.accountName);
+            sessionStorage.setItem("userId", res.data.iAccountDTO.id);
+            sessionStorage.setItem("userPhoto", res.data.iAccountDTO.profilePicture);
+            await SweetAlert("Đăng nhập thành công!", `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`, "success")
+            setIsSubmitLogin(false);
+            navigate('/home')
+        } catch (err) {
+            sessionStorage.clear();
+            await SweetAlert("Đăng nhập thất bại!", `Tài khoản của bạn đã bị khóa bởi hệ thống, mọi thắc mắc xin liên hệ đến số điện thoại 090564325 để được giải đáp. Trân trọng cám ơn!`, "error")
+            setIsSubmitLogin(false);
+        }
     }
   };
   const handleLoginFacebookSuccess = async (response) => {
@@ -249,7 +264,39 @@ export default function Login() {
       setIsSubmit(false);
       setError2("Mật khẩu bạn nhập không chính xác! Xin nhập lại!");
     }
-  };
+    const handleForgetPassword1 = async () => {
+        let param = {
+            email: email,
+            password: password
+        }
+        try {
+            if (param.password === "") {
+                setError2("Xin vui lòng nhập mật khẩu!");
+            } else {
+                setIsSubmit(true);
+                const req = await LoginLogoutService.loginEmail(param);
+                if (req.data.iAccountDTO.isDeleted === true) {
+                    await SweetAlert("Đăng nhập thất bại!", `Tài khoản của bạn đã bị khóa bởi hệ thống, mọi thắc mắc xin liên hệ đến số điện thoại 090564325 để được giải đáp. Trân trọng cám ơn!`, "error");
+                    setShow1(false);
+                    setShow(false);
+                    setError("");
+                    setError1("");
+                    setError2("");
+                    setIsSubmit(false);
+                    setEmail("");
+                    setPassword("");
+                } else {
+                    sessionStorage.setItem("accessToken", req.data.accessToken);
+                    sessionStorage.setItem("roleUser", req.data.roleUser);
+                    sessionStorage.setItem("user", req.data.iAccountDTO.accountName);
+                    sessionStorage.setItem("userId", req.data.iAccountDTO.id);
+                    sessionStorage.setItem("userPhoto", req.data.iAccountDTO.profilePicture);
+                    await SweetAlert("Đăng nhập thành công!", `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`, "success");
+                    setError2("");
+                    setIsSubmit(false);
+                    navigate('/home')
+                }
+            }
 
   //  --------------------------------------------------- Đăng Kí ---------------------------------------------------------------------------
  
@@ -306,6 +353,7 @@ export default function Login() {
         /^[A-Za-zÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]*(?:\s+[A-Za-zÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]*)*\s*$/,
         "Họ Và Tên vui lòng nhập đúng định dạng"
     ),
+
 
     password : Yup.string().required("Mật Khẩu không được để rỗng").min(6,"Mật Khẩu độ dài từ 6-20 kí tự").max(20,"Mật Khẩu độ dài từ 6-20 kí tự"),
     phoneNumber : Yup.string().required("Số Điện Thoại không được để rỗng").matches("^(0|84)(2(0[3-9]|1[0-6|8|9]|2[0-2|5-9]|3[2-9]|4[0-9]|5[1|2|4-9]|6[0-3|9]|7[0-7]|8[0-9]|9[0-4|6|7|9])|3[2-9]|5[5|6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])([0-9]{7})$","Số điện thoại vui lòng nhập đúng định dạng"),
