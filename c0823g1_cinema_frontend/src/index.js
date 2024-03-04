@@ -4,11 +4,14 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {BrowserRouter} from "react-router-dom";
+import UserInformation from './components/User/UserInformation';
+import DetailMovie from './components/DetailMovie/DetailMovie';
+import Login from './components/Login/Login';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <BrowserRouter>
-    <App />
+    <Login />
   </BrowserRouter>
 );
 
