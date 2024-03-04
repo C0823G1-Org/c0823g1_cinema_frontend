@@ -13,6 +13,7 @@ import {ColorRing} from "react-loader-spinner";
 export default function Login() {
     const navigate = useNavigate();
     const [status, setStatus] = useState(true);
+    const [isSubmitLogin, setIsSubmitLogin] = useState(false);
     const handleGetRegister = () => {
         setStatus(false);
     }
@@ -36,13 +37,16 @@ export default function Login() {
 
     const handleLogin = async () => {
         try {
+            setIsSubmitLogin(true);
             if (params.password === "" || params.accountName === "") {
-                setError("Tên đăng nhập và mật khẩu không được để trống!")
+                setError("Tên đăng nhập và mật khẩu không được để trống!");
+                setIsSubmitLogin(false);
             } else {
                 const req = await LoginLogoutService.loginAccount(params);
                 setError("");
                 if (req.data.iAccountDTO.isDeleted === true) {
                     await SweetAlert("Đăng nhập thất bại!", `Tài khoản của bạn đã bị khóa bởi hệ thống, mọi thắc mắc xin liên hệ đến số điện thoại 090564325 để được giải đáp. Trân trọng cám ơn!`, "error");
+                    setIsSubmitLogin(false);
                 } else {
                     sessionStorage.setItem("accessToken", req.data.accessToken);
                     sessionStorage.setItem("roleUser", req.data.roleUser);
@@ -51,55 +55,45 @@ export default function Login() {
                     sessionStorage.setItem("userPhoto", req.data.iAccountDTO.profilePicture);
                     await SweetAlert("Đăng nhập thành công!", `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`, "success")
                     setError("");
+                    setIsSubmitLogin(false);
                     navigate('/home');
                 }
             }
         } catch (err) {
             setError("Tên đăng nhập hoặc mật khẩu không chính xác!");
+            setIsSubmitLogin(false);
         }
     };
     const handleLoginGoogle = async () => {
+        setIsSubmitLogin(true);
         let param;
         try {
             const req = await signInWithPopup(auth, provider);
             sessionStorage.setItem("accessTokenGG", req.user.accessToken);
             param = {
-                email: req.user.email,
-                googleId: req.user.uid,
-                fullName: req.user.displayName,
-                phoneNumber: req.user.phoneNumber,
-                profilePicture: req.user.photoURL
+                value: req._tokenResponse.oauthAccessToken
             }
             const req1 = await LoginLogoutService.loginGoogle(param);
             sessionStorage.setItem("accessToken", req1.data.accessToken);
             sessionStorage.setItem("roleUser", req1.data.roleUser);
             sessionStorage.setItem("user", req1.data.iAccountDTO.accountName);
             sessionStorage.setItem("userId", req1.data.iAccountDTO.id);
+            sessionStorage.setItem("userPhoto", req1.data.iAccountDTO.profilePicture);
             await SweetAlert("Đăng nhập thành công!", `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`, "success")
+            setIsSubmitLogin(false);
             navigate('/home');
         } catch (err) {
             sessionStorage.clear();
             await SweetAlert("Đăng nhập thất bại!", `Tài khoản của bạn đã bị khóa bởi hệ thống, mọi thắc mắc xin liên hệ đến số điện thoại 090564325 để được giải đáp. Trân trọng cám ơn!`, "error")
+            setIsSubmitLogin(false);
         }
     }
     const handleLoginFacebookSuccess = async (response) => {
         let param;
-        sessionStorage.setItem("accessTokenFB", response.data.accessToken)
+        sessionStorage.setItem("accessTokenFB", response.data.accessToken);
         try {
-            if (response.data.email === undefined) {
-                param = {
-                    email: "",
-                    facebookId: response.data.id,
-                    fullName: response.data.name,
-                    profilePicture: response.data.picture.data.url
-                }
-            } else {
-                param = {
-                    email: response.data.email,
-                    facebookId: response.data.id,
-                    fullName: response.data.name,
-                    profilePicture: response.data.picture.data.url
-                }
+            param = {
+                value: response.data.accessToken
             }
             const res = await LoginLogoutService.loginFacebook(param);
             sessionStorage.setItem("accessToken", res.data.accessToken);
@@ -108,10 +102,12 @@ export default function Login() {
             sessionStorage.setItem("userId", res.data.iAccountDTO.id);
             sessionStorage.setItem("userPhoto", res.data.iAccountDTO.profilePicture);
             await SweetAlert("Đăng nhập thành công!", `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`, "success")
+            setIsSubmitLogin(false);
             navigate('/home')
         } catch (err) {
             sessionStorage.clear();
             await SweetAlert("Đăng nhập thất bại!", `Tài khoản của bạn đã bị khóa bởi hệ thống, mọi thắc mắc xin liên hệ đến số điện thoại 090564325 để được giải đáp. Trân trọng cám ơn!`, "error")
+            setIsSubmitLogin(false);
         }
     }
 
@@ -179,7 +175,7 @@ export default function Login() {
             } else {
                 setIsSubmit(true);
                 const req = await LoginLogoutService.loginEmail(param);
-                if(req.data.iAccountDTO.isDeleted === true){
+                if (req.data.iAccountDTO.isDeleted === true) {
                     await SweetAlert("Đăng nhập thất bại!", `Tài khoản của bạn đã bị khóa bởi hệ thống, mọi thắc mắc xin liên hệ đến số điện thoại 090564325 để được giải đáp. Trân trọng cám ơn!`, "error");
                     setShow1(false);
                     setShow(false);
@@ -244,25 +240,30 @@ export default function Login() {
                         </div>
                         {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                         <a href="#" onClick={handleShow}>Quên Mật Khẩu?</a>
-                        <button type="button" className="button" onClick={handleLogin}>Đăng Nhập</button>
+                        {isSubmitLogin ? <button type="button" className="button">Đăng Nhập</button> :
+                            <button type="button" className="button" onClick={handleLogin}>Đăng Nhập</button>}
                         <hr color="black"></hr>
                         <span>hoặc sử dụng tài khoản của bạn</span>
                         <div className="social-container">
                             <div>
-                                <LoginSocialFacebook
-                                    appId="1535030517281067"
-                                    onResolve={(response) => {
-                                        handleLoginFacebookSuccess(response)
-                                    }}
-                                    onReject={(err) => {
-                                        console.log(err);
-                                    }}
-                                >
+                                {isSubmitLogin ?
                                     <FacebookLoginButton text="Đăng nhập bằng Facebook"/>
-                                </LoginSocialFacebook>
+                                    : <LoginSocialFacebook
+                                        appId="1535030517281067"
+                                        onResolve={(response) => {
+                                            handleLoginFacebookSuccess(response)
+                                        }}
+                                        onReject={(err) => {
+                                            console.log(err);
+                                        }
+                                    }
+                                    >
+                                        <FacebookLoginButton onClick={() =>  setIsSubmitLogin(true)} text="Đăng nhập bằng Facebook"/>
+                                    </LoginSocialFacebook>}
                             </div>
                             <div style={{marginTop: "10px"}}>
-                                <GoogleLoginButton text="Đăng nhập bằng Google" onClick={handleLoginGoogle}/>
+                                {isSubmitLogin ? <GoogleLoginButton text="Đăng nhập bằng Google"/> :
+                                    <GoogleLoginButton text="Đăng nhập bằng Google" onClick={handleLoginGoogle}/>}
                             </div>
                         </div>
                     </form>
@@ -277,7 +278,9 @@ export default function Login() {
                         <div className="overlay-panel overlay-right">
                             <h1>Chào Bạn !</h1>
                             <p>Hãy Tham Gia Cùng Chúng Tôi Và Đón Xem Những Bộ Phim Bom Tấn Nhé</p>
-                            <button className="ghost button" id="signUp" onClick={handleGetRegister}>Đăng Kí</button>
+                            {isSubmitLogin ? <button className="ghost button" id="signUp">Đăng Kí</button> :
+                                <button className="ghost button" id="signUp" onClick={handleGetRegister}>Đăng
+                                    Kí</button>}
                         </div>
                     </div>
                 </div>
