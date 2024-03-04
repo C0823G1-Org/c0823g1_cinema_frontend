@@ -257,20 +257,20 @@ export default function UserInformation() {
                                                                         <Field className="form-control" type="date"
                                                                                id="endDate" name="endDate"/>
                                                                     </td>
-                                                                    <td>
-                                                                        <label>
-                                                                            <Field type="radio" name="type"
-                                                                                   value="Lịch sử cộng điểm"/>
-                                                                            Lịch sử cộng điểm
-                                                                        </label>
-                                                                    </td>
-                                                                    <td>
-                                                                        <label>
-                                                                            <Field type="radio" name="type"
-                                                                                   value="Lịch sử dùng điểm"/>
-                                                                            Lịch sử dùng điểm
-                                                                        </label>
-                                                                    </td>
+                                                                    {/*<td>*/}
+                                                                    {/*    <label>*/}
+                                                                    {/*        <Field type="radio" name="type"*/}
+                                                                    {/*               value="Lịch sử cộng điểm"/>*/}
+                                                                    {/*        Lịch sử cộng điểm*/}
+                                                                    {/*    </label>*/}
+                                                                    {/*</td>*/}
+                                                                    {/*<td>*/}
+                                                                    {/*    <label>*/}
+                                                                    {/*        <Field type="radio" name="type"*/}
+                                                                    {/*               value="Lịch sử dùng điểm"/>*/}
+                                                                    {/*        Lịch sử dùng điểm*/}
+                                                                    {/*    </label>*/}
+                                                                    {/*</td>*/}
                                                                     <td style={{paddingLeft: 10}}>
                                                                         <button className="btn btn__search my-2 my-sm-0"
                                                                                 style={{width: 100}} type="submit">
@@ -300,7 +300,7 @@ export default function UserInformation() {
                                                 <tbody>
                                                 {historyBooking.map((booking) => (
                                                     <tr key={booking.id}>
-                                                        <th scope="row">{booking.nameMovie}</th>
+                                                        <td style={{fontWeight: "bold"}} scope="row">{booking.nameMovie}</td>
                                                         <td>{formatDate(booking.dateBooking)}</td>
                                                         <td>{formatNumber(booking.price)}</td>
                                                         <td>{formatNumber(booking.price / 50)}</td>
