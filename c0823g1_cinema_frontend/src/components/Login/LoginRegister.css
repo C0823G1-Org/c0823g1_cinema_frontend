@@ -5,7 +5,7 @@
     font-family:  roboto condensed, sans-serif;
 }
 
-body {
+.body {
     background: #f6f5f7;
     display: flex;
     justify-content: center;
@@ -81,7 +81,7 @@ a {
     border-color: #FFFFFF;
 }
 
-form {
+/* form {
     background-color: #FFFFFF;
     display: flex;
     align-items: center;
@@ -90,9 +90,27 @@ form {
     padding: 0 50px;
     height: 100%;
     text-align: center;
-}
+} */
 
+.form {
+    background-color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 50px;
+    height: 100%;
+    text-align: center;
+} 
+/* 
 input {
+    background-color: #eee;
+    border: none;
+    padding: 12px 15px;
+    margin: 8px 0;
+    width: 100%;
+} */
+.input {
     background-color: #eee;
     border: none;
     padding: 12px 15px;
@@ -100,7 +118,7 @@ input {
     width: 100%;
 }
 
-.container {
+.containerLogin {
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 14px 28px rgba(0,0,0,0.25),
@@ -109,13 +127,14 @@ input {
     overflow: hidden;
     width: 1200px;
     max-width: 100%;
-    height: 675px;
+    height: 800px;
+
 }
 
 .form-container {
     position: absolute;
     top: 0;
-    height: 100%;
+    height: 90%;
     transition: all 0.6s ease-in-out;
 
 }
@@ -126,7 +145,7 @@ input {
     z-index: 2;
 }
 
-.container.right-panel-active .sign-in-container {
+.containerLogin.right-panel-active .sign-in-container {
     transform: translateX(100%);
 }
 
@@ -137,7 +156,7 @@ input {
     z-index: 1;
 }
 
-.container.right-panel-active .sign-up-container {
+.containerLogin.right-panel-active .sign-up-container {
     transform: translateX(100%);
     opacity: 1;
     z-index: 5;
@@ -167,7 +186,7 @@ input {
     z-index: 100;
 }
 
-.container.right-panel-active .overlay-container{
+.containerLogin.right-panel-active .overlay-container{
     transform: translateX(-100%);
 }
 
@@ -184,7 +203,7 @@ input {
     transition: transform 0.6s ease-in-out;
 }
 
-.container.right-panel-active .overlay {
+.containerLogin.right-panel-active .overlay {
     transform: translateX(50%);
 }
 
@@ -207,7 +226,7 @@ input {
     transform: translateX(-20%);
 }
 
-.container.right-panel-active .overlay-left {
+.containerLogin.right-panel-active .overlay-left {
     transform: translateX(0);
 }
 
@@ -216,7 +235,7 @@ input {
     transform: translateX(0);
 }
 
-.container.right-panel-active .overlay-right {
+.containerLogin.right-panel-active .overlay-right {
     transform: translateX(20%);
 }
 
@@ -318,4 +337,4 @@ footer a {
 @keyframes pulse {
     0% , 60% , 100%{ transform:  scale(1) }
     80% { transform:  scale(1.2)}
-}
+}   
