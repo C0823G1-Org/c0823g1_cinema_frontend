@@ -58,7 +58,6 @@ const Home = () => {
     return (
         <div>
             <Header />
-
             {/* Carousel */}
             <section className="movieCarousel">
                 <div id="movieCarousel" className="carousel slide" data-ride="carousel">

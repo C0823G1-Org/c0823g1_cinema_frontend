@@ -9,7 +9,6 @@ export default function Header() {
     }
     return (
         <>
-            <button onClick={handleLogin}>Đăng nhập</button>
             <div className="hide-menubar" id="hide-navbar">
                 <div className="container">
                     <nav className="navbar navbar-expand-lg navbar-dark px-0 navbar-onscroll-by-user">
