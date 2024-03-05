@@ -18,3 +18,32 @@ export async function getListHistoryBooking(id, startDate, endDate, page) {
         console.log(err)
     }
 }
+export const selectTicket = async (ticket) => {
+    try {
+
+        let result = await axios.post("http://localhost:8080/booking/confirm", ticket)
+        return result.data;
+    } catch (error) {
+        console.log(error)
+        return error;
+    }
+}
+
+export const handleSuccess = async (checkout) => {
+    console.log(checkout)
+    try {
+        let result = await axios.post("http://localhost:8080/booking/success", checkout)
+        return result.data
+    } catch (error) {
+        return error;
+    }
+}
+export const handleFail = async (checkout) => {
+    console.log(checkout)
+    try {
+        let result = await axios.post("http://localhost:8080/booking/fail", checkout)
+        return result.data
+    } catch (error) {
+        return error;
+    }
+}
