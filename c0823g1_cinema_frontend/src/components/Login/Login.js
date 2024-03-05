@@ -1,33 +1,24 @@
 import "./LoginRegister.css";
-import {useEffect, useState} from "react";
+import { useState } from "react";
 import {
     FacebookLoginButton,
     GoogleLoginButton,
 } from "react-social-login-buttons";
-import {LoginSocialFacebook} from "reactjs-social-login";
-import {useNavigate} from "react-router-dom";
-import {LoginLogoutService} from "../../service/LoginLogoutService";
-import {auth, provider} from "../config/config";
-import {signInWithPopup} from "firebase/auth";
+import { LoginSocialFacebook } from "reactjs-social-login";
+import { useNavigate } from "react-router-dom";
+import { LoginLogoutService } from "../../service/LoginLogoutService";
+import { auth, provider } from "../config/config";
+import { signInWithPopup } from "firebase/auth";
 import SweetAlert from "sweetalert";
-import {Button, Modal} from "react-bootstrap";
-import {ColorRing} from "react-loader-spinner";
-import {register} from "../../service/AccountService";
+import { Button, Modal } from "react-bootstrap";
+import { ColorRing } from "react-loader-spinner";
+import { AccountService, register } from "../../service/AccountService";
 import * as Yup from 'yup';
-import {ErrorMessage, Field, Form, Formik} from "formik";
+import { ErrorMessage, Field, Form, Formik } from "formik";
 
 export default function Login() {
-
     const navigate = useNavigate();
-    useEffect(() => {
-        const roleUser = sessionStorage.getItem("roleUser");
-        if (roleUser !== null) {
-            navigate(`/home`);
-        }
-    }, []);
     const [status, setStatus] = useState(true);
-    const [isSubmitLogin, setIsSubmitLogin] = useState(false);
-
     const handleGetRegister = () => {
         setStatus(false);
     };
@@ -41,7 +32,7 @@ export default function Login() {
     });
 
     const handleParamsChange = (e) => {
-        const {name, value} = e.target;
+        const { name, value } = e.target;
         setParams((prevParams) => ({
             ...prevParams,
             [name]: value,
@@ -51,63 +42,89 @@ export default function Login() {
 
     const handleLogin = async () => {
         try {
-            setIsSubmitLogin(true);
             if (params.password === "" || params.accountName === "") {
                 setError("Tên đăng nhập và mật khẩu không được để trống!");
-                setIsSubmitLogin(false);
             } else {
                 const req = await LoginLogoutService.loginAccount(params);
                 setError("");
                 if (req.data.iAccountDTO.isDeleted === true) {
-                    await SweetAlert("Đăng nhập thất bại!", `Tài khoản của bạn đã bị khóa bởi hệ thống, mọi thắc mắc xin liên hệ đến số điện thoại 090564325 để được giải đáp. Trân trọng cám ơn!`, "error");
-                    setIsSubmitLogin(false);
+                    await SweetAlert(
+                        "Đăng nhập thất bại!",
+                        `Tài khoản của bạn đã bị khóa bởi hệ thống, mọi thắc mắc xin liên hệ đến số điện thoại 090564325 để được giải đáp. Trân trọng cám ơn!`,
+                        "error"
+                    );
                 } else {
                     sessionStorage.setItem("accessToken", req.data.accessToken);
                     sessionStorage.setItem("roleUser", req.data.roleUser);
                     sessionStorage.setItem("user", req.data.iAccountDTO.accountName);
                     sessionStorage.setItem("userId", req.data.iAccountDTO.id);
-                    sessionStorage.setItem("userPhoto", req.data.iAccountDTO.profilePicture);
-                    await SweetAlert("Đăng nhập thành công!", `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`, "success")
+                    sessionStorage.setItem(
+                        "userPhoto",
+                        req.data.iAccountDTO.profilePicture
+                    );
+                    await SweetAlert(
+                        "Đăng nhập thành công!",
+                        `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`,
+                        "success"
+                    );
                     setError("");
-                    setIsSubmitLogin(false);
-                    navigate('/home');
+                    navigate("/home");
                 }
             }
         } catch (err) {
             setError("Tên đăng nhập hoặc mật khẩu không chính xác!");
-            setIsSubmitLogin(false);
         }
     };
     const handleLoginGoogle = async () => {
-        setIsSubmitLogin(true);
         let param;
         try {
             const req = await signInWithPopup(auth, provider);
             sessionStorage.setItem("accessTokenGG", req.user.accessToken);
             param = {
-                value: req._tokenResponse.oauthAccessToken
-            }
+                email: req.user.email,
+                googleId: req.user.uid,
+                fullName: req.user.displayName,
+                phoneNumber: req.user.phoneNumber,
+                profilePicture: req.user.photoURL,
+            };
             const req1 = await LoginLogoutService.loginGoogle(param);
             sessionStorage.setItem("accessToken", req1.data.accessToken);
             sessionStorage.setItem("roleUser", req1.data.roleUser);
             sessionStorage.setItem("user", req1.data.iAccountDTO.accountName);
             sessionStorage.setItem("userId", req1.data.iAccountDTO.id);
-            sessionStorage.setItem("userPhoto", req1.data.iAccountDTO.profilePicture);
-            await SweetAlert("Đăng nhập thành công!", `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`, "success")
-            setIsSubmitLogin(false);
-            navigate('/home');
+            await SweetAlert(
+                "Đăng nhập thành công!",
+                `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`,
+                "success"
+            );
+            navigate("/home");
         } catch (err) {
             sessionStorage.clear();
-            await SweetAlert("Đăng nhập thất bại!", `Tài khoản của bạn đã bị khóa bởi hệ thống, mọi thắc mắc xin liên hệ đến số điện thoại 090564325 để được giải đáp. Trân trọng cám ơn!`, "error")
-            setIsSubmitLogin(false);
+            await SweetAlert(
+                "Đăng nhập thất bại!",
+                `Tài khoản của bạn đã bị khóa bởi hệ thống, mọi thắc mắc xin liên hệ đến số điện thoại 090564325 để được giải đáp. Trân trọng cám ơn!`,
+                "error"
+            );
         }
-    }
+    };
     const handleLoginFacebookSuccess = async (response) => {
         let param;
         sessionStorage.setItem("accessTokenFB", response.data.accessToken);
         try {
-            param = {
-                value: response.data.accessToken
+            if (response.data.email === undefined) {
+                param = {
+                    email: "",
+                    facebookId: response.data.id,
+                    fullName: response.data.name,
+                    profilePicture: response.data.picture.data.url,
+                };
+            } else {
+                param = {
+                    email: response.data.email,
+                    facebookId: response.data.id,
+                    fullName: response.data.name,
+                    profilePicture: response.data.picture.data.url,
+                };
             }
             const res = await LoginLogoutService.loginFacebook(param);
             sessionStorage.setItem("accessToken", res.data.accessToken);
@@ -115,15 +132,21 @@ export default function Login() {
             sessionStorage.setItem("user", res.data.iAccountDTO.accountName);
             sessionStorage.setItem("userId", res.data.iAccountDTO.id);
             sessionStorage.setItem("userPhoto", res.data.iAccountDTO.profilePicture);
-            await SweetAlert("Đăng nhập thành công!", `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`, "success")
-            setIsSubmitLogin(false);
-            navigate('/home')
+            await SweetAlert(
+                "Đăng nhập thành công!",
+                `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`,
+                "success"
+            );
+            navigate("/home");
         } catch (err) {
             sessionStorage.clear();
-            await SweetAlert("Đăng nhập thất bại!", `Tài khoản của bạn đã bị khóa bởi hệ thống, mọi thắc mắc xin liên hệ đến số điện thoại 090564325 để được giải đáp. Trân trọng cám ơn!`, "error")
-            setIsSubmitLogin(false);
+            await SweetAlert(
+                "Đăng nhập thất bại!",
+                `Tài khoản của bạn đã bị khóa bởi hệ thống, mọi thắc mắc xin liên hệ đến số điện thoại 090564325 để được giải đáp. Trân trọng cám ơn!`,
+                "error"
+            );
         }
-    }
+    };
 
     const [isSubmit, setIsSubmit] = useState(false);
     const [error1, setError1] = useState("");
@@ -165,7 +188,7 @@ export default function Login() {
         } else {
             try {
                 setIsSubmit(true);
-                const req = await LoginLogoutService.forgetPassword({email: email});
+                const req = await LoginLogoutService.forgetPassword({ email: email });
                 console.log(req);
                 setShow(false);
                 setShow1(true);
@@ -213,13 +236,13 @@ export default function Login() {
                         req.data.iAccountDTO.profilePicture
                     );
                     await SweetAlert(
-                        "Chúc mừng bạn đã lấy lại mật khẩu thành công!",
-                        `Hãy cập nhật mật khẩu để đảm bảo an toàn bảo mật bạn nhé!`,
+                        "Đăng nhập thành công!",
+                        `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`,
                         "success"
                     );
                     setError2("");
                     setIsSubmit(false);
-                    navigate("/user/information");
+                    navigate("/home");
                 }
             }
         } catch (err) {
@@ -231,13 +254,15 @@ export default function Login() {
     //  --------------------------------------------------- Đăng Kí ---------------------------------------------------------------------------
 
 
+
+
     // const [errors,setErrors] = useState()
 
-    const registerAccount = async (values, {setErrors}) => {
-        try {
-            if (values.gender == "male") {
+    const registerAccount = async (values,{setErrors}) => {
+        try{
+            if(values.gender == "male"){
                 values.gender = true;
-            } else {
+            }else{
                 values.gender = false;
             }
             const result = await register(values);
@@ -247,7 +272,7 @@ export default function Login() {
                 "success"
             );
             navigate("/login")
-        } catch (err) {
+        }catch(err){
             setErrors(err.data)
             await SweetAlert(
                 "Đăng Kí Thất Bại",
@@ -260,19 +285,19 @@ export default function Login() {
     }
 
     const initValues = {
-        accountName: "",
-        fullName: "",
-        password: "",
-        idNumber: "",
-        birthday: "",
-        phoneNumber: "",
-        gender: true,
-        email: "",
-        address: "",
-        verificationCode: "1",
+        accountName : "",
+        fullName : "",
+        password : "" ,
+        idNumber : "" ,
+        birthday : "",
+        phoneNumber : "",
+        gender : true,
+        email : "",
+        address : "",
+        verificationCode : "1",
     }
     const validateObject = {
-        accountName: Yup.string().required("Tài Khoản không được để trống").min(6, "Tài Khoản từ 6 - 20 kí tự").max(20, "Tài Khoản từ 6 - 20 kí tự").matches("^[a-z0-9_-]+$", "Tài Khoản Vui Lòng Nhập Đúng Định Dạng"),
+        accountName : Yup.string().required("Tài Khoản không được để trống").min(6,"Tài Khoản từ 6 - 20 kí tự").max(20,"Tài Khoản từ 6 - 20 kí tự").matches("^[a-z0-9_-]+$","Tài Khoản Vui Lòng Nhập Đúng Định Dạng"),
         fullName: Yup.string()
             .required("Họ Và Tên không được để rỗng")
             .min(6, "Họ và Tên từ 6 - 45 kí tự")
@@ -282,8 +307,8 @@ export default function Login() {
                 "Họ Và Tên vui lòng nhập đúng định dạng"
             ),
 
-        password: Yup.string().required("Mật Khẩu không được để rỗng").min(6, "Mật Khẩu độ dài từ 6-20 kí tự").max(20, "Mật Khẩu độ dài từ 6-20 kí tự"),
-        phoneNumber: Yup.string().required("Số Điện Thoại không được để rỗng").matches("^(0|84)(2(0[3-9]|1[0-6|8|9]|2[0-2|5-9]|3[2-9]|4[0-9]|5[1|2|4-9]|6[0-3|9]|7[0-7]|8[0-9]|9[0-4|6|7|9])|3[2-9]|5[5|6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])([0-9]{7})$", "Số điện thoại vui lòng nhập đúng định dạng"),
+        password : Yup.string().required("Mật Khẩu không được để rỗng").min(6,"Mật Khẩu độ dài từ 6-20 kí tự").max(20,"Mật Khẩu độ dài từ 6-20 kí tự"),
+        phoneNumber : Yup.string().required("Số Điện Thoại không được để rỗng").matches("^(0|84)(2(0[3-9]|1[0-6|8|9]|2[0-2|5-9]|3[2-9]|4[0-9]|5[1|2|4-9]|6[0-3|9]|7[0-7]|8[0-9]|9[0-4|6|7|9])|3[2-9]|5[5|6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])([0-9]{7})$","Số điện thoại vui lòng nhập đúng định dạng"),
         email: Yup.string()
             .required("Email Không được để rỗng")
             .matches(/^[\w\-.]+@([\w\-]+\.)+[\w\-]{2,}$/, "Email vui lòng nhập đúng định dạng"),
@@ -301,56 +326,59 @@ export default function Login() {
                     className={`containerLogin ${status ? "" : "right-panel-active"}`}
                     id="container"
                 >
-                    <Formik initialValues={initValues} validationSchema={Yup.object(validateObject)}
-                            onSubmit={(values, {setErrors}) => registerAccount(values, {setErrors})}>
+                    <Formik initialValues={initValues} validationSchema={Yup.object(validateObject)} onSubmit={(values,{setErrors}) => registerAccount(values,{setErrors})}>
                         {
-                            ({isSubmitting}) => (
+                            ({isSubmitting}) =>(
 
 
                                 <div
                                     className="form-container sign-up-container"
-                                    style={{paddingTop: "3em"}}
+                                    style={{ paddingTop: "3em" }}
                                 >
                                     <Form className="form">
                                         <h1>Đăng Kí</h1>
                                         <span>
-                      Bạn Có Thể Quay Lại Trang Đăng Nhập Sử Dụng Email Và Facebook để
-                      đăng nhập
-                    </span>
-                                        <table style={{width: "100%"}}>
+              Bạn Có Thể Quay Lại Trang Đăng Nhập Sử Dụng Email Và Facebook để
+              đăng nhập
+            </span>
+                                        <table  style={{ width: "100%" }}>
                                             <tbody>
                                             <tr>
-                                                <td style={{width: 90}}>
+                                                <td style={{ width: 90 }}>
                                                     <h6>Tài Khoản </h6>
                                                 </td>
                                                 <td>
-                                                    <Field type="text" id="accountName" name="accountName"
-                                                           placeholder="Ex: example123456" className="input"/> <br></br>
-                                                    <ErrorMessage name="accountName" component='span'
-                                                                  className="form-err" style={{color: 'red'}}/>
+                                                    <Field type="text" id="accountName" name="accountName" placeholder="Ex: example123456" className="input" /> <br></br>
                                                 </td>
                                             </tr>
+                                            <tr><td></td><td>
+                                                <ErrorMessage name="accountName" component='span' className="form-err" style={{ color: 'red' }} />
+                                            </td></tr>
                                             <tr>
                                                 <td>
                                                     <h6>Mật Khẩu</h6>
                                                 </td>
                                                 <td>
-                                                    <Field type="password" id="password" name="password"
-                                                           className="input"/> <br></br>
-                                                    <ErrorMessage name="password" component='span' className="form-err"
-                                                                  style={{color: 'red'}}/>
+                                                    <Field type="password" id="password" name="password" className="input" /> <br></br>
                                                 </td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <ErrorMessage name="password" component='span' className="form-err" style={{ color: 'red' }} />
+                                                <td></td>
                                             </tr>
                                             <tr>
                                                 <td>
                                                     <h6>Họ Và Tên</h6>
                                                 </td>
                                                 <td>
-                                                    <Field type="text" id="fullName" name="fullName"
-                                                           placeholder="Ex: Nguyễn Văn A" className="input"/> <br></br>
-                                                    <ErrorMessage name="fullName" component='span' className="form-err"
-                                                                  style={{color: 'red'}}/>
+                                                    <Field type="text" id="fullName" name="fullName" placeholder="Ex: Nguyễn Văn A" className="input" /> <br></br>
                                                 </td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <ErrorMessage name="fullName" component='span' className="form-err" style={{ color: 'red' }} />
+                                                <td></td>
                                             </tr>
                                             <tr>
                                                 <td>
@@ -358,11 +386,11 @@ export default function Login() {
                                                 </td>
                                                 <td>
                                                     {/* <input
-            type="date" 
-            value={dateOfBirth} 
-            onChange={(event)=>handleDateChange(event)} 
+            type="date"
+            value={dateOfBirth}
+            onChange={(event)=>handleDateChange(event)}
         /> */}
-                                                    <Field type="date" id="birthday" name="birthday" className="input"/>
+                                                    <Field type="date" id="birthday" name="birthday"  className="input" />
                                                 </td>
                                             </tr>
                                             <tr>
@@ -377,9 +405,10 @@ export default function Login() {
                                                             name="gender"
                                                             id="inlineRadio1"
                                                             value="male"
+                                                            checked
                                                         />
                                                         <label
-                                                            style={{marginBottom: 10}}
+                                                            style={{ marginBottom: 10 }}
                                                             className="form-check-label"
                                                             htmlFor="inlineRadio1"
                                                         >
@@ -395,7 +424,7 @@ export default function Login() {
                                                             value="female"
                                                         />
                                                         <label
-                                                            style={{marginBottom: 10}}
+                                                            style={{ marginBottom: 10 }}
                                                             className="form-check-label"
                                                             htmlFor="inlineRadio2"
                                                         >
@@ -409,50 +438,58 @@ export default function Login() {
                                                     <h6>CMND/CCCD</h6>
                                                 </td>
                                                 <td>
-                                                    <Field className="input" type="text" id="idNumber" name="idNumber"/>
-                                                    <br></br>
-                                                    <ErrorMessage name="idNumber" component='span' className="form-err"
-                                                                  style={{color: 'red'}}/>
+                                                    <Field className="input" type="text" id="idNumber" name="idNumber" /> <br></br>
                                                 </td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <ErrorMessage name="idNumber" component='span' className="form-err" style={{ color: 'red' }}  />
+                                                <td></td>
                                             </tr>
                                             <tr>
                                                 <td>
                                                     <h6>Email</h6>
                                                 </td>
                                                 <td>
-                                                    <Field className="input" type="text" id="email" name="email"
-                                                           placeholder="Ex: example@gmail.com"/> <br></br>
-                                                    <ErrorMessage name="email" component='span' className="form-err"
-                                                                  style={{color: 'red'}}/>
+                                                    <Field className="input" type="text" id="email" name="email" placeholder="Ex: example@gmail.com" /> <br></br>
                                                 </td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <ErrorMessage name="email" component='span' className="form-err" style={{ color: 'red' }} />
+                                                <td></td>
                                             </tr>
                                             <tr>
                                                 <td>
                                                     <h6>Địa Chỉ</h6>
                                                 </td>
                                                 <td>
-                                                    <Field className="input" type="text" id="address" name="address"
-                                                           placeholder="Ex: 295 Nguyễn Tất Thành"/> <br></br>
-                                                    <ErrorMessage name="address" component='span' className="form-err"
-                                                                  style={{color: 'red'}}/>
+                                                    <Field className="input" type="text" id="address" name="address" placeholder="Ex: 295 Nguyễn Tất Thành" /> <br></br>
                                                 </td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <ErrorMessage name="address" component='span' className="form-err" style={{ color: 'red' }} />
+                                                <td></td>
                                             </tr>
                                             <tr>
                                                 <td>
                                                     <h6 className="soDienThoaiTable">Số Điện Thoại</h6>
                                                 </td>
                                                 <td>
-                                                    <Field className="input" type="text" id="phoneNumber"
-                                                           name="phoneNumber" placeholder="Ex:0387274038"/> <br></br>
-                                                    <ErrorMessage name="phoneNumber" component='span'
-                                                                  className="form-err" style={{color: 'red'}}/>
+                                                    <Field className="input" type="text" id="phoneNumber" name="phoneNumber" placeholder="Ex:0387274038" /> <br></br>
                                                 </td>
                                                 <td>
-                                                    <Field className="input" type="hidden" id="verificationCode"
-                                                           name="verificationCode"/> <br></br>
-                                                    <ErrorMessage name="verificationCode" component='span'
-                                                                  className="form-err" style={{color: 'red'}}/>
+                                                    <Field className="input" type="hidden" id="verificationCode" name="verificationCode"/> <br></br>
+                                                    <ErrorMessage name="verificationCode" component='span' className="form-err" style={{ color: 'red' }} />
                                                 </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+
+                                                </td>
+                                                <ErrorMessage name="phoneNumber" component='span' className="form-err" style={{ color: 'red' }} />
+                                                <td></td>
                                             </tr>
                                             </tbody>
                                         </table>
@@ -466,7 +503,7 @@ export default function Login() {
 
                     <div className="form-container sign-in-container">
                         <form className="form" action="#">
-                            <h1 style={{marginBottom: "15px"}}>Đăng Nhập</h1>
+                            <h1 style={{ marginBottom: "15px" }}>Đăng Nhập</h1>
                             <input
                                 className="input"
                                 id="accountName"
@@ -484,37 +521,36 @@ export default function Login() {
                                 onChange={handleParamsChange}
                             />
                             <div>
-                                <span style={{color: "red", fontSize: "1em"}}>{error}</span>
+                                <span style={{ color: "red", fontSize: "1em" }}>{error}</span>
                             </div>
                             {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                             <a href="#" onClick={handleShow}>
                                 Quên Mật Khẩu?
                             </a>
-                            {isSubmitLogin ? <button type="button" className="button">Đăng Nhập</button> :
-                                <button type="button" className="button" onClick={handleLogin}>Đăng Nhập</button>}
+                            <button type="button" className="button" onClick={handleLogin}>
+                                Đăng Nhập
+                            </button>
                             <hr color="black"></hr>
                             <span>hoặc sử dụng tài khoản của bạn</span>
                             <div className="social-container">
                                 <div>
-                                    {isSubmitLogin ?
-                                        <FacebookLoginButton text="Đăng nhập bằng Facebook"/>
-                                        : <LoginSocialFacebook
-                                            appId="1535030517281067"
-                                            onResolve={(response) => {
-                                                handleLoginFacebookSuccess(response)
-                                            }}
-                                            onReject={(err) => {
-                                                console.log(err);
-                                            }
-                                            }
-                                        >
-                                            <FacebookLoginButton onClick={() => setIsSubmitLogin(true)}
-                                                                 text="Đăng nhập bằng Facebook"/>
-                                        </LoginSocialFacebook>}
+                                    <LoginSocialFacebook
+                                        appId="1535030517281067"
+                                        onResolve={(response) => {
+                                            handleLoginFacebookSuccess(response);
+                                        }}
+                                        onReject={(err) => {
+                                            console.log(err);
+                                        }}
+                                    >
+                                        <FacebookLoginButton text="Đăng nhập bằng Facebook" />
+                                    </LoginSocialFacebook>
                                 </div>
-                                <div style={{marginTop: "10px"}}>
-                                    {isSubmitLogin ? <GoogleLoginButton text="Đăng nhập bằng Google"/> :
-                                        <GoogleLoginButton text="Đăng nhập bằng Google" onClick={handleLoginGoogle}/>}
+                                <div style={{ marginTop: "10px" }}>
+                                    <GoogleLoginButton
+                                        text="Đăng nhập bằng Google"
+                                        onClick={handleLoginGoogle}
+                                    />
                                 </div>
                             </div>
                         </form>
@@ -523,7 +559,7 @@ export default function Login() {
                         <div className="overlay">
                             <div className="overlay-panel overlay-left">
                                 <h1>Chào Bạn !</h1>
-                                <p>Hãy Điền Thông Tin Cá Nhân Đầy Đủ Để Đăng Kí Tài Khoản Nhé</p>
+                                <p className="p1">Hãy Điền Thông Tin Cá Nhân Đầy Đủ Để Đăng Kí Tài Khoản Nhé</p>
                                 <button
                                     className="ghost button"
                                     id="signIn"
@@ -534,12 +570,17 @@ export default function Login() {
                             </div>
                             <div className="overlay-panel overlay-right">
                                 <h1>Chào Bạn !</h1>
-                                <p>
+                                <p className="p1">
                                     Hãy Tham Gia Cùng Chúng Tôi Và Đón Xem Những Bộ Phim Bom Tấn Nhé
                                 </p>
-                                {isSubmitLogin ? <button className="ghost button" id="signUp">Đăng Kí</button> :
-                                    <button className="ghost button" id="signUp" onClick={handleGetRegister}>Đăng
-                                        Kí</button>}
+                                <button
+                                    className="ghost button"
+                                    id="signUp"
+                                    onClick={handleGetRegister}
+
+                                >
+                                    Đăng Kí
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -566,7 +607,7 @@ export default function Login() {
                             onChange={handleEmailChange}
                         />
                         <div>
-                            <span style={{color: "red", fontSize: "1em"}}>{error1}</span>
+                            <span style={{ color: "red", fontSize: "1em" }}>{error1}</span>
                         </div>
                     </Modal.Body>
                     <Modal.Footer>
@@ -605,7 +646,6 @@ export default function Login() {
                             vào hệ thống!
                         </label>
                         <input
-                            className="input"
                             id="password1"
                             type="password"
                             placeholder="Mật khẩu"
@@ -613,7 +653,7 @@ export default function Login() {
                             onChange={handlePasswordChange}
                         />
                         <div>
-                            <span style={{color: "red", fontSize: "1em"}}>{error2}</span>
+                            <span style={{ color: "red", fontSize: "1em" }}>{error2}</span>
                         </div>
                     </Modal.Body>
                     <Modal.Footer>
