@@ -7,6 +7,8 @@ import {BrowserRouter} from "react-router-dom";
 import DetailMovie from "./components/DetailMovie/DetailMovie";
 import UserInformation from "./components/User/UserInformation";
 import Home from "./components/Home/Home";
+import Header from "./components/Home/Header";
+import Footer from "./components/Home/Footer";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

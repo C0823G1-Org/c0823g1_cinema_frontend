@@ -130,7 +130,7 @@ const Home = () => {
                                         <div className="newIn__play text-white">
                                             <span className="format-description">{value.description}</span>
                                             <div className="container__button-position">
-                                                <a className="btn__edit">Chi tiết</a>
+                                                <Link  className="btn__edit" to={`/home/detail/${value.movieId}`}>Chi tiết</Link>
                                                 <a className="btn__add" href="../template/TuanNM_detailcnm.html">Đặt vé</a>
                                             </div>
                                         </div>
