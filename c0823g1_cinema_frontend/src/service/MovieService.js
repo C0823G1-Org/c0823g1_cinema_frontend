@@ -25,7 +25,7 @@ export const getAllMovieCurrent = async () => {
     return rest.data;
 }
 
-export const searchName = async (name,page) => {
+export const searchName = async (name, page) => {
     const rest = await axios.get(`http://localhost:8080/movie/search?name=${name}&page=${page}`);
     return rest.data;
 }
@@ -33,6 +33,16 @@ export const searchName = async (name,page) => {
 export async function getAllMovieAttributes() {
     try {
         const result = await axios.get("http://localhost:8080/movie/attributes")
+        return result.data
+    } catch (e) {
+        console.log(e)
+        return false
+    }
+}
+
+export async function getAllCountries() {
+    try {
+        const result = await axios.get("https://restcountries.com/v3.1/all")
         return result.data
     } catch (e) {
         console.log(e)
