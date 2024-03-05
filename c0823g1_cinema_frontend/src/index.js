@@ -11,7 +11,7 @@ import Login from './components/Login/Login';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <BrowserRouter>
-    <Login />
+    <UserInformation />
   </BrowserRouter>
 );
 
