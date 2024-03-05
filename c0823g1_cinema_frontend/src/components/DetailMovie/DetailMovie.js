@@ -13,6 +13,7 @@ export default function DetailMovie() {
             const movie2 = await findByIdMovieHasGenre(id);
             setMovie(movie1);
             setTypeMovie(movie2);
+            document.title=movie1.name;
         };
         fetchData();
     }, []);
