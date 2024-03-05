@@ -5,6 +5,38 @@ import {useEffect, useState} from "react";
 import {EmployeeService} from "../../service/EmployeeService";
 export default function TicketList() {
     const[listBooking,setListBooking] = useState([]);
+    const[search,setSearch] = useState("");
+    const[searchDate,setSearchDate] = useState("");
+
+    const handleChangeValue =  (e) => {
+        setSearch(e.target.value);
+    }
+    const handleChangeDate =  (e) => {
+        setSearchDate(e.target.value);
+    }
+
+    const handleSearch = async () => {
+            let result;
+            if (search && searchDate) {
+                result = await EmployeeService.searchWithParamDateAndValue(search, searchDate);
+            } else if (search && !searchDate) {
+                result = await EmployeeService.searchWithParamInput(search);
+            } else if (!search && searchDate) {
+                result = await EmployeeService.searchWithParamDate(searchDate);
+            } else {
+                result = await EmployeeService.searchWithoutParam();
+            }
+
+            if (result.flag === "FOUND") {
+                console.log(result.flag)
+                setListBooking(result.data.content);
+            } else {
+                console.log(result.flag)
+                alert("Không tìm thấy");
+                setListBooking(result.data.content);
+            }
+
+    }
     const  fetchData = async () => {
         try {
             const listData = await EmployeeService.listBooking();
@@ -29,23 +61,23 @@ export default function TicketList() {
                     <div className="table-title">
                         <div className="row">
                             <div className="col-sm-6">
-                                <form  className="form-inline my-2 my-lg-0">
+                                <div  className="form-inline my-2 my-lg-0">
                                     <div className="d-flex">
 
                                         <label>
-                                            Date  <input id="dateInput2"
+                                            Date  <input  onChange={handleChangeDate} id="dateInput2"
                                                          className="form-control mr-sm-2"
                                                         style={{marginLeft: "5px"}} type="date"
                                                          min={new Date().toISOString().split("T")[0]}
                                         />
                                         </label>
-                                        <input className="form-control mr-sm-2" type="search"
+                                        <input onChange={handleChangeValue} className="form-control mr-sm-2" type="search"
                                                placeholder="Thông tin khách hàng"
                                                aria-label="Search"/>
-                                        <button className="btn btn__search my-2 my-sm-0" type="submit">Tìm kiếm
+                                        <button onClick={handleSearch} className="btn btn__search my-2 my-sm-0" type="submit">Tìm kiếm
                                         </button>
                                     </div>
-                                </form>
+                                </div>
                             </div>
 
                         </div>
@@ -58,7 +90,7 @@ export default function TicketList() {
                             <th>Họ tên</th>
                             <th>CMND</th>
                             <th>Số điện thoại</th>
-                            <th>Ngày khởi chiếu</th>
+                            <th>Ngày Đặt</th>
                             <th>Phim</th>
                             <th>Chức năng</th>
                         </tr>
