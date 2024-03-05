@@ -74,7 +74,7 @@ export default function EmployeeList() {
     <>
       <Sidebar />
       <section className="home-section">
-      <div className="container">
+      <div className="container body__employee">
         <h1>Quản lý nhân viên</h1>
         <div className="table-wrapper">
           <div className="table-title">
