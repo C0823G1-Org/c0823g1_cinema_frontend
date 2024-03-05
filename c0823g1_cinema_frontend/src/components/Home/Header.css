@@ -132,3 +132,29 @@ header {
 #hideNavbar li.nav-item.active::after {
     width: 100%;
 }
+
+/* Name user */
+.name--user {
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: none
+}
+.checkunder {
+    border-bottom: none !important;
+}
+
+.design__logout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 27%;
+    transform: translateX(300%);
+    text-decoration: none;  
+}
+
+.logout-name {
+    color: white;
+    text-decoration: none;
+}

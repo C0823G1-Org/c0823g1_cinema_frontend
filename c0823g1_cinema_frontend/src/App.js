@@ -20,6 +20,7 @@ import Register from "./components/Register/Register";
 import UserInformation from "./components/User/UserInformation";
 import HistoryBooking from "./components/User/HistoryBooking";
 import Search from './components/Home/Search';
+import HeaderTemplateAdmin from './components/Home/HeaderTemplateAdmin';
 
 function App() {
     return (
@@ -28,6 +29,7 @@ function App() {
                 <Route path={"/home"} element={<Home/>}></Route>
                 <Route path={"/search"} element={<Search/>}/>
                 <Route path={"/login"} element={<Login/>}></Route>
+                <Route path={"/check"} element={<HeaderTemplateAdmin/>}  />
                 <Route path={"/register"} element={<Register/>}></Route>
                 <Route path={"/movie"} element={<MovieList/>}></Route>
                 <Route path={"/movie/create"} element={<MovieCreate/>}></Route>
