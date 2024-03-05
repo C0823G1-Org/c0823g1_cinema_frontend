@@ -1,22 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import '../Home/Home.css'
-// import quythaydau from '../img/quaythaydau.jpg'
-// import quatmotrungma from '../img/quatmotrungma.jpg'
-// import truocgioyeu from '../img/truocgioyeu.jpg'
-// import bietdoisanma from '../img/bietdoisanma.jpg'
-// import kong from '../img/kong.jpg'
-// import sangden from '../img/sangden.png'
-// import movie3 from '../img/slide-3-video.png'
-// import movie4 from '../img/movie-5.jpg'
-// import movie5 from '../img/movie-6.jpg'
-// import movie6 from '../img/movie-7.jpg'
-// import movie7 from '../img/movie-8.jpg'
-// import movie8 from '../img/movie-9.jpg'
-// import movie9 from '../img/movie-13.jpg'
 import { getAllMovieCurrent, getAllMovieHot, searchName } from '../../service/MovieService'
 import Header from '../Home/Header'
 import Footer from '../Home/Footer'
 import { useNavigate } from 'react-router-dom'
+import HeaderTemplateAdmin from './HeaderTemplateAdmin'
 
 
 const Home = () => {
@@ -26,7 +14,7 @@ const Home = () => {
     const [search, setSearch] = useState("")
     const [page, setPage] = useState("0");
     const native = useNavigate();
-    sessionStorage.clear();
+
     useEffect(() => {
         getAllMovieHot().then(res => {
             setMovies(res)
@@ -57,7 +45,7 @@ const Home = () => {
     if (!moviesCurrent) return <div>Loading...</div>
     return (
         <div>
-            <Header />
+            <HeaderTemplateAdmin />
             {/* Carousel */}
             <section className="movieCarousel">
                 <div id="movieCarousel" className="carousel slide" data-ride="carousel">
@@ -122,35 +110,6 @@ const Home = () => {
                 </div>
             </section>
             <section style={{ position: 'relative', marginTop: 50 }} className="newIn container py-5">
-                <div className="container__search-ticket">
-                    <label>
-                        <select className="custom-select" style={{ width: 200 }}>
-                            <option selected>Chọn phim</option>
-                            <option value={1}>Mai</option>
-                            <option value={2}>Madame Web</option>
-                            <option value={3}>Cua lại chị bầu </option>
-                        </select>
-                    </label>
-                    <label>
-                        <label>
-                            <select className="custom-select" style={{ width: 200 }}>
-                                <option selected>Chọn ngày</option>
-                                <option value={1}>23/02/2024</option>
-                                <option value={2}>24/02/2024</option>
-                                <option value={3}>25/02/2024</option>
-                            </select>
-                        </label>
-                    </label>
-                    <label>
-                        <select className="custom-select" style={{ width: 200 }}>
-                            <option selected>Chọn suất</option>
-                            <option value={1}>9h30</option>
-                            <option value={2}>12h</option>
-                            <option value={3}>14h30</option>
-                        </select>
-                    </label>
-                    <a href="../template/HuuPT_BookingSeat.html" style={{ borderRadius: 3, fontWeight: 500 }} className="btn__edit-new">Đặt vé</a>
-                </div>
                 {/* LIST PHIM HOT */}
                 <h2 className="content__after">Phim Hot</h2>
                 <div className="container__input">
@@ -166,7 +125,7 @@ const Home = () => {
                             movies.map(value => (
                                 <div key={value.name} className="col-6 col-md-3 list__film">
                                     <div className="newIn__img">
-                                        <img className="img-fluid" src alt />
+                                        <img className="img-fluid" src={value.poster} alt />
                                         <div className="newIn__overlay" />
                                         <div className="newIn__play text-white">
                                             <span className="format-description">{value.description}</span>
@@ -189,26 +148,53 @@ const Home = () => {
             <section style={{ position: 'relative' }} className="newIn container ">
                 <h2 className="content__after">Phim Hôm Nay</h2>
                 <div className="newIn__content">
-                    <div data-slick="{&quot;slidesToShow&quot;: 4, &quot;slidesToScroll&quot;: 4}" className="row text-center" id="slick-slider">
-                        <div className="col-6 col-md-3">
+                    <div data-slick="{slidesToShow:'4', slidesToScroll:'4'}" className="row text-center" id="slick-slider">
+                        {
+                            moviesCurrent.map(value => (
+                                <div className="col-6 col-md-3">
+                                    <div className="newIn__img">
+                                        <img className="img-fluid" src={value.poster} alt />
+                                        <div className="newIn__overlay" />
+                                        <div className="newIn__play text-white">
+                                            <span className="format-description">{value.description}</span>
+                                            <div className="container__button-position">
+                                                <a className="btn__edit">Chi tiết</a>
+                                                <a className="btn__add" href="../template/TuanNM_detailcnm.html">Đặt vé</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a className="container-title" href="*">
+                                        <h3 className="title__name-film">{value.name}</h3>
+                                    </a>
+                                </div>
+                            ))
+                        }
+                        {/* <div className="col-6 col-sm-6 col-md-3 col-lg-3 col-xl-3">
                             <div className="newIn__img">
                                 <img className="img-fluid" src alt />
                                 <div className="newIn__overlay" />
                                 <div className="newIn__play text-white">
-                                    <span className="format-description"></span>
+                                    <span className="format-description">\AAAAA</span>
                                     <div className="container__button-position">
                                         <a className="btn__edit">Chi tiết</a>
-                                        <a className="btn__add" href="../template/TuanNM_detailcnm.html">Đặt vé</a>
+                                        <a className="btn__add" href="http://127.0.0.1:5500/template/TuanNM_detailcnm.html">Đặt
+                                            vé</a>
                                     </div>
                                 </div>
                             </div>
                             <a className="container-title" href="*">
-                                <h3 className="title__name-film">QUẬT MỘ TRÙNG MA</h3>
+                                <h3 className="title__name-film">ĐẤU TRƯỜNG MUÔN THÚ</h3>
                             </a>
-                        </div>
+                        </div> */}
+
                     </div>
                 </div>
             </section>
+
+
+
+
+
             {/* Comming Son */}
             <section className="comingSoon">
                 <div className="comingSoon__bg" />
@@ -239,7 +225,7 @@ const Home = () => {
                         </div>
                         <div className="col-12 col-md-6 col-lg-6">
                             <div className="comingSoon__trailer">
-                                <img className="img-fluid" src alt />
+                                <img className="img-fluid" src="https://firebasestorage.googleapis.com/v0/b/newfirebase-1fe01.appspot.com/o/images%2Fslide-3-video.png?alt=media&token=9cb30ce8-f0be-4aca-9948-76406530b1c2" alt />
                                 <span className="d-inline-block rounded-circle"><i className="fa fa-play" /></span>
                             </div>
                         </div>
@@ -252,7 +238,7 @@ const Home = () => {
                     <div className="row text-center">
                         <div className="col-4 col-sm-3 col-md-2 movieList__item">
                             <div className="movieList__detail">
-                                <img className="img-fluid" src alt />
+                                <img className="img-fluid" src="https://firebasestorage.googleapis.com/v0/b/newfirebase-1fe01.appspot.com/o/images%2Fmovie-6.jpg?alt=media&token=1474d22c-9ffc-4b7f-bd96-0cb4f4b5625c,https://firebasestorage.googleapis.com/v0/b/newfirebase-1fe01.appspot.com/o/images%2Fmovie-7.jpg?alt=media&token=a44f907a-55d3-4ff3-ab4b-513962c8c625,https://firebasestorage.googleapis.com/v0/b/newfirebase-1fe01.appspot.com/o/images%2Fmovie-8.jpg?alt=media&token=eda1ff4f-bf93-4a22-bce8-20ed085c9481,https://firebasestorage.googleapis.com/v0/b/newfirebase-1fe01.appspot.com/o/images%2Fmovie-9.jpg?alt=media&token=48c6293b-75ec-496f-b492-1f7a1b37977c" alt />
                                 <div className="movieList__Name-Date my-3 text-white">
                                     <h5>Too fast</h5>
                                     <span>15 Tháng 3, 2024</span>
@@ -261,7 +247,7 @@ const Home = () => {
                         </div>
                         <div className="col-4 col-sm-3 col-md-2 movieList__item">
                             <div className="movieList__detail">
-                                <img className="img-fluid" src alt />
+                                <img className="img-fluid" src="https://firebasestorage.googleapis.com/v0/b/newfirebase-1fe01.appspot.com/o/images%2Fmovie-7.jpg?alt=media&token=4b500324-8cb6-47e2-a919-f235c5e23b5b" alt />
                                 <div className="movieList__Name-Date my-3 text-white">
                                     <h5>The Hangover: Part III</h5>
                                     <span>30 Tháng 9, 2024</span>
@@ -270,7 +256,7 @@ const Home = () => {
                         </div>
                         <div className="col-4 col-sm-3 col-md-2 movieList__item">
                             <div className="movieList__detail">
-                                <img className="img-fluid" src alt />
+                                <img className="img-fluid" src="https://firebasestorage.googleapis.com/v0/b/newfirebase-1fe01.appspot.com/o/images%2Fmovie-9.jpg?alt=media&token=48c6293b-75ec-496f-b492-1f7a1b37977c" alt />
                                 <div className="movieList__Name-Date my-3 text-white">
                                     <h5>Transformers: Age of Extinction</h5>
                                     <span>15 Tháng 3, 2024</span>
@@ -279,7 +265,7 @@ const Home = () => {
                         </div>
                         <div className="col-sm-3 col-md-2 movieList__item rp__none-item">
                             <div className="movieList__detail">
-                                <img className="img-fluid" src alt />
+                                <img className="img-fluid" src="https://firebasestorage.googleapis.com/v0/b/newfirebase-1fe01.appspot.com/o/images%2Fmovie-8.jpg?alt=media&token=eda1ff4f-bf93-4a22-bce8-20ed085c9481" alt />
                                 <div className="movieList__Name-Date my-3 text-white">
                                     <h5>End of an empire</h5>
                                     <span>19 Tháng 3, 2024</span>
@@ -288,7 +274,7 @@ const Home = () => {
                         </div>
                         <div className="col-sm-3 col-md-2 movieList__item rp__none-item">
                             <div className="movieList__detail">
-                                <img className="img-fluid" src alt />
+                                <img className="img-fluid" src="https://firebasestorage.googleapis.com/v0/b/newfirebase-1fe01.appspot.com/o/images%2Fmovie-12.jpg?alt=media&token=bd16a756-9527-44da-a20a-161ddaf28b94" alt />
                                 <div className="movieList__Name-Date my-3 text-white">
                                     <h5>The comedian</h5>
                                     <span>21 Tháng 3, 2024</span>
@@ -297,7 +283,7 @@ const Home = () => {
                         </div>
                         <div className="col-sm-3 col-md-2 movieList__item rp__none-item">
                             <div className="movieList__detail">
-                                <img className="img-fluid" src alt />
+                                <img className="img-fluid" src="https://firebasestorage.googleapis.com/v0/b/newfirebase-1fe01.appspot.com/o/images%2Fmovie-14.jpg?alt=media&token=9df9f33d-1763-49f0-bdb2-40887b1f6b70" alt />
                                 <div className="movieList__Name-Date my-3 text-white">
                                     <h5>Locked out</h5>
                                     <span>01 Tháng 4, 2024</span>
