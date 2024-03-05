@@ -12,9 +12,11 @@ import Footer from "./components/Home/Footer";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
+
     <BrowserRouter>
         <App />
     </BrowserRouter>
+
 );
 
 // If you want to start measuring performance in your app, pass a function
