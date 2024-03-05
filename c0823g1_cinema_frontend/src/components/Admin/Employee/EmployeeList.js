@@ -81,7 +81,7 @@ export default function EmployeeList() {
                   <div className="d-inline">
                     <div className="d-flex">
                       <input
-                        className="form-control mr-sm-2"
+                        className="form-control_employee mr-sm-2"
                         type="search"
                         placeholder="Nhập tên nhân viên"
                         name="searchName"
@@ -92,7 +92,8 @@ export default function EmployeeList() {
                         id="searchName"
                       />
                       <button
-                        className="btn my-2 my-sm-0 btn__search"
+                        
+                        className="my-2 my-sm-0 btn__search_employee"
                         type="button"
                         onClick={() => submitSearch()}
                       >
@@ -104,9 +105,9 @@ export default function EmployeeList() {
               </div>
               <div
                 className="col-12 col-sm-4 col-md-4 col-lg-4 col-xl-4"
-                style={{ marginTop: "35px" }}
+                style={{ width: "35px" }}
               >
-                <Link to={"/employee/create"} className="btn  btn__add">
+                <Link to={"/employee/create"} className="btn__add_employee">
                   <i className="material-icons">&#xE147;</i>
                   <span>Thêm mới nhân viên</span>
                 </Link>

@@ -31,7 +31,7 @@ body {
     float: right;
     font-size: 13px;
     border: none;
-    min-width: 50px;
+    min-width: 190px;
     border-radius: 2px;
     border: none;
     outline: none !important;
@@ -188,25 +188,28 @@ body {
     background: #ddd;
   }
   /* Button add */
-  .btn__add {
+  .btn__add_employee {
     background: linear-gradient(90deg, #649fde 0%, #2b4db5 100%);
     border-radius: 2px;
     border: none;
-    outline: none;
     padding: 8px 12px;
     color: #fff;
-    font-size: 16px;
     font-weight: 400;
     font-family: inherit;
     text-align: center;
     cursor: pointer;
     width: 35%;
+    float: right;
+    font-size: 13px;
+    min-width: 190px;
+    outline: none !important;
+    margin-left: 10px;
   }
-  .btn__add :hover {
+  .btn__add_employee :hover {
     background: linear-gradient(90deg, #87bcf5 0%, #3863e2 100%);
   }
   /* Button search */
-  .btn__search {
+  .btn__search_employee {
     background: linear-gradient(90deg, #649fde 0%, #2b4db5 100%);
     border-radius: 2px;
     border: none;
@@ -218,9 +221,12 @@ body {
     font-family: inherit;
     text-align: center;
     cursor: pointer;
-    width: 50%;
+    width: 20%;
+    position: absolute;
+    top: 20%;
+    transform: translateX(179%);
   }
-  .btn__search :hover {
+  .btn__search_employee :hover {
     background: linear-gradient(90deg, #87bcf5 0%, #3863e2 100%);
   }
   /* Button delete */
@@ -240,6 +246,11 @@ body {
   }
   .btn__delete :hover {
     background: linear-gradient(90deg, #de5b5b 0%, #ec4964 100%);
+  }
+  .btn__add_employee i {
+    float: left;
+    font-size: 21px;
+    margin-right: 5px;
   }
   
   /* Button back */
@@ -518,5 +529,19 @@ body {
       width: 100%;
       left: 0;
     }
+  }
+  .form-control_employee{
+    display: block;
+    width: 35%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    margin-top: 2%;
   }
   
