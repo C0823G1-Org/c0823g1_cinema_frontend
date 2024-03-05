@@ -4,15 +4,17 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {BrowserRouter} from "react-router-dom";
-import UserInformation from './components/User/UserInformation';
-import DetailMovie from './components/DetailMovie/DetailMovie';
-import Login from './components/Login/Login';
+import DetailMovie from "./components/DetailMovie/DetailMovie";
+import UserInformation from "./components/User/UserInformation";
+import Home from "./components/Home/Home";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <BrowserRouter>
-    <UserInformation />
-  </BrowserRouter>
+
+    <BrowserRouter>
+        <App />
+    </BrowserRouter>
+
 );
 
 // If you want to start measuring performance in your app, pass a function

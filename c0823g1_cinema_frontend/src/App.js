@@ -19,13 +19,17 @@ import TicketList from "./components/Employee/TicketList";
 import Register from "./components/Register/Register";
 import UserInformation from "./components/User/UserInformation";
 import HistoryBooking from "./components/User/HistoryBooking";
+import Search from './components/Home/Search';
+import HeaderTemplateAdmin from './components/Home/HeaderTemplateAdmin';
 
 function App() {
     return (
         <>
             <Routes>
                 <Route path={"/home"} element={<Home/>}></Route>
+                <Route path={"/search"} element={<Search/>}/>
                 <Route path={"/login"} element={<Login/>}></Route>
+                <Route path={"/check"} element={<HeaderTemplateAdmin/>}  />
                 <Route path={"/register"} element={<Register/>}></Route>
                 <Route path={"/movie"} element={<MovieList/>}></Route>
                 <Route path={"/movie/create"} element={<MovieCreate/>}></Route>
@@ -38,7 +42,7 @@ function App() {
                 <Route path={"/booking"} element={<BookingSeat/>}></Route>
                 <Route path={"/booking/confirm"} element={<TicketBookingConfirmation/>}></Route>
                 <Route path={"/booking/checkout"} element={<Checkout/>}></Route>
-                <Route path={"/home/detail:id"} element={<DetailMovie/>}></Route>
+                <Route path={"/home/detail/:id"} element={<DetailMovie/>}></Route>
                 <Route path={"/employee/ticketCheckout"} element={<TicketCheckout/>}></Route>
                 <Route path={"/employee/ticketList"} element={<TicketList/>}></Route>
                 <Route path={"/user/information"} element={<UserInformation/>}></Route>
