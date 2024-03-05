@@ -91,20 +91,20 @@ export default function MovieList() {
         <>
             <div className="container">
                 <h1>Quản lý phim</h1>
-                <div className="table-wrapper">
-                    <div className="table-title">
+                <div className="table-wrapper_movie">
+                    <div className="table-title_movie">
                         <div className="row">
                             <div className="col-12 col-sm-8 col-md-8 col-lg-8 col-xl-8">
                                 <form className="form-group my-2 my-lg-0 p-0 m-0">
                                     <div className="d-inline">
                                         <h5 style={{color:"white"}}>Chọn ngày khởi chiếu</h5>
                                         <div className="d-flex">
-                                            <label className="from-start-date">Từ</label>
+                                            <label className="from-start-date_movie">Từ</label>
                                             <input id="startDate" className="form-control mr-sm-2 w-25" type="date"
                                                    onChange={(event => handleStartDate(event.target.value))}
                                                    name="startDate"
                                             />
-                                            <label className="from-end-date"> Đến </label>
+                                            <label className="from-end-date_movie"> Đến </label>
                                             <input id="endDate" className="form-control mr-sm-2 w-25" type="date"
                                                    onChange={(event => handleEndDate(event.target.value))}
                                                    name="endDate"/>
@@ -114,7 +114,7 @@ export default function MovieList() {
                                                    aria-label="Search"
                                                    onChange={(event => handleNameSearch(event.target.value))}
                                                    id="name"/>
-                                            <button className="btn my-2 my-sm-0 btn__search" type="button"
+                                            <button className="btn F my-sm-0 btn__search_movie" type="button"
                                                     onClick={() => submitSearch()}
                                             >Tìm kiếm
                                             </button>
@@ -122,14 +122,14 @@ export default function MovieList() {
                                     </div>
                                 </form>
                             </div>
-                            <div className="col-12 col-sm-4 col-md-4 col-lg-4 col-xl-4" style={{marginTop:"35px"}}>
-                                <Link to={"/movie/create"} className="btn  btn__add">
-                                    <i className="material-icons">&#xE147;</i>
+                            <div className="col-12 col-sm-4 col-md-4 col-lg-4 col-xl-4" style={{marginTop:"19px"}}>
+                                <Link to={"/movie/create"} className="btn  btn__add_movie">
+                                    <i style={{float: "left",fontSize: "21px",marginRight: "5px"}} className="material-icons">&#xE147;</i>
                                     <span>Thêm mới phim</span></Link>
                             </div>
                         </div>
                     </div>
-                    <table className="table table-striped table-hover">
+                    <table className="table_movie table-striped_movie table-hover_movie ">
                         <thead >
                         <tr>
                             <th>STT</th>
@@ -153,10 +153,10 @@ export default function MovieList() {
                                     <td>{movie.versions}</td>
                                     <td>
                                         <Link to={`/movie/edit/${movie.id}`} className="edit"><i
-                                            className="material-icons" data-toggle="tooltip"
+                                           style={{color: "#FFC107"}} className="material-icons" data-toggle="tooltip"
                                             title="Chỉnh sửa">&#xE254;</i></Link>
                                         <Link onClick={() => handleDeleteClick(movie)} className="delete"
-                                              data-toggle="modal" to={""}><i className="material-icons"
+                                              data-toggle="modal" to={""}><i style={{color: "#F44336"}} className="material-icons"
                                                                              data-toggle="tooltip"
                                                                              title="Xóa">&#xE872;</i></Link>
                                     </td>
@@ -168,8 +168,7 @@ export default function MovieList() {
                         </tbody>
                     </table>
                     <div className="clearfix">
-                        <div className="hint-text"></div>
-                        <div className="page">
+                        <div style={{float:"right"}} className="page">
                             <ReactPaginate
                                 breakLabel="..."
                                 nextLabel="Trang Sau"
