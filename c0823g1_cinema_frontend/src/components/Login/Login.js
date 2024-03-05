@@ -1,5 +1,5 @@
 import "./LoginRegister.css";
-import { useState, useHistory } from "react";
+import { useState } from "react";
 import {
   FacebookLoginButton,
   GoogleLoginButton,
@@ -19,7 +19,6 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 export default function Login() {
   const navigate = useNavigate();
   const [status, setStatus] = useState(true);
-
   const handleGetRegister = () => {
     setStatus(false);
   };
@@ -50,9 +49,9 @@ export default function Login() {
         setError("");
         if (req.data.iAccountDTO.isDeleted === true) {
           await SweetAlert(
-            "Đăng nhập thất bại!",
-            `Tài khoản của bạn đã bị khóa bởi hệ thống, mọi thắc mắc xin liên hệ đến số điện thoại 090564325 để được giải đáp. Trân trọng cám ơn!`,
-            "error"
+              "Đăng nhập thất bại!",
+              `Tài khoản của bạn đã bị khóa bởi hệ thống, mọi thắc mắc xin liên hệ đến số điện thoại 090564325 để được giải đáp. Trân trọng cám ơn!`,
+              "error"
           );
         } else {
           sessionStorage.setItem("accessToken", req.data.accessToken);
@@ -60,13 +59,13 @@ export default function Login() {
           sessionStorage.setItem("user", req.data.iAccountDTO.accountName);
           sessionStorage.setItem("userId", req.data.iAccountDTO.id);
           sessionStorage.setItem(
-            "userPhoto",
-            req.data.iAccountDTO.profilePicture
+              "userPhoto",
+              req.data.iAccountDTO.profilePicture
           );
           await SweetAlert(
-            "Đăng nhập thành công!",
-            `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`,
-            "success"
+              "Đăng nhập thành công!",
+              `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`,
+              "success"
           );
           setError("");
           navigate("/home");
@@ -76,7 +75,6 @@ export default function Login() {
       setError("Tên đăng nhập hoặc mật khẩu không chính xác!");
     }
   };
-
   const handleLoginGoogle = async () => {
     let param;
     try {
@@ -95,17 +93,17 @@ export default function Login() {
       sessionStorage.setItem("user", req1.data.iAccountDTO.accountName);
       sessionStorage.setItem("userId", req1.data.iAccountDTO.id);
       await SweetAlert(
-        "Đăng nhập thành công!",
-        `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`,
-        "success"
+          "Đăng nhập thành công!",
+          `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`,
+          "success"
       );
       navigate("/home");
     } catch (err) {
       sessionStorage.clear();
       await SweetAlert(
-        "Đăng nhập thất bại!",
-        `Tài khoản của bạn đã bị khóa bởi hệ thống, mọi thắc mắc xin liên hệ đến số điện thoại 090564325 để được giải đáp. Trân trọng cám ơn!`,
-        "error"
+          "Đăng nhập thất bại!",
+          `Tài khoản của bạn đã bị khóa bởi hệ thống, mọi thắc mắc xin liên hệ đến số điện thoại 090564325 để được giải đáp. Trân trọng cám ơn!`,
+          "error"
       );
     }
   };
@@ -135,17 +133,17 @@ export default function Login() {
       sessionStorage.setItem("userId", res.data.iAccountDTO.id);
       sessionStorage.setItem("userPhoto", res.data.iAccountDTO.profilePicture);
       await SweetAlert(
-        "Đăng nhập thành công!",
-        `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`,
-        "success"
+          "Đăng nhập thành công!",
+          `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`,
+          "success"
       );
       navigate("/home");
     } catch (err) {
       sessionStorage.clear();
       await SweetAlert(
-        "Đăng nhập thất bại!",
-        `Tài khoản của bạn đã bị khóa bởi hệ thống, mọi thắc mắc xin liên hệ đến số điện thoại 090564325 để được giải đáp. Trân trọng cám ơn!`,
-        "error"
+          "Đăng nhập thất bại!",
+          `Tài khoản của bạn đã bị khóa bởi hệ thống, mọi thắc mắc xin liên hệ đến số điện thoại 090564325 để được giải đáp. Trân trọng cám ơn!`,
+          "error"
       );
     }
   };
@@ -216,9 +214,9 @@ export default function Login() {
         const req = await LoginLogoutService.loginEmail(param);
         if (req.data.iAccountDTO.isDeleted === true) {
           await SweetAlert(
-            "Đăng nhập thất bại!",
-            `Tài khoản của bạn đã bị khóa bởi hệ thống, mọi thắc mắc xin liên hệ đến số điện thoại 090564325 để được giải đáp. Trân trọng cám ơn!`,
-            "error"
+              "Đăng nhập thất bại!",
+              `Tài khoản của bạn đã bị khóa bởi hệ thống, mọi thắc mắc xin liên hệ đến số điện thoại 090564325 để được giải đáp. Trân trọng cám ơn!`,
+              "error"
           );
           setShow1(false);
           setShow(false);
@@ -234,13 +232,13 @@ export default function Login() {
           sessionStorage.setItem("user", req.data.iAccountDTO.accountName);
           sessionStorage.setItem("userId", req.data.iAccountDTO.id);
           sessionStorage.setItem(
-            "userPhoto",
-            req.data.iAccountDTO.profilePicture
+              "userPhoto",
+              req.data.iAccountDTO.profilePicture
           );
           await SweetAlert(
-            "Đăng nhập thành công!",
-            `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`,
-            "success"
+              "Đăng nhập thành công!",
+              `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`,
+              "success"
           );
           setError2("");
           setIsSubmit(false);
@@ -260,26 +258,26 @@ export default function Login() {
 
   // const [errors,setErrors] = useState()
 
-  const registerAccount = async (values, { setErrors }) => {
-    try {
-      if (values.gender == "male") {
+  const registerAccount = async (values,{setErrors}) => {
+    try{
+      if(values.gender == "male"){
         values.gender = true;
-      } else {
+      }else{
         values.gender = false;
       }
       const result = await register(values);
       await SweetAlert(
-        "Đăng Kí Thành Công",
-        `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`,
-        "success"
+          "Đăng Kí Thành Công",
+          `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`,
+          "success"
       );
       navigate("/login")
-    } catch (err) {
+    }catch(err){
       setErrors(err.data)
       await SweetAlert(
-        "Đăng Kí Thất Bại",
-        `Vui lòng nhập lại thông tin!`,
-        "error"
+          "Đăng Kí Thất Bại",
+          `Vui lòng nhập lại thông tin!`,
+          "error"
       );
 
     }
@@ -287,33 +285,33 @@ export default function Login() {
   }
 
   const initValues = {
-    accountName: "",
-    fullName: "",
-    password: "",
-    idNumber: "",
-    birthday: "",
-    phoneNumber: "",
-    gender: true,
-    email: "",
-    address: "",
-    verificationCode: "1",
+    accountName : "",
+    fullName : "",
+    password : "" ,
+    idNumber : "" ,
+    birthday : "",
+    phoneNumber : "",
+    gender : true,
+    email : "",
+    address : "",
+    verificationCode : "1",
   }
   const validateObject = {
-    accountName: Yup.string().required("Tài Khoản không được để trống").min(6, "Tài Khoản từ 6 - 20 kí tự").max(20, "Tài Khoản từ 6 - 20 kí tự").matches("^[a-z0-9_-]+$", "Tài Khoản Vui Lòng Nhập Đúng Định Dạng"),
+    accountName : Yup.string().required("Tài Khoản không được để trống").min(6,"Tài Khoản từ 6 - 20 kí tự").max(20,"Tài Khoản từ 6 - 20 kí tự").matches("^[a-z0-9_-]+$","Tài Khoản Vui Lòng Nhập Đúng Định Dạng"),
     fullName: Yup.string()
-      .required("Họ Và Tên không được để rỗng")
-      .min(6, "Họ và Tên từ 6 - 45 kí tự")
-      .max(45, "Họ và Tên từ 6 - 45 kí tự")
-      .matches(
-        /^[A-Za-zÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]*(?:\s+[A-Za-zÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]*)*\s*$/,
-        "Họ Và Tên vui lòng nhập đúng định dạng"
-      ),
+        .required("Họ Và Tên không được để rỗng")
+        .min(6, "Họ và Tên từ 6 - 45 kí tự")
+        .max(45, "Họ và Tên từ 6 - 45 kí tự")
+        .matches(
+            /^[A-Za-zÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]*(?:\s+[A-Za-zÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]*)*\s*$/,
+            "Họ Và Tên vui lòng nhập đúng định dạng"
+        ),
 
-    password: Yup.string().required("Mật Khẩu không được để rỗng").min(6, "Mật Khẩu độ dài từ 6-20 kí tự").max(20, "Mật Khẩu độ dài từ 6-20 kí tự"),
-    phoneNumber: Yup.string().required("Số Điện Thoại không được để rỗng").matches("^(0|84)(2(0[3-9]|1[0-6|8|9]|2[0-2|5-9]|3[2-9]|4[0-9]|5[1|2|4-9]|6[0-3|9]|7[0-7]|8[0-9]|9[0-4|6|7|9])|3[2-9]|5[5|6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])([0-9]{7})$", "Số điện thoại vui lòng nhập đúng định dạng"),
+    password : Yup.string().required("Mật Khẩu không được để rỗng").min(6,"Mật Khẩu độ dài từ 6-20 kí tự").max(20,"Mật Khẩu độ dài từ 6-20 kí tự"),
+    phoneNumber : Yup.string().required("Số Điện Thoại không được để rỗng").matches("^(0|84)(2(0[3-9]|1[0-6|8|9]|2[0-2|5-9]|3[2-9]|4[0-9]|5[1|2|4-9]|6[0-3|9]|7[0-7]|8[0-9]|9[0-4|6|7|9])|3[2-9]|5[5|6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])([0-9]{7})$","Số điện thoại vui lòng nhập đúng định dạng"),
     email: Yup.string()
-      .required("Email Không được để rỗng")
-      .matches(/^[\w\-.]+@([\w\-]+\.)+[\w\-]{2,}$/, "Email vui lòng nhập đúng định dạng"),
+        .required("Email Không được để rỗng")
+        .matches(/^[\w\-.]+@([\w\-]+\.)+[\w\-]{2,}$/, "Email vui lòng nhập đúng định dạng"),
     address: Yup.string().required("Địa chỉ không được để rỗng"),
 
 
@@ -321,337 +319,366 @@ export default function Login() {
 
 
   return (
-    <>
-      <div className="body">
+      <>
+        <div className="body">
 
-        <div
-          className={`containerLogin ${status ? "" : "right-panel-active"}`}
-          id="container"
-        >
-          <Formik initialValues={initValues} validationSchema={Yup.object(validateObject)} onSubmit={(values, { setErrors }) => registerAccount(values, { setErrors })}>
-            {
-              ({ isSubmitting }) => (
+          <div
+              className={`containerLogin ${status ? "" : "right-panel-active"}`}
+              id="container"
+          >
+            <Formik initialValues={initValues} validationSchema={Yup.object(validateObject)} onSubmit={(values,{setErrors}) => registerAccount(values,{setErrors})}>
+              {
+                ({isSubmitting}) =>(
 
 
-                <div
-                  className="form-container sign-up-container"
-                  style={{ paddingTop: "3em" }}
-                >
-                  <Form className="form">
-                    <h1>Đăng Kí</h1>
-                    <span>
-                      Bạn Có Thể Quay Lại Trang Đăng Nhập Sử Dụng Email Và Facebook để
-                      đăng nhập
-                    </span>
-                    <table style={{ width: "100%" }}>
-                      <tbody>
-                        <tr>
-                          <td style={{ width: 90 }}>
-                            <h6>Tài Khoản </h6>
-                          </td>
-                          <td>
-                            <Field type="text" id="accountName" name="accountName" placeholder="Ex: example123456" className="input" /> <br></br>
+                    <div
+                        className="form-container sign-up-container"
+                        style={{ paddingTop: "3em" }}
+                    >
+                      <Form className="form">
+                        <h1>Đăng Kí</h1>
+                        <span>
+              Bạn Có Thể Quay Lại Trang Đăng Nhập Sử Dụng Email Và Facebook để
+              đăng nhập
+            </span>
+                        <table  style={{ width: "100%" }}>
+                          <tbody>
+                          <tr>
+                            <td style={{ width: 90 }}>
+                              <h6>Tài Khoản </h6>
+                            </td>
+                            <td>
+                              <Field type="text" id="accountName" name="accountName" placeholder="Ex: example123456" className="input" /> <br></br>
+                            </td>
+                          </tr>
+                          <tr><td></td><td>
                             <ErrorMessage name="accountName" component='span' className="form-err" style={{ color: 'red' }} />
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <h6>Mật Khẩu</h6>
-                          </td>
-                          <td>
-                            <Field type="password" id="password" name="password" className="input" /> <br></br>
+                          </td></tr>
+                          <tr>
+                            <td>
+                              <h6>Mật Khẩu</h6>
+                            </td>
+                            <td>
+                              <Field type="password" id="password" name="password" className="input" /> <br></br>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td></td>
                             <ErrorMessage name="password" component='span' className="form-err" style={{ color: 'red' }} />
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <h6>Họ Và Tên</h6>
-                          </td>
-                          <td>
-                            <Field type="text" id="fullName" name="fullName" placeholder="Ex: Nguyễn Văn A" className="input" /> <br></br>
+                            <td></td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <h6>Họ Và Tên</h6>
+                            </td>
+                            <td>
+                              <Field type="text" id="fullName" name="fullName" placeholder="Ex: Nguyễn Văn A" className="input" /> <br></br>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td></td>
                             <ErrorMessage name="fullName" component='span' className="form-err" style={{ color: 'red' }} />
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <h6>Ngày Sinh</h6>
-                          </td>
-                          <td>
-                            {/* <input 
-            type="date" 
-            value={dateOfBirth} 
-            onChange={(event)=>handleDateChange(event)} 
+                            <td></td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <h6>Ngày Sinh</h6>
+                            </td>
+                            <td>
+                              {/* <input
+            type="date"
+            value={dateOfBirth}
+            onChange={(event)=>handleDateChange(event)}
         /> */}
-                            <Field type="date" id="birthday" name="birthday" className="input" />
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <h6>Giới Tính</h6>
-                          </td>
-                          <td>
-                            <div className="form-check form-check-inline">
-                              <Field
-                                className="form-check-input input"
-                                type="radio"
-                                name="gender"
-                                id="inlineRadio1"
-                                value="male"
-                              />
-                              <label
-                                style={{ marginBottom: 10 }}
-                                className="form-check-label"
-                                htmlFor="inlineRadio1"
-                              >
-                                Nam
-                              </label>
-                            </div>
-                            <div className="form-check form-check-inline">
-                              <Field
-                                className="form-check-input input"
-                                type="radio"
-                                name="gender"
-                                id="inlineRadio2"
-                                value="female"
-                              />
-                              <label
-                                style={{ marginBottom: 10 }}
-                                className="form-check-label"
-                                htmlFor="inlineRadio2"
-                              >
-                                Nữ
-                              </label>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <h6>CMND/CCCD</h6>
-                          </td>
-                          <td>
-                            <Field className="input" type="text" id="idNumber" name="idNumber" /> <br></br>
-                            <ErrorMessage name="idNumber" component='span' className="form-err" style={{ color: 'red' }} />
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <h6>Email</h6>
-                          </td>
-                          <td>
-                            <Field className="input" type="text" id="email" name="email" placeholder="Ex: example@gmail.com" /> <br></br>
+                              <Field type="date" id="birthday" name="birthday"  className="input" />
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <h6>Giới Tính</h6>
+                            </td>
+                            <td>
+                              <div className="form-check form-check-inline">
+                                <Field
+                                    className="form-check-input input"
+                                    type="radio"
+                                    name="gender"
+                                    id="inlineRadio1"
+                                    value="male"
+                                    checked
+                                />
+                                <label
+                                    style={{ marginBottom: 10 }}
+                                    className="form-check-label"
+                                    htmlFor="inlineRadio1"
+                                >
+                                  Nam
+                                </label>
+                              </div>
+                              <div className="form-check form-check-inline">
+                                <Field
+                                    className="form-check-input input"
+                                    type="radio"
+                                    name="gender"
+                                    id="inlineRadio2"
+                                    value="female"
+                                />
+                                <label
+                                    style={{ marginBottom: 10 }}
+                                    className="form-check-label"
+                                    htmlFor="inlineRadio2"
+                                >
+                                  Nữ
+                                </label>
+                              </div>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <h6>CMND/CCCD</h6>
+                            </td>
+                            <td>
+                              <Field className="input" type="text" id="idNumber" name="idNumber" /> <br></br>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td></td>
+                            <ErrorMessage name="idNumber" component='span' className="form-err" style={{ color: 'red' }}  />
+                            <td></td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <h6>Email</h6>
+                            </td>
+                            <td>
+                              <Field className="input" type="text" id="email" name="email" placeholder="Ex: example@gmail.com" /> <br></br>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td></td>
                             <ErrorMessage name="email" component='span' className="form-err" style={{ color: 'red' }} />
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <h6>Địa Chỉ</h6>
-                          </td>
-                          <td>
-                            <Field className="input" type="text" id="address" name="address" placeholder="Ex: 295 Nguyễn Tất Thành" /> <br></br>
+                            <td></td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <h6>Địa Chỉ</h6>
+                            </td>
+                            <td>
+                              <Field className="input" type="text" id="address" name="address" placeholder="Ex: 295 Nguyễn Tất Thành" /> <br></br>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td></td>
                             <ErrorMessage name="address" component='span' className="form-err" style={{ color: 'red' }} />
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <h6 className="soDienThoaiTable">Số Điện Thoại</h6>
-                          </td>
-                          <td>
-                            <Field className="input" type="text" id="phoneNumber" name="phoneNumber" placeholder="Ex:0387274038" /> <br></br>
+                            <td></td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <h6 className="soDienThoaiTable">Số Điện Thoại</h6>
+                            </td>
+                            <td>
+                              <Field className="input" type="text" id="phoneNumber" name="phoneNumber" placeholder="Ex:0387274038" /> <br></br>
+                            </td>
+                            <td>
+                              <Field className="input" type="hidden" id="verificationCode" name="verificationCode"/> <br></br>
+                              <ErrorMessage name="verificationCode" component='span' className="form-err" style={{ color: 'red' }} />
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+
+                            </td>
                             <ErrorMessage name="phoneNumber" component='span' className="form-err" style={{ color: 'red' }} />
-                          </td>
-                          <td>
-                            <Field className="input" type="hidden" id="verificationCode" name="verificationCode" /> <br></br>
-                            <ErrorMessage name="verificationCode" component='span' className="form-err" style={{ color: 'red' }} />
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                    <button type="submit" className="button">Đăng Kí</button>
-                  </Form>
-                </div>
-              )
-            }
+                            <td></td>
+                          </tr>
+                          </tbody>
+                        </table>
+                        <button type="submit" className="button">Đăng Kí</button>
+                      </Form>
+                    </div>
+                )
+              }
 
-          </Formik>
+            </Formik>
 
-          <div className="form-container sign-in-container">
-            <form className="form" action="#">
-              <h1 style={{ marginBottom: "15px" }}>Đăng Nhập</h1>
-              <input
-                className="input"
-                id="accountName"
-                type="text"
-                placeholder="Tên đăng nhập"
-                name="accountName"
-                onChange={handleParamsChange}
-              />
-              <input
-                className="input"
-                id="password"
-                type="password"
-                placeholder="Mật khẩu"
-                name="password"
-                onChange={handleParamsChange}
-              />
-              <div>
-                <span style={{ color: "red", fontSize: "1em" }}>{error}</span>
-              </div>
-              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-              <a href="#" onClick={handleShow}>
-                Quên Mật Khẩu?
-              </a>
-              <button type="button" className="button" onClick={handleLogin}>
-                Đăng Nhập
-              </button>
-              <hr color="black"></hr>
-              <span>hoặc sử dụng tài khoản của bạn</span>
-              <div className="social-container">
+            <div className="form-container sign-in-container">
+              <form className="form" action="#">
+                <h1 style={{ marginBottom: "15px" }}>Đăng Nhập</h1>
+                <input
+                    className="input"
+                    id="accountName"
+                    type="text"
+                    placeholder="Tên đăng nhập"
+                    name="accountName"
+                    onChange={handleParamsChange}
+                />
+                <input
+                    className="input"
+                    id="password"
+                    type="password"
+                    placeholder="Mật khẩu"
+                    name="password"
+                    onChange={handleParamsChange}
+                />
                 <div>
-                  <LoginSocialFacebook
-                    appId="1535030517281067"
-                    onResolve={(response) => {
-                      handleLoginFacebookSuccess(response);
-                    }}
-                    onReject={(err) => {
-                      console.log(err);
-                    }}
-                  >
-                    <FacebookLoginButton text="Đăng nhập bằng Facebook" />
-                  </LoginSocialFacebook>
+                  <span style={{ color: "red", fontSize: "1em" }}>{error}</span>
                 </div>
-                <div style={{ marginTop: "10px" }}>
-                  <GoogleLoginButton
-                    text="Đăng nhập bằng Google"
-                    onClick={handleLoginGoogle}
-                  />
-                </div>
-              </div>
-            </form>
-          </div>
-          <div className="overlay-container">
-            <div className="overlay">
-              <div className="overlay-panel overlay-left">
-                <h1>Chào Bạn !</h1>
-                <p>Hãy Điền Thông Tin Cá Nhân Đầy Đủ Để Đăng Kí Tài Khoản Nhé</p>
-                <button
-                  className="ghost button"
-                  id="signIn"
-                  onClick={handleGetLogin}
-                >
+                {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+                <a href="#" onClick={handleShow}>
+                  Quên Mật Khẩu?
+                </a>
+                <button type="button" className="button" onClick={handleLogin}>
                   Đăng Nhập
                 </button>
-              </div>
-              <div className="overlay-panel overlay-right">
-                <h1>Chào Bạn !</h1>
-                <p>
-                  Hãy Tham Gia Cùng Chúng Tôi Và Đón Xem Những Bộ Phim Bom Tấn Nhé
-                </p>
-                <button
-                  className="ghost button"
-                  id="signUp"
-                  onClick={handleGetRegister}
+                <hr color="black"></hr>
+                <span>hoặc sử dụng tài khoản của bạn</span>
+                <div className="social-container">
+                  <div>
+                    <LoginSocialFacebook
+                        appId="1535030517281067"
+                        onResolve={(response) => {
+                          handleLoginFacebookSuccess(response);
+                        }}
+                        onReject={(err) => {
+                          console.log(err);
+                        }}
+                    >
+                      <FacebookLoginButton text="Đăng nhập bằng Facebook" />
+                    </LoginSocialFacebook>
+                  </div>
+                  <div style={{ marginTop: "10px" }}>
+                    <GoogleLoginButton
+                        text="Đăng nhập bằng Google"
+                        onClick={handleLoginGoogle}
+                    />
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div className="overlay-container">
+              <div className="overlay">
+                <div className="overlay-panel overlay-left">
+                  <h1>Chào Bạn !</h1>
+                  <p className="p1">Hãy Điền Thông Tin Cá Nhân Đầy Đủ Để Đăng Kí Tài Khoản Nhé</p>
+                  <button
+                      className="ghost button"
+                      id="signIn"
+                      onClick={handleGetLogin}
+                  >
+                    Đăng Nhập
+                  </button>
+                </div>
+                <div className="overlay-panel overlay-right">
+                  <h1>Chào Bạn !</h1>
+                  <p className="p1">
+                    Hãy Tham Gia Cùng Chúng Tôi Và Đón Xem Những Bộ Phim Bom Tấn Nhé
+                  </p>
+                  <button
+                      className="ghost button"
+                      id="signUp"
+                      onClick={handleGetRegister}
 
-                >
-                  Đăng Kí
-                </button>
+                  >
+                    Đăng Kí
+                  </button>
+                </div>
               </div>
             </div>
           </div>
+          <Modal
+              show={show}
+              onHide={handleClose}
+              backdrop="static"
+              keyboard={false}
+          >
+            <Modal.Header>
+              <Modal.Title>Tìm tài khoản của bạn</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <label htmlFor="email">
+                Vui lòng nhập email để tìm lại tài khoản của bạn
+              </label>
+              <input
+                  className="input"
+                  id="email"
+                  type="email"
+                  placeholder="Email"
+                  name="email"
+                  onChange={handleEmailChange}
+              />
+              <div>
+                <span style={{ color: "red", fontSize: "1em" }}>{error1}</span>
+              </div>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button className="button1" onClick={handleClose}>
+                Đóng
+              </Button>
+              {isSubmit ? (
+                  <ColorRing
+                      visible={true}
+                      height="40"
+                      width="40"
+                      ariaLabel="color-ring-loading"
+                      wrapperStyle={{}}
+                      wrapperClass="color-ring-wrapper"
+                      colors={["#e15b64", "#f47e60", "#f8b26a", "#abbd81", "#849b87"]}
+                  />
+              ) : (
+                  <Button className="button" onClick={handleForgetPassword}>
+                    Gửi
+                  </Button>
+              )}
+            </Modal.Footer>
+          </Modal>
+          <Modal
+              show={show1}
+              onHide={handleClose1}
+              backdrop="static"
+              keyboard={false}
+          >
+            <Modal.Header>
+              <Modal.Title>Xác nhận mật khẩu</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <label htmlFor="email">
+                Chúng tôi đã cung cấp mật khẩu đến {email}. Xin nhập lại mật khẩu để
+                vào hệ thống!
+              </label>
+              <input
+                  id="password1"
+                  type="password"
+                  placeholder="Mật khẩu"
+                  name="password"
+                  onChange={handlePasswordChange}
+              />
+              <div>
+                <span style={{ color: "red", fontSize: "1em" }}>{error2}</span>
+              </div>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleClose1}>
+                Đóng
+              </Button>
+              {isSubmit ? (
+                  <ColorRing
+                      visible={true}
+                      height="40"
+                      width="40"
+                      ariaLabel="color-ring-loading"
+                      wrapperStyle={{}}
+                      wrapperClass="color-ring-wrapper"
+                      colors={["#e15b64", "#f47e60", "#f8b26a", "#abbd81", "#849b87"]}
+                  />
+              ) : (
+                  <Button className="button" onClick={handleForgetPassword1}>
+                    Gửi
+                  </Button>
+              )}
+            </Modal.Footer>
+          </Modal>
         </div>
-        <Modal
-          show={show}
-          onHide={handleClose}
-          backdrop="static"
-          keyboard={false}
-        >
-          <Modal.Header>
-            <Modal.Title>Tìm tài khoản của bạn</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <label htmlFor="email">
-              Vui lòng nhập email để tìm lại tài khoản của bạn
-            </label>
-            <input
-              className="input"
-              id="email"
-              type="email"
-              placeholder="Email"
-              name="email"
-              onChange={handleEmailChange}
-            />
-            <div>
-              <span style={{ color: "red", fontSize: "1em" }}>{error1}</span>
-            </div>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button className="button1" onClick={handleClose}>
-              Đóng
-            </Button>
-            {isSubmit ? (
-              <ColorRing
-                visible={true}
-                height="40"
-                width="40"
-                ariaLabel="color-ring-loading"
-                wrapperStyle={{}}
-                wrapperClass="color-ring-wrapper"
-                colors={["#e15b64", "#f47e60", "#f8b26a", "#abbd81", "#849b87"]}
-              />
-            ) : (
-              <Button className="button" onClick={handleForgetPassword}>
-                Gửi
-              </Button>
-            )}
-          </Modal.Footer>
-        </Modal>
-        <Modal
-          show={show1}
-          onHide={handleClose1}
-          backdrop="static"
-          keyboard={false}
-        >
-          <Modal.Header>
-            <Modal.Title>Xác nhận mật khẩu</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <label htmlFor="email">
-              Chúng tôi đã cung cấp mật khẩu đến {email}. Xin nhập lại mật khẩu để
-              vào hệ thống!
-            </label>
-            <input
-              id="password1"
-              type="password"
-              placeholder="Mật khẩu"
-              name="password"
-              onChange={handlePasswordChange}
-            />
-            <div>
-              <span style={{ color: "red", fontSize: "1em" }}>{error2}</span>
-            </div>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose1}>
-              Đóng
-            </Button>
-            {isSubmit ? (
-              <ColorRing
-                visible={true}
-                height="40"
-                width="40"
-                ariaLabel="color-ring-loading"
-                wrapperStyle={{}}
-                wrapperClass="color-ring-wrapper"
-                colors={["#e15b64", "#f47e60", "#f8b26a", "#abbd81", "#849b87"]}
-              />
-            ) : (
-              <Button className="button" onClick={handleForgetPassword1}>
-                Gửi
-              </Button>
-            )}
-          </Modal.Footer>
-        </Modal>
-      </div>
 
-    </>
+      </>
   );
 }
