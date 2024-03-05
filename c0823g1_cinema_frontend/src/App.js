@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import {Route, Routes} from "react-router-dom";
 import Home from "./components/Home/Home";
@@ -20,12 +19,14 @@ import TicketList from "./components/Employee/TicketList";
 import Register from "./components/Register/Register";
 import UserInformation from "./components/User/UserInformation";
 import HistoryBooking from "./components/User/HistoryBooking";
+import Search from './components/Home/Search';
 
 function App() {
     return (
         <>
             <Routes>
                 <Route path={"/home"} element={<Home/>}></Route>
+                <Route path={"/search"} element={<Search/>}/>
                 <Route path={"/login"} element={<Login/>}></Route>
                 <Route path={"/register"} element={<Register/>}></Route>
                 <Route path={"/movie"} element={<MovieList/>}></Route>
