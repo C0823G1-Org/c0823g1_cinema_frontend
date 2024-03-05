@@ -97,8 +97,8 @@ a {
     padding: 0 50px;
     height: 100%;
     text-align: center;
-} 
-/* 
+}
+/*
 input {
     background-color: #eee;
     border: none;
@@ -322,4 +322,4 @@ footer a {
 @keyframes pulse {
     0% , 60% , 100%{ transform:  scale(1) }
     80% { transform:  scale(1.2)}
-}   
+}
