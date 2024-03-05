@@ -19,6 +19,7 @@ import TicketList from "./components/Employee/TicketList";
 import Register from "./components/Register/Register";
 import UserInformation from "./components/User/UserInformation";
 import HistoryBooking from "./components/User/HistoryBooking";
+import BookingMovieSchedule from "./components/Booking/BookingMovieSchedule";
 
 function App() {
     return (
@@ -35,7 +36,8 @@ function App() {
                 <Route path={"/employee/edit:id"} element={<EmployeeEdit/>}></Route>
                 <Route path={"/statistic/member"} element={<MemberStatistic/>}></Route>
                 <Route path={"/statistic/movie"} element={<MovieStatistic/>}></Route>
-                <Route path={"/booking"} element={<BookingSeat/>}></Route>
+                <Route path={"/booking"} element={<BookingMovieSchedule/>}></Route>
+                <Route path={"/booking/seat"} element={<BookingSeat/>}></Route>
                 <Route path={"/booking/confirm"} element={<TicketBookingConfirmation/>}></Route>
                 <Route path={"/booking/checkout"} element={<Checkout/>}></Route>
                 <Route path={"/home/detail:id"} element={<DetailMovie/>}></Route>
