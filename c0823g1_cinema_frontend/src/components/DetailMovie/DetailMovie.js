@@ -6,7 +6,7 @@ import {useParams} from "react-router-dom";
 export default function DetailMovie() {
     const [movie, setMovie] = useState([]);
     const [typeMovie, setTypeMovie] = useState([]);
-    const id = 4;
+    const {id} = useParams();
     useEffect(() => {
         const fetchData = async () => {
             const movie1 = await findByIdMovie(id);
@@ -15,6 +15,7 @@ export default function DetailMovie() {
             setTypeMovie(movie2);
             document.title=movie1.name;
         };
+        console.log(id)
         fetchData();
     }, []);
     return (
