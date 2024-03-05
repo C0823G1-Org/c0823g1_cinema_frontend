@@ -148,6 +148,7 @@ body {
     position: relative;
     overflow: hidden;
     border-radius: 10px;
+    text-align: center;
 }
 
 .newIn__play {
@@ -534,8 +535,9 @@ a {
 .container__button-position {
     position: absolute;
     /* position: relative; */
+    width: 100%;
     bottom: 26px;
-    transform: translateX(56px);
+    /* transform: translateX(56px); */
 }
 
 /* Format Description */
@@ -544,7 +546,8 @@ a {
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    margin-top: 50px;
+    /* margin-top: 50px; */
+    margin-top: 50%;
 }
 
 /* Title name phim */
@@ -710,4 +713,26 @@ a {
     text-align: center;
     font-size: 25px;
     margin: 10% 0 20% 0;
+}
+
+
+/* Carosel current */
+.react-multi-carousel-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 50px;
+}
+
+.react-multiple-carousel__arrow--left  {
+    top: 37%;
+    left: 0;   
+     transform: translateX(-105%);
+
+}
+.react-multiple-carousel__arrow--right{
+    top: 37%;
+    transform: translateX(105%);
+
+
 }

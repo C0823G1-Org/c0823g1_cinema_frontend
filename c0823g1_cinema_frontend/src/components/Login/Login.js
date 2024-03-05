@@ -1,5 +1,5 @@
 import "./LoginRegister.css";
-import { useState, useHistory } from "react";
+import { useState } from "react";
 import {
   FacebookLoginButton,
   GoogleLoginButton,
