@@ -53,9 +53,6 @@ table.table tr th, table.table tr td {
     padding: 12px 10px;
     vertical-align: middle;
 }
-table.table tr th:first-child {
-    width: 400px;
-}
 table.table tr th:last-child {
     width: 100px;
 }
