@@ -12,7 +12,7 @@ export const getAllEmployee= async (page,searchName) => {
 
 export const deleteEmployee= async (employee) => {
     try {
-        const rs = await axios.patch(`http://localhost:8080/api/employee/delete/${employee.id}`);   
+        const rs = await axios.delete(`http://localhost:8080/api/employee/delete/${employee.id}`);   
         return rs.data
     }catch (e) {
         return undefined
