@@ -4,6 +4,7 @@ import "./HungVXK_EmployeeList.css";
 import { useEffect, useState } from "react";
 import MySwal from "sweetalert2";
 import ReactPaginate from "react-paginate";
+import { Sidebar } from "../Sidebar/Sidebar";
 
 export default function EmployeeList() {
   const navigate = useNavigate();
@@ -71,7 +72,9 @@ export default function EmployeeList() {
   };
   return (
     <>
-      <div className="container">
+      <Sidebar />
+      <section className="home-section">
+      <div className="container body__employee">
         <h1>Quản lý nhân viên</h1>
         <div className="table-wrapper">
           <div className="table-title">
@@ -203,6 +206,8 @@ export default function EmployeeList() {
           </div>
         </div>
       </div>
+      </section>
+      
     </>
   );
 }
