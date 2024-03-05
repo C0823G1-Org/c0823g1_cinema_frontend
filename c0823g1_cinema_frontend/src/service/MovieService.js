@@ -48,3 +48,14 @@ export async function getAllCountries() {
         console.log(e)
     }
 }
+
+export async function getScheduleByHallId(id) {
+    try {
+        console.log("http://localhost:8080/schedule/hall/" + id)
+        const result = await axios.get("http://localhost:8080/schedule/hall/" + id)
+        console.log("hall's result: " + result.data)
+        return result.data
+    } catch (e) {
+        console.log(e)
+    }
+}

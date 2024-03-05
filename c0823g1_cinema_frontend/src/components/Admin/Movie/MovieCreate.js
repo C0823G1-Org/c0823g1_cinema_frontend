@@ -1,17 +1,18 @@
 import {useEffect, useState} from "react";
 import ".//css/movie.css"
-import {getAllCountries, getAllMovieAttributes} from "../../../service/MovieService";
+import {getAllCountries, getAllMovieAttributes, getScheduleByHallId} from "../../../service/MovieService";
 import {Field, Form, Formik} from "formik";
 import {Link} from "react-router-dom";
 import * as Yup from 'yup';
 import {forEach} from "react-bootstrap/ElementChildren";
+
 
 export default function MovieCreate() {
     const curDate = new Date()
     const sevenLoop = [0, 1, 2, 3, 4, 5, 6]
     const [movieAtt, setMovieAtt] = useState({})
     const [countries, setCountries] = useState([])
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true)
     const [schedules, setSchedules] = useState([])
     const initialValue = {
         poster: "",
@@ -26,7 +27,8 @@ export default function MovieCreate() {
         trailer: "",
         genre: "",
         description: "",
-        ticketPrice: ""
+        ticketPrice: "",
+        schedules: []
     }
     const validationObject = {
         poster: Yup.mixed().required("Cần up ảnh poster"),
@@ -41,7 +43,8 @@ export default function MovieCreate() {
         trailer: null,
         genre: null,
         description: null,
-        ticketPrice: null
+        ticketPrice: null,
+        schedules: null
     }
     useEffect(() => {
         async function fetchApi() {
@@ -64,8 +67,33 @@ export default function MovieCreate() {
         })
     }, []);
 
-    function bitch() {
-        alert("Clicked")
+    function tdOnClickHandler(id) {
+        document.getElementById(id).checked = !document.getElementById(id).checked
+    }
+
+    async function hallOnChangeHandler(event) {
+        try {
+            let id = event.target.value
+            console.log(id)
+            if (isNaN(id)) {
+                setSchedules([])
+                return
+            }
+            const scheduleData = await getScheduleByHallId(id)
+            await setSchedules(scheduleData)
+            updateSchedules()
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    function updateSchedules() {
+        let id
+        schedules.forEach((schedule) => {
+            id = schedule.date + "," + schedule.scheduleTime.scheduleTime + " title"
+            console.log(id)
+            document.getElementById(id).innerText = schedule.movie.name
+        })
     }
 
     return (
@@ -266,7 +294,8 @@ export default function MovieCreate() {
                                             <div>
                                                 <h2><b>Tháng {curDate.getMonth() + 1}</b> {curDate.getFullYear()}</h2>
                                                 <div className="input-group mb-3">
-                                                    <Field as="select" className="custom-select" name="hall">
+                                                    <Field as="select" className="custom-select" name="hall"
+                                                           onChange={hallOnChangeHandler}>
                                                         <option selected>Chọn sảnh chiếu phim...</option>
                                                         {movieAtt.halls.map((hall) => (
                                                             <option value={"" + hall.id}>
@@ -278,7 +307,7 @@ export default function MovieCreate() {
                                             </div>
 
                                             <div className="row mt-2 d-flex justify-content-center">
-                                                <table className="table table-bordered" style={{tableLayout:"fixed"}}>
+                                                <table className="table table-bordered" style={{tableLayout: "fixed"}}>
                                                     <thead>
                                                     <tr>
                                                         <th></th>
@@ -312,7 +341,8 @@ export default function MovieCreate() {
                                                                 default:
                                                                     dayResult = "Lỗi"
                                                             }
-                                                            return (<th>{curDate.getDate() + i + " " + dayResult}</th>)
+                                                            return (
+                                                                <th>{dayResult + ` / Ngày ${curDate.getDate() + i}`}</th>)
                                                         })}
                                                     </tr>
                                                     </thead>
@@ -323,9 +353,15 @@ export default function MovieCreate() {
                                                             {sevenLoop.map((i) => {
                                                                 let dayIncrease = new Date();
                                                                 dayIncrease.setDate(curDate.getDate() + i)
+                                                                let idValue = dayIncrease.getFullYear() + "-" + ("0" + (dayIncrease.getMonth() + 1)).slice(-2) + "-" + ("0" + dayIncrease.getDate()).slice(-2) + "," + scheduleTime.scheduleTime
                                                                 return (
-                                                                    <td onClick={()=>{alert("Bao le ngu")}}>
-
+                                                                    <td onClick={() => tdOnClickHandler(idValue)}>
+                                                                        <Field className="form-check-input"
+                                                                               id={idValue}
+                                                                               type="checkbox"
+                                                                               name="schedules"
+                                                                               value={"" + idValue}/>
+                                                                        <label className="form-label" id={idValue + " title"}></label>
                                                                     </td>
                                                                 )
                                                             })}
