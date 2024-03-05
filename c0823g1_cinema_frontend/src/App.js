@@ -42,7 +42,7 @@ function App() {
                 <Route path={"/booking"} element={<BookingSeat/>}></Route>
                 <Route path={"/booking/confirm"} element={<TicketBookingConfirmation/>}></Route>
                 <Route path={"/booking/checkout"} element={<Checkout/>}></Route>
-                <Route path={"/home/detail:id"} element={<DetailMovie/>}></Route>
+                <Route path={"/home/detail/:id"} element={<DetailMovie/>}></Route>
                 <Route path={"/employee/ticketCheckout"} element={<TicketCheckout/>}></Route>
                 <Route path={"/employee/ticketList"} element={<TicketList/>}></Route>
                 <Route path={"/user/information"} element={<UserInformation/>}></Route>

@@ -4,6 +4,9 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {BrowserRouter} from "react-router-dom";
+import DetailMovie from "./components/DetailMovie/DetailMovie";
+import UserInformation from "./components/User/UserInformation";
+import Home from "./components/Home/Home";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
