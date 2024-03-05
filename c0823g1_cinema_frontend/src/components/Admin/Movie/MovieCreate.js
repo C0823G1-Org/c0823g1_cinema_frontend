@@ -12,6 +12,7 @@ export default function MovieCreate() {
     const [movieAtt, setMovieAtt] = useState({})
     const [countries, setCountries] = useState([])
     const [isLoading, setIsLoading] = useState(true);
+    const [schedules, setSchedules] = useState([])
     const initialValue = {
         poster: "",
         name: "",
@@ -277,7 +278,7 @@ export default function MovieCreate() {
                                             </div>
 
                                             <div className="row mt-2 d-flex justify-content-center">
-                                                <table className="table table-bordered">
+                                                <table className="table table-bordered" style={{tableLayout:"fixed"}}>
                                                     <thead>
                                                     <tr>
                                                         <th></th>
@@ -319,13 +320,15 @@ export default function MovieCreate() {
                                                     {movieAtt.scheduleTimes.map((scheduleTime) => (
                                                         <tr key={scheduleTime.id}>
                                                             <td>{scheduleTime.scheduleTime}</td>
-                                                            <td></td>
-                                                            <td></td>
-                                                            <td></td>
-                                                            <td></td>
-                                                            <td></td>
-                                                            <td></td>
-                                                            <td></td>
+                                                            {sevenLoop.map((i) => {
+                                                                let dayIncrease = new Date();
+                                                                dayIncrease.setDate(curDate.getDate() + i)
+                                                                return (
+                                                                    <td onClick={()=>{alert("Bao le ngu")}}>
+
+                                                                    </td>
+                                                                )
+                                                            })}
                                                         </tr>
                                                     ))}
                                                     </tbody>
