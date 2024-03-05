@@ -1,4 +1,4 @@
-body {
+.body_movie {
     color: black;
     background: #f5f5f5;
     font-family: 'roboto condensed', sans-serif;
@@ -74,7 +74,7 @@ table.table-striped_movie.table-hover_movie tbody tr:hover {
     font-family: inherit;
     text-align: center;
     cursor: pointer;
-    width:50%;
+    width:65%;
 }
 .btn__add_movie :hover {
     background: linear-gradient(90deg, #87BCF5 0%, #3863E2 100%);

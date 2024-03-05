@@ -4,7 +4,8 @@ import {useEffect, useState} from "react";
 import {deleteMovie, fillAllMovie} from "../../../service/MovieService";
 import ReactPaginate from "react-paginate";
 import MySwal from "sweetalert2";
-import { format } from 'date-fns';
+import {format} from 'date-fns';
+import {Sidebar} from "../Sidebar/Sidebar";
 
 
 export default function MovieList() {
@@ -82,117 +83,123 @@ export default function MovieList() {
             }
         });
     }
-    const formatDuration = (durationInMinutes)=> {
+    const formatDuration = (durationInMinutes) => {
         const hours = Math.floor(durationInMinutes / 60);
         const minutes = durationInMinutes % 60;
-        return `${String(hours).padStart(2,'0')}:${String(minutes).padStart(2, '0')}:00`;
+        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:00`;
     }
     return (
         <>
-            <div className="container">
-                <h1>Quản lý phim</h1>
-                <div className="table-wrapper_movie">
-                    <div className="table-title_movie">
-                        <div className="row">
-                            <div className="col-12 col-sm-8 col-md-8 col-lg-8 col-xl-8">
-                                <form className="form-group my-2 my-lg-0 p-0 m-0">
-                                    <div className="d-inline">
-                                        <h5 style={{color:"white"}}>Chọn ngày khởi chiếu</h5>
-                                        <div className="d-flex">
-                                            <label className="from-start-date_movie">Từ</label>
-                                            <input id="startDate" className="form-control mr-sm-2 w-25" type="date"
-                                                   onChange={(event => handleStartDate(event.target.value))}
-                                                   name="startDate"
-                                            />
-                                            <label className="from-end-date_movie"> Đến </label>
-                                            <input id="endDate" className="form-control mr-sm-2 w-25" type="date"
-                                                   onChange={(event => handleEndDate(event.target.value))}
-                                                   name="endDate"/>
-                                            <input className="form-control mr-sm-2" type="search"
-                                                   placeholder="Nhập tên phim, hãng phim"
-                                                   name="name"
-                                                   aria-label="Search"
-                                                   onChange={(event => handleNameSearch(event.target.value))}
-                                                   id="name"/>
-                                            <button className="btn F my-sm-0 btn__search_movie" type="button"
-                                                    onClick={() => submitSearch()}
-                                            >Tìm kiếm
-                                            </button>
+            <Sidebar/>
+            <section className="home-section">
+                <div className="container body_movie">
+                    <h1>Quản lý phim</h1>
+                    <div className="table-wrapper_movie">
+                        <div className="table-title_movie">
+                            <div className="row">
+                                <div className="col-12 col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                                    <form className="form-group my-2 my-lg-0 p-0 m-0">
+                                        <div className="d-inline">
+                                            <h5 style={{color: "white"}}>Chọn ngày khởi chiếu</h5>
+                                            <div className="d-flex">
+                                                <label className="from-start-date_movie">Từ</label>
+                                                <input id="startDate" className="form-control mr-sm-2 w-25" type="date"
+                                                       onChange={(event => handleStartDate(event.target.value))}
+                                                       name="startDate"
+                                                />
+                                                <label className="from-end-date_movie"> Đến </label>
+                                                <input id="endDate" className="form-control mr-sm-2 w-25" type="date"
+                                                       onChange={(event => handleEndDate(event.target.value))}
+                                                       name="endDate"/>
+                                                <input className="form-control mr-sm-2" type="search"
+                                                       placeholder="Nhập tên phim, hãng phim"
+                                                       name="name"
+                                                       aria-label="Search"
+                                                       onChange={(event => handleNameSearch(event.target.value))}
+                                                       id="name"/>
+                                                <button className="btn F my-sm-0 btn__search_movie" type="button"
+                                                        onClick={() => submitSearch()}
+                                                >Tìm kiếm
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
-                                </form>
-                            </div>
-                            <div className="col-12 col-sm-4 col-md-4 col-lg-4 col-xl-4" style={{marginTop:"19px"}}>
-                                <Link to={"/movie/create"} className="btn  btn__add_movie">
-                                    <i style={{float: "left",fontSize: "21px",marginRight: "5px"}} className="material-icons">&#xE147;</i>
-                                    <span>Thêm mới phim</span></Link>
+                                    </form>
+                                </div>
+                                <div className="col-12 col-sm-3 col-md-3 col-lg-3 col-xl-3" style={{marginTop: "19px"}}>
+                                    <Link to={"/movie/create"} className="btn  btn__add_movie">
+                                        <i style={{float: "left", fontSize: "21px", marginRight: "5px"}}
+                                           className="material-icons">&#xE147;</i>
+                                        <span>Thêm mới phim</span></Link>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <table className="table_movie table-striped_movie table-hover_movie ">
-                        <thead >
-                        <tr>
-                            <th>STT</th>
-                            <th>Phim</th>
-                            <th>Ngày khởi chiếu</th>
-                            <th>Hãng phim</th>
-                            <th>Thời lượng (giờ)</th>
-                            <th>Phiên bản</th>
-                            <th>Chức năng</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {movies ? (
-                            movies.map((movie, index) => (
-                                <tr key={movie.id}>
-                                    <td>{index + 1}</td>
-                                    <td>{movie.name}</td>
-                                    <td>{format(new Date(movie.startDate), 'dd/MM/yyyy')}</td>
-                                    <td>{movie.publisher}</td>
-                                    <td>{formatDuration(movie.duration)}</td>
-                                    <td>{movie.versions}</td>
-                                    <td>
-                                        <Link to={`/movie/edit/${movie.id}`} className="edit"><i
-                                           style={{color: "#FFC107"}} className="material-icons" data-toggle="tooltip"
-                                            title="Chỉnh sửa">&#xE254;</i></Link>
-                                        <Link onClick={() => handleDeleteClick(movie)} className="delete"
-                                              data-toggle="modal" to={""}><i style={{color: "#F44336"}} className="material-icons"
-                                                                             data-toggle="tooltip"
-                                                                             title="Xóa">&#xE872;</i></Link>
-                                    </td>
-                                </tr>
-                            ))
-                        ) : (<tr>
-                            <td colSpan="7" className="text-danger h5">Không tìm thấy dữ liệu</td>
-                        </tr>)}
-                        </tbody>
-                    </table>
-                    <div className="clearfix">
-                        <div style={{float:"right"}} className="page">
-                            <ReactPaginate
-                                breakLabel="..."
-                                nextLabel="Trang Sau"
-                                onPageChange={handlePageClick}
-                                pageRangeDisplayed={2}
-                                marginPagesDisplayed={2}
-                                pageCount={totalPages}
-                                previousLabel="Trang Trước"
-                                pageClassName="page-item"
-                                pageLinkClassName="page-link"
-                                previousClassName="page-item"
-                                previousLinkClassName="page-link"
-                                nextClassName="page-item"
-                                nextLinkClassName="page-link"
-                                breakClassName="page-item"
-                                breakLinkClassName="page-link"
-                                containerClassName="pagination"
-                                activeClassName="active"
-                            />
+                        <table className="table_movie table-striped_movie table-hover_movie ">
+                            <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Phim</th>
+                                <th>Ngày khởi chiếu</th>
+                                <th>Hãng phim</th>
+                                <th>Thời lượng (giờ)</th>
+                                <th>Phiên bản</th>
+                                <th>Chức năng</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {movies ? (
+                                movies.map((movie, index) => (
+                                    <tr key={movie.id}>
+                                        <td>{index + 1}</td>
+                                        <td>{movie.name}</td>
+                                        <td>{format(new Date(movie.startDate), 'dd/MM/yyyy')}</td>
+                                        <td>{movie.publisher}</td>
+                                        <td>{formatDuration(movie.duration)}</td>
+                                        <td>{movie.versions}</td>
+                                        <td>
+                                            <Link to={`/movie/edit/${movie.id}`} className="edit"><i
+                                                style={{color: "#FFC107"}} className="material-icons"
+                                                data-toggle="tooltip"
+                                                title="Chỉnh sửa">&#xE254;</i></Link>
+                                            <Link onClick={() => handleDeleteClick(movie)} className="delete"
+                                                  data-toggle="modal" to={""}><i style={{color: "#F44336"}}
+                                                                                 className="material-icons"
+                                                                                 data-toggle="tooltip"
+                                                                                 title="Xóa">&#xE872;</i></Link>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (<tr>
+                                <td colSpan="7" className="text-danger h5">Không tìm thấy dữ liệu</td>
+                            </tr>)}
+                            </tbody>
+                        </table>
+                        <div className="clearfix">
+                            <div style={{float: "right"}} className="page">
+                                <ReactPaginate
+                                    breakLabel="..."
+                                    nextLabel="Trang Sau"
+                                    onPageChange={handlePageClick}
+                                    pageRangeDisplayed={2}
+                                    marginPagesDisplayed={2}
+                                    pageCount={totalPages}
+                                    previousLabel="Trang Trước"
+                                    pageClassName="page-item"
+                                    pageLinkClassName="page-link"
+                                    previousClassName="page-item"
+                                    previousLinkClassName="page-link"
+                                    nextClassName="page-item"
+                                    nextLinkClassName="page-link"
+                                    breakClassName="page-item"
+                                    breakLinkClassName="page-link"
+                                    containerClassName="pagination"
+                                    activeClassName="active"
+                                />
+                            </div>
                         </div>
-                    </div>
 
+                    </div>
                 </div>
-            </div>
+            </section>
         </>
     )
 }
