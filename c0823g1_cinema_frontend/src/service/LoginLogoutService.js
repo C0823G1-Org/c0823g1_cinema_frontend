@@ -12,8 +12,20 @@ const loginGoogle = (param) => {
     return axios.post("http://localhost:8080/account/login-by-gg", param);
 }
 
+const forgetPassword = (param) => {
+    return axios.post("http://localhost:8080/account/forget-password", param);
+}
+const loginEmail = (param) => {
+    return axios.post("http://localhost:8080/account/login-email", param);
+}
+const logout = (param) => {
+    return axios.delete(`https://graph.facebook.com/v10.0/me/permissions?access_token=${param}`);
+}
 export const LoginLogoutService = {
     loginAccount,
     loginFacebook,
-    loginGoogle
+    loginGoogle,
+    forgetPassword,
+    loginEmail,
+    logout
 }
