@@ -171,3 +171,11 @@ header {
     width: 85px;
     height: 36px;
 }
+
+/* Logout */
+.container__logout {
+    position: absolute;
+    right: -13%;
+    transform: translateY(-18%);
+}
+

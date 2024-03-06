@@ -11,7 +11,7 @@ export default function HeaderTemplateAdmin() {
     const [roleUser, setRoleUser] = useState("");
     const [userName, setUserName] = useState("");
     const [isLogin, setIsLogin] = useState(false)
-    const [img,setImg] = useState("");
+    const [img, setImg] = useState("");
 
 
     useEffect(() => {
@@ -88,9 +88,11 @@ export default function HeaderTemplateAdmin() {
                                         </li>
                                     </ul>
                                     <ul className="navbar-nav text-center ml-auto checkunder">
-                                        <p style={{color: "white", marginRight: "1rem", marginTop:"0.6rem"}} className="name--user">{userName}</p>
-                                        <img src={`${img}`} alt="Profile" style={{borderRadius: "50%", height: "3rem", marginRight: "1rem"}}/>
-                                        <i onClick={logout} className="fas fa-sign-out-alt" style={{fontSize: "2rem", marginTop:"0.5rem" , color: "#EE5A24"}}></i>
+                                        <p style={{ color: "white", marginRight: "1rem", marginTop: "0.6rem" }} className="name--user">{userName}</p>
+                                        <div className="container__logout">
+                                            <img src={`${img}`} alt="Profile" style={{ borderRadius: "50%", height: "3rem", marginRight: "1rem",marginTop:"20px" }} />
+                                            <i onClick={logout} className="fas fa-sign-out-alt" style={{ fontSize: "2rem", marginTop: "17px", color: "#EE5A24",position: "absolute" }}></i>
+                                        </div>
                                     </ul>
                                 </div>
                             )}
@@ -98,7 +100,7 @@ export default function HeaderTemplateAdmin() {
                                 <div className="collapse navbar-collapse" id="hideNavbar">
                                     <ul className="navbar-nav text-center ml-auto">
                                         <li className="nav-item">
-                                        <Link className="nav-link" to={'/home'}>Trang Chủ</Link>
+                                            <Link className="nav-link" to={'/home'}>Trang Chủ</Link>
                                         </li>
                                         <li className="nav-item">
                                             <a className="nav-link" href="#">Hổ Trợ</a>
@@ -111,9 +113,11 @@ export default function HeaderTemplateAdmin() {
                                         </li>
                                     </ul>
                                     <ul className="navbar-nav text-center ml-auto checkunder">
-                                        <p style={{color: "white", marginRight: "1rem", marginTop:"0.6rem"}} className="name--user">{userName}</p>
-                                        <img src={`${img}`} alt="Profile" style={{borderRadius: "50%", height: "3rem", marginRight: "1rem"}}/>
-                                        <i onClick={logout} className="fas fa-sign-out-alt" style={{fontSize: "2rem", marginTop:"0.5rem" , color: "#EE5A24"}}></i>
+                                        <p style={{ color: "white", marginRight: "1rem", marginTop: "0.6rem" }} className="name--user">{userName}</p>
+                                        <div className="container__logout">
+                                            <img src={`${img}`} alt="Profile" style={{ borderRadius: "50%", height: "3rem", marginRight: "1rem",marginTop:"20px" }} />
+                                            <i onClick={logout} className="fas fa-sign-out-alt" style={{ fontSize: "2rem", marginTop: "17px", color: "#EE5A24",position: "absolute" }}></i>
+                                        </div>
                                     </ul>
                                 </div>
                             )}
@@ -121,7 +125,7 @@ export default function HeaderTemplateAdmin() {
                                 <div className="collapse navbar-collapse" id="hideNavbar">
                                     <ul className="navbar-nav text-center ml-auto">
                                         <li className="nav-item">
-                                        <Link className="nav-link" to={'/home'}>Trang Chủ</Link>
+                                            <Link className="nav-link" to={'/home'}>Trang Chủ</Link>
                                         </li>
                                         <li className="nav-item">
                                             <a className="nav-link" href="#">Hổ Trợ</a>
@@ -131,9 +135,11 @@ export default function HeaderTemplateAdmin() {
                                         </li>
                                     </ul>
                                     <ul className="navbar-nav text-center ml-auto checkunder">
-                                        <p style={{color: "white", marginRight: "1rem", marginTop:"0.6rem"}} className="name--user">{userName}</p>
-                                        <img src={`${img}`} alt="Profile" style={{borderRadius: "50%", height: "3rem", marginRight: "1rem"}}/>
-                                        <i onClick={logout} className="fas fa-sign-out-alt" style={{fontSize: "2rem", marginTop:"0.5rem" , color: "#EE5A24"}}></i>
+                                        <p style={{ color: "white", marginRight: "1rem", marginTop: "0.6rem" }} className="name--user">{userName}</p>
+                                        <div className="container__logout">
+                                            <img src={`${img}`} alt="Profile" style={{ borderRadius: "50%", height: "3rem", marginRight: "1rem",marginTop:"20px" }} />
+                                            <i onClick={logout} className="fas fa-sign-out-alt" style={{ fontSize: "2rem", marginTop: "17px", color: "#EE5A24",position: "absolute" }}></i>
+                                        </div>
                                     </ul>
                                 </div>
                             )}
