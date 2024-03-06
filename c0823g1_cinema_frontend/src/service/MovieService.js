@@ -53,7 +53,7 @@ export async function getScheduleByHallId(id) {
     try {
         console.log("http://localhost:8080/schedule/hall/" + id)
         const result = await axios.get("http://localhost:8080/schedule/hall/" + id)
-        console.log("hall's result: " + result.data)
+        console.log(result.data)
         return result.data
     } catch (e) {
         console.log(e)

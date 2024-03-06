@@ -13,7 +13,12 @@ export default function MovieCreate() {
     const [movieAtt, setMovieAtt] = useState({})
     const [countries, setCountries] = useState([])
     const [isLoading, setIsLoading] = useState(true)
-    const [schedules, setSchedules] = useState([])
+    const [schedulesList, setSchedulesList] = useState([])
+    const [isTableUpdating, setIsTableUpdating] = useState(false)
+    const [hallId, setHallId] = useState(-1)
+    const [newSchedule, setNewSchedule] = useState([])
+
+
     const initialValue = {
         poster: "",
         name: "",
@@ -28,8 +33,8 @@ export default function MovieCreate() {
         genre: "",
         description: "",
         ticketPrice: "",
-        schedules: []
     }
+
     const validationObject = {
         poster: Yup.mixed().required("Cần up ảnh poster"),
         name: Yup.string().required("Tên không được để trống").min(2, "Tên phimm ít nhất 2 ký tự").max(100, "Tên phim tối đa 100 ký tự"),
@@ -44,8 +49,12 @@ export default function MovieCreate() {
         genre: null,
         description: null,
         ticketPrice: null,
-        schedules: null
     }
+
+    useEffect(() => {
+        updateScheduleTable();
+        setIsTableUpdating(false)
+    }, [schedulesList])
     useEffect(() => {
         async function fetchApi() {
             try {
@@ -67,32 +76,104 @@ export default function MovieCreate() {
         })
     }, []);
 
-    function tdOnClickHandler(id) {
-        document.getElementById(id).checked = !document.getElementById(id).checked
+    function tdOnClickHandler(event) {
+        if (hallId < 0) {
+            return;
+        }
+        let cell = event.target
+        if (cell.style.backgroundColor === "grey") {
+            console.log("DISABLE!")
+            return
+        }
+        let checkbox = cell.children[0]
+        console.log(checkbox)
+        checkbox.checked = !checkbox.checked
+        if (checkbox.checked) {
+            cell.style.backgroundColor = "lightblue"
+            updateNewSchedule(true, checkbox.value)
+        } else {
+            cell.style.backgroundColor = "white"
+            updateNewSchedule(false, checkbox.value)
+        }
+
+    }
+
+    function updateNewSchedule(add, scheduleValue) {
+        if (hallId < 0) {
+            return
+        }
+        let valueArray = scheduleValue.split(",")
+        console.log(add)
+        let newScheduleDTO = {
+            "date": valueArray[0],
+            "scheduleTime": valueArray[1],
+            "hall": hallId
+        }
+        if (add) {
+            setNewSchedule((prevState) => [newScheduleDTO, ...prevState])
+        } else {
+
+        }
+        console.log(newSchedule)
     }
 
     async function hallOnChangeHandler(event) {
         try {
+            setIsTableUpdating(true)
             let id = event.target.value
             console.log(id)
-            if (isNaN(id)) {
-                setSchedules([])
+            setHallId(id)
+            if (id < 0) {
+                resetScheduleTable()
+                setIsTableUpdating(false)
+                console.log("Finish update no hall")
                 return
             }
             const scheduleData = await getScheduleByHallId(id)
-            await setSchedules(scheduleData)
-            updateSchedules()
+            setSchedulesList(scheduleData)
+
+            console.log("Finish update")
         } catch (e) {
             console.log(e)
         }
     }
 
-    function updateSchedules() {
+    function resetScheduleTable() {
+        let table = document.getElementById("scheduleTable")
+        if (table == null) {
+            return;
+        }
+        for (let row of table.rows) {
+            if (row === table.rows[0]) {
+                continue
+            }
+            for (let cell of row.cells) {
+                if (cell === row.cells[0]) {
+                    continue
+                }
+                cell.children[0].checked = false
+                cell.children[1].innerText = ""
+                cell.children[1].style.color = "black"
+                cell.style.backgroundColor = "white"
+            }
+        }
+    }
+
+    function updateScheduleTable() {
+        resetScheduleTable()
+        //update table
         let id
-        schedules.forEach((schedule) => {
-            id = schedule.date + "," + schedule.scheduleTime.scheduleTime + " title"
-            console.log(id)
-            document.getElementById(id).innerText = schedule.movie.name
+        let label
+        let cell
+        console.log(schedulesList)
+        schedulesList.forEach((scheduleList) => {
+            id = scheduleList.date + "," + scheduleList.scheduleTime.scheduleTime
+            console.log("Movie: " + scheduleList.movie.name)
+            label = document.getElementById(id + " title")
+            label.innerText = scheduleList.movie.name
+            label.style.color = "white"
+            cell = label.parentElement
+            cell.style.backgroundColor = "grey";
         })
     }
 
@@ -192,8 +273,8 @@ export default function MovieCreate() {
                                                         <div className="col">
                                                             <Field as="select" className="custom-select" name="country">
                                                                 {countries.map((country) => (
-                                                                    <option
-                                                                        value={country.name.common}>{country.name.common}</option>
+                                                                    <option key={country.name.common}
+                                                                            value={country.name.common}>{country.name.common}</option>
                                                                 ))}
                                                             </Field>
                                                         </div>
@@ -296,9 +377,9 @@ export default function MovieCreate() {
                                                 <div className="input-group mb-3">
                                                     <Field as="select" className="custom-select" name="hall"
                                                            onChange={hallOnChangeHandler}>
-                                                        <option selected>Chọn sảnh chiếu phim...</option>
+                                                        <option defaultValue value="-1">Chọn sảnh chiếu phim...</option>
                                                         {movieAtt.halls.map((hall) => (
-                                                            <option value={"" + hall.id}>
+                                                            <option key={hall.id} value={"" + hall.id}>
                                                                 Sảnh {hall.name}
                                                             </option>
                                                         ))}
@@ -307,7 +388,8 @@ export default function MovieCreate() {
                                             </div>
 
                                             <div className="row mt-2 d-flex justify-content-center">
-                                                <table className="table table-bordered" style={{tableLayout: "fixed"}}>
+                                                {isTableUpdating ? <h2>Updating table...</h2> : <></>}
+                                                <table className="table table-bordered" id="scheduleTable">
                                                     <thead>
                                                     <tr>
                                                         <th></th>
@@ -342,7 +424,7 @@ export default function MovieCreate() {
                                                                     dayResult = "Lỗi"
                                                             }
                                                             return (
-                                                                <th>{dayResult + ` / Ngày ${curDate.getDate() + i}`}</th>)
+                                                                <th key={i}>{dayResult + ` / Ngày ${curDate.getDate() + i}`}</th>)
                                                         })}
                                                     </tr>
                                                     </thead>
@@ -355,13 +437,13 @@ export default function MovieCreate() {
                                                                 dayIncrease.setDate(curDate.getDate() + i)
                                                                 let idValue = dayIncrease.getFullYear() + "-" + ("0" + (dayIncrease.getMonth() + 1)).slice(-2) + "-" + ("0" + dayIncrease.getDate()).slice(-2) + "," + scheduleTime.scheduleTime
                                                                 return (
-                                                                    <td onClick={() => tdOnClickHandler(idValue)}>
-                                                                        <Field className="form-check-input"
-                                                                               id={idValue}
+                                                                    <td key={i} onClick={tdOnClickHandler}>
+                                                                        <input id={idValue}
+                                                                               hidden="true"
                                                                                type="checkbox"
                                                                                name="schedules"
-                                                                               value={"" + idValue}/>
-                                                                        <label className="form-label" id={idValue + " title"}></label>
+                                                                               value={dayIncrease.getFullYear() + "-" + ("0" + (dayIncrease.getMonth() + 1)).slice(-2) + "-" + ("0" + dayIncrease.getDate()).slice(-2) + "," + scheduleTime.id}/>
+                                                                        <label id={idValue + " title"}></label>
                                                                     </td>
                                                                 )
                                                             })}
