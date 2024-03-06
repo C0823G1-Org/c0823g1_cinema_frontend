@@ -3,8 +3,6 @@ import '../../../src/css/HaiNT_TicketBooking.css';
 import '../../index.css';
 import {EmployeeService} from "../../service/EmployeeService";
 import SweetAlert from "sweetalert";
-import { saveAs } from 'file-saver';
-
 
 
 export  default function ExportDetail(){

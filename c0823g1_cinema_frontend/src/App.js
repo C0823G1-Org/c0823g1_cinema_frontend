@@ -36,7 +36,7 @@ function App() {
                 <Route path={"/register"} element={<Register/>}></Route>
                 <Route path={"/movie"} element={<MovieList/>}></Route>
                 <Route path={"/movie/create"} element={<MovieCreate/>}></Route>
-                <Route path={"/movie/edit:id"} element={<MovieEdit/>}></Route>
+                <Route path={"/movie/edit/:id"} element={<MovieEdit/>}></Route>
                 <Route path={"/employee"} element={<EmployeeList/>}></Route>
                 <Route path={"/employee/create"} element={<EmployeeCreate/>}></Route>
                 <Route path={"/employee/edit:id"} element={<EmployeeEdit/>}></Route>
