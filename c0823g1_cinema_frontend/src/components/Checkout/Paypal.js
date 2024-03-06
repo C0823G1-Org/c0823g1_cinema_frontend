@@ -15,7 +15,7 @@ export function Paypal(props) {
             .Buttons({
                 createOrder: function (data, actions) {
                     return actions.order.create({
-                        purchase_units: [{ "amount": { "currency_code": "USD", "value": (sum / 25) } }]
+                        purchase_units: [{ "amount": { "currency_code": "USD", "value": (sum / 25000) } }]
                     });
                 },
 
@@ -38,9 +38,9 @@ export function Paypal(props) {
                 },
 
                 onError: async (err) => {
-                    await bookingService.handleFail(dataTicket)
+                    let result = await bookingService.handleFail(dataTicket)
                     console.log(err);
-                    navigate("/user/history")
+                    navigate(`/home/detail/${result}`)
                     swal({
                         title: "Thông báo",
                         text: "That bai!",

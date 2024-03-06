@@ -8,6 +8,7 @@ import Header from "../Home/Header";
 import Footer from "../Home/Footer";
 
 export default function Checkout() {
+    document.title = "Xác Nhận & Thanh Toán"
     const navigate = useNavigate()
     const location = useLocation()
     const data = location.state.myResult;
@@ -21,14 +22,14 @@ export default function Checkout() {
     });
 
     const handleBack = async () => {
-        await bookingService.handleFail({
+        let movieId = await bookingService.handleFail({
             "totalAmount": data.sum,
             "accountId": data.accountId,
             "scheduleId": data.scheduleId,
             "seat": data.seat,
             "bookingId": data.bookingId
         });
-        navigate(`/home/detail/1`)
+        navigate(`/home/detail/${movieId}`)
     }
 
     const [checkout, setCheckOut] = useState(false)
@@ -36,7 +37,7 @@ export default function Checkout() {
         <>
             <Header />
             <div className="mt">
-                <h1 className="h1 text-center">Thông tin đặt vé</h1>
+                <h1 className="h1 text-center">Thông Tin Đặt Vé</h1>
                 <div className="container-fluid">
                     <div className="row">
                         <div className="col-2 col-md-2 col-sm-12"></div>
@@ -50,8 +51,8 @@ export default function Checkout() {
                             <table className="table">
                                 <tbody>
                                     <tr>
-                                        <th colSpan="2">
-                                            <h4>{data.movieName}</h4>
+                                        <th colSpan="2" >
+                                            <h4 style={{ fontWeight: "bold" }}>{data.movieName}</h4>
                                         </th>
                                     </tr>
                                     <tr>

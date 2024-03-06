@@ -8,11 +8,11 @@ function CountdownClock(props) {
     const dataTicket = props.information;
     const [countdownTime, setCountdownTime] = useState(5 * 60); // Đếm ngược trong 5 phút (5 * 60 giây)
     const handleCountdown = async () => {
-        await bookingService.handleFail(dataTicket)
-        navigate("user/history")
+        let result = await bookingService.handleFail(dataTicket)
+        navigate(`/home/detail/${result}`)
         swal({
             title: "Thông báo",
-            text: "Thanh toán không thành công!",
+            text: "Vui lòng thanh toán trong thời gian !",
             type: "error",
             icon: "error",
             button: {
