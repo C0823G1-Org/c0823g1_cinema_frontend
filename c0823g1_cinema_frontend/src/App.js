@@ -22,6 +22,7 @@ import HistoryBooking from "./components/User/HistoryBooking";
 
 import ExportDetail from "./components/Employee/ExportDetail";
 import Search from './components/Home/Search';
+import BookingMovieSchedule from "./components/Booking/BookingMovieSchedule";
 import HeaderTemplateAdmin from './components/Home/HeaderTemplateAdmin';
 
 function App() {
@@ -41,7 +42,8 @@ function App() {
                 <Route path={"/employee/edit:id"} element={<EmployeeEdit/>}></Route>
                 <Route path={"/statistic/member"} element={<MemberStatistic/>}></Route>
                 <Route path={"/statistic/movie"} element={<MovieStatistic/>}></Route>
-                <Route path={"/booking"} element={<BookingSeat/>}></Route>
+                <Route path={"/booking"} element={<BookingMovieSchedule/>}></Route>
+                <Route path={"/booking/seat"} element={<BookingSeat/>}></Route>
                 <Route path={"/booking/confirm"} element={<TicketBookingConfirmation/>}></Route>
                 <Route path={"/booking/checkout"} element={<Checkout/>}></Route>
                 <Route path={"/home/detail/:id"} element={<DetailMovie/>}></Route>
