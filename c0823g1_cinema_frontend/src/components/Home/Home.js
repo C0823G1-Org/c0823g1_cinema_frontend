@@ -1,22 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import '../Home/Home.css'
-// import quythaydau from '../img/quaythaydau.jpg'
-// import quatmotrungma from '../img/quatmotrungma.jpg'
-// import truocgioyeu from '../img/truocgioyeu.jpg'
-// import bietdoisanma from '../img/bietdoisanma.jpg'
-// import kong from '../img/kong.jpg'
-// import sangden from '../img/sangden.png'
-// import movie3 from '../img/slide-3-video.png'
-// import movie4 from '../img/movie-5.jpg'
-// import movie5 from '../img/movie-6.jpg'
-// import movie6 from '../img/movie-7.jpg'
-// import movie7 from '../img/movie-8.jpg'
-// import movie8 from '../img/movie-9.jpg'
-// import movie9 from '../img/movie-13.jpg'
 import { getAllMovieCurrent, getAllMovieHot, searchName } from '../../service/MovieService'
-import Header from '../Home/Header'
 import Footer from '../Home/Footer'
-import { useNavigate } from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
+import HeaderTemplateAdmin from './HeaderTemplateAdmin'
+import Carousel from 'react-multi-carousel';
+import 'react-multi-carousel/lib/styles.css';
+import Spinner from 'react-bootstrap/Spinner';
+
 
 
 const Home = () => {
@@ -26,7 +17,27 @@ const Home = () => {
     const [search, setSearch] = useState("")
     const [page, setPage] = useState("0");
     const native = useNavigate();
-    sessionStorage.clear();
+    const [message,setMessage] = useState("Không có kết quả tìm kiếm !");
+
+    const responsive = {
+        desktop: {
+            breakpoint: { max: 3000, min: 1024 },
+            items: 3,
+            slidesToSlide: 3 // optional, default to 1.
+        },
+        tablet: {
+            breakpoint: { max: 1024, min: 464 },
+            items: 2,
+            slidesToSlide: 2 // optional, default to 1.
+        },
+        mobile: {
+            breakpoint: { max: 464, min: 0 },
+            items: 1,
+            slidesToSlide: 1 // optional, default to 1.
+        }
+    }
+
+
     useEffect(() => {
         getAllMovieHot().then(res => {
             setMovies(res)
@@ -39,7 +50,6 @@ const Home = () => {
     }, [])
 
     useEffect(() => {
-        console.log(listMovie);
         if (listMovie) {
             native("/search", { state: { movies: listMovie, search } });
         }
@@ -53,11 +63,17 @@ const Home = () => {
         )
     }
 
-    if (!movies) return <div>Loading...</div>
-    if (!moviesCurrent) return <div>Loading...</div>
+    if (!movies) return
+    (<Spinner animation="border" role="status">
+        <span className="visually-hidden">Loading...</span>
+    </Spinner>)
+    if (!moviesCurrent) return
+    (<Spinner animation="border" role="status">
+        <span className="visually-hidden">Loading...</span>
+    </Spinner>)
     return (
         <div>
-            <Header />
+            <HeaderTemplateAdmin />
             {/* Carousel */}
             <section className="movieCarousel">
                 <div id="movieCarousel" className="carousel slide" data-ride="carousel">
@@ -122,35 +138,6 @@ const Home = () => {
                 </div>
             </section>
             <section style={{ position: 'relative', marginTop: 50 }} className="newIn container py-5">
-                <div className="container__search-ticket">
-                    <label>
-                        <select className="custom-select" style={{ width: 200 }}>
-                            <option selected>Chọn phim</option>
-                            <option value={1}>Mai</option>
-                            <option value={2}>Madame Web</option>
-                            <option value={3}>Cua lại chị bầu </option>
-                        </select>
-                    </label>
-                    <label>
-                        <label>
-                            <select className="custom-select" style={{ width: 200 }}>
-                                <option selected>Chọn ngày</option>
-                                <option value={1}>23/02/2024</option>
-                                <option value={2}>24/02/2024</option>
-                                <option value={3}>25/02/2024</option>
-                            </select>
-                        </label>
-                    </label>
-                    <label>
-                        <select className="custom-select" style={{ width: 200 }}>
-                            <option selected>Chọn suất</option>
-                            <option value={1}>9h30</option>
-                            <option value={2}>12h</option>
-                            <option value={3}>14h30</option>
-                        </select>
-                    </label>
-                    <a href="../template/HuuPT_BookingSeat.html" style={{ borderRadius: 3, fontWeight: 500 }} className="btn__edit-new">Đặt vé</a>
-                </div>
                 {/* LIST PHIM HOT */}
                 <h2 className="content__after">Phim Hot</h2>
                 <div className="container__input">
@@ -166,13 +153,13 @@ const Home = () => {
                             movies.map(value => (
                                 <div key={value.name} className="col-6 col-md-3 list__film">
                                     <div className="newIn__img">
-                                        <img className="img-fluid" src alt />
+                                        <img className="img-fluid" src={value.poster} />
                                         <div className="newIn__overlay" />
                                         <div className="newIn__play text-white">
                                             <span className="format-description">{value.description}</span>
                                             <div className="container__button-position">
-                                                <a className="btn__edit">Chi tiết</a>
-                                                <a className="btn__add" href="../template/TuanNM_detailcnm.html">Đặt vé</a>
+                                                <Link style={{ margin: '0px 10px' }} className="btn__edit" to={`/home/detail/${value.movieId}`}>Chi tiết</Link>
+                                                <a style={{ margin: '0px 10px' }} className="btn__add" href="../template/TuanNM_detailcnm.html">Đặt vé</a>
                                             </div>
                                         </div>
                                     </div>
@@ -189,24 +176,43 @@ const Home = () => {
             <section style={{ position: 'relative' }} className="newIn container ">
                 <h2 className="content__after">Phim Hôm Nay</h2>
                 <div className="newIn__content">
-                    <div data-slick="{&quot;slidesToShow&quot;: 4, &quot;slidesToScroll&quot;: 4}" className="row text-center" id="slick-slider">
-                        <div className="col-6 col-md-3">
-                            <div className="newIn__img">
-                                <img className="img-fluid" src alt />
-                                <div className="newIn__overlay" />
-                                <div className="newIn__play text-white">
-                                    <span className="format-description"></span>
-                                    <div className="container__button-position">
-                                        <a className="btn__edit">Chi tiết</a>
-                                        <a className="btn__add" href="../template/TuanNM_detailcnm.html">Đặt vé</a>
+                    <Carousel
+                        swipeable={false}
+                        draggable={false}
+                        showDots={true}
+                        responsive={responsive}
+                        ssr={true} // means to render carousel on server-side.
+                        infinite={true}
+                        autoPlaySpeed={1000}
+                        keyBoardControl={true}
+                        customTransition="all .5"
+                        transitionDuration={500}
+                        containerClass="carousel-container"
+                        removeArrowOnDeviceType={["tablet", "mobile"]}
+                        dotListClass="custom-dot-list-style"
+                        itemClass="carousel-item-padding-40-px"
+                    >
+                        {
+                            moviesCurrent.map(value => (
+                                <div key={value.name} className="col-6 col-md-10">
+                                    <div className="newIn__img">
+                                        <img className="img-fluid" src={value.poster} />
+                                        <div className="newIn__overlay" />
+                                        <div className="newIn__play text-white">
+                                            <span className="format-description">{value.description}</span>
+                                            <div className="container__button-position">
+                                                <Link style={{ margin: '0px 10px' }}  className="btn__edit" to={`/home/detail/${value.movieId}`}>Chi tiết</Link>
+                                                <a style={{ margin: '0px 10px' }} className="btn__add" href="../template/TuanNM_detailcnm.html">Đặt vé</a>
+                                            </div>
+                                        </div>
                                     </div>
+                                    <a className="container-title" href="*">
+                                        <h3 className="title__name-film">{value.name}</h3>
+                                    </a>
                                 </div>
-                            </div>
-                            <a className="container-title" href="*">
-                                <h3 className="title__name-film">QUẬT MỘ TRÙNG MA</h3>
-                            </a>
-                        </div>
-                    </div>
+                            ))
+                        }
+                    </Carousel>;
                 </div>
             </section>
             {/* Comming Son */}
@@ -235,11 +241,11 @@ const Home = () => {
                                 Chow,
                                 người có
                                 đã trốn khỏi nhà tù và đang lẩn trốn.</p>
-                            <a href>Thông Tin Thêm <i className="fa fa-angle-right" /></a>
+                            <a href="">Thông Tin Thêm <i className="fa fa-angle-right" /></a>
                         </div>
                         <div className="col-12 col-md-6 col-lg-6">
                             <div className="comingSoon__trailer">
-                                <img className="img-fluid" src alt />
+                                <img className="img-fluid" src="https://firebasestorage.googleapis.com/v0/b/newfirebase-1fe01.appspot.com/o/images%2Fslide-3-video.png?alt=media&token=9cb30ce8-f0be-4aca-9948-76406530b1c2" />
                                 <span className="d-inline-block rounded-circle"><i className="fa fa-play" /></span>
                             </div>
                         </div>
@@ -252,7 +258,7 @@ const Home = () => {
                     <div className="row text-center">
                         <div className="col-4 col-sm-3 col-md-2 movieList__item">
                             <div className="movieList__detail">
-                                <img className="img-fluid" src alt />
+                                <img className="img-fluid" src="https://firebasestorage.googleapis.com/v0/b/newfirebase-1fe01.appspot.com/o/images%2Fmovie-6.jpg?alt=media&token=1474d22c-9ffc-4b7f-bd96-0cb4f4b5625c,https://firebasestorage.googleapis.com/v0/b/newfirebase-1fe01.appspot.com/o/images%2Fmovie-7.jpg?alt=media&token=a44f907a-55d3-4ff3-ab4b-513962c8c625,https://firebasestorage.googleapis.com/v0/b/newfirebase-1fe01.appspot.com/o/images%2Fmovie-8.jpg?alt=media&token=eda1ff4f-bf93-4a22-bce8-20ed085c9481,https://firebasestorage.googleapis.com/v0/b/newfirebase-1fe01.appspot.com/o/images%2Fmovie-9.jpg?alt=media&token=48c6293b-75ec-496f-b492-1f7a1b37977c" />
                                 <div className="movieList__Name-Date my-3 text-white">
                                     <h5>Too fast</h5>
                                     <span>15 Tháng 3, 2024</span>
@@ -261,7 +267,7 @@ const Home = () => {
                         </div>
                         <div className="col-4 col-sm-3 col-md-2 movieList__item">
                             <div className="movieList__detail">
-                                <img className="img-fluid" src alt />
+                                <img className="img-fluid" src="https://firebasestorage.googleapis.com/v0/b/newfirebase-1fe01.appspot.com/o/images%2Fmovie-7.jpg?alt=media&token=4b500324-8cb6-47e2-a919-f235c5e23b5b" />
                                 <div className="movieList__Name-Date my-3 text-white">
                                     <h5>The Hangover: Part III</h5>
                                     <span>30 Tháng 9, 2024</span>
@@ -270,7 +276,7 @@ const Home = () => {
                         </div>
                         <div className="col-4 col-sm-3 col-md-2 movieList__item">
                             <div className="movieList__detail">
-                                <img className="img-fluid" src alt />
+                                <img className="img-fluid" src="https://firebasestorage.googleapis.com/v0/b/newfirebase-1fe01.appspot.com/o/images%2Fmovie-9.jpg?alt=media&token=48c6293b-75ec-496f-b492-1f7a1b37977c" />
                                 <div className="movieList__Name-Date my-3 text-white">
                                     <h5>Transformers: Age of Extinction</h5>
                                     <span>15 Tháng 3, 2024</span>
@@ -279,7 +285,7 @@ const Home = () => {
                         </div>
                         <div className="col-sm-3 col-md-2 movieList__item rp__none-item">
                             <div className="movieList__detail">
-                                <img className="img-fluid" src alt />
+                                <img className="img-fluid" src="https://firebasestorage.googleapis.com/v0/b/newfirebase-1fe01.appspot.com/o/images%2Fmovie-8.jpg?alt=media&token=eda1ff4f-bf93-4a22-bce8-20ed085c9481" />
                                 <div className="movieList__Name-Date my-3 text-white">
                                     <h5>End of an empire</h5>
                                     <span>19 Tháng 3, 2024</span>
@@ -288,7 +294,7 @@ const Home = () => {
                         </div>
                         <div className="col-sm-3 col-md-2 movieList__item rp__none-item">
                             <div className="movieList__detail">
-                                <img className="img-fluid" src alt />
+                                <img className="img-fluid" src="https://firebasestorage.googleapis.com/v0/b/newfirebase-1fe01.appspot.com/o/images%2Fmovie-12.jpg?alt=media&token=bd16a756-9527-44da-a20a-161ddaf28b94" />
                                 <div className="movieList__Name-Date my-3 text-white">
                                     <h5>The comedian</h5>
                                     <span>21 Tháng 3, 2024</span>
@@ -297,7 +303,7 @@ const Home = () => {
                         </div>
                         <div className="col-sm-3 col-md-2 movieList__item rp__none-item">
                             <div className="movieList__detail">
-                                <img className="img-fluid" src alt />
+                                <img className="img-fluid" src="https://firebasestorage.googleapis.com/v0/b/newfirebase-1fe01.appspot.com/o/images%2Fmovie-14.jpg?alt=media&token=9df9f33d-1763-49f0-bdb2-40887b1f6b70" />
                                 <div className="movieList__Name-Date my-3 text-white">
                                     <h5>Locked out</h5>
                                     <span>01 Tháng 4, 2024</span>
@@ -308,7 +314,6 @@ const Home = () => {
                 </div>
             </section>
             <Footer />
-
         </div>
     )
 }
