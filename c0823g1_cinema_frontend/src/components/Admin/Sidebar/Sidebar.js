@@ -49,7 +49,9 @@ export function Sidebar() {
                             <div className="name-job">
                                 <div className="profile_name">Admin</div>
                             </div>
-                            <i className='bx bx-log-out'></i>
+                            <Link to={"/login"}>
+                                <i className='bx bx-log-out'></i>
+                            </Link>
                         </div>
                     </li>
                 </ul>
