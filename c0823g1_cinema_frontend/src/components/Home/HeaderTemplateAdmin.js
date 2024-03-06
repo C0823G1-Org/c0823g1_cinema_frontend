@@ -1,8 +1,8 @@
-import {useNavigate} from "react-router-dom";
-import React, {useState, useEffect} from 'react'
+import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react'
 import '../Home/Header.css'
 import Header from "./Header";
-import {LoginLogoutService} from "../../service/LoginLogoutService";
+import { LoginLogoutService } from "../../service/LoginLogoutService";
 import SweetAlert from "sweetalert";
 
 
@@ -11,6 +11,7 @@ export default function HeaderTemplateAdmin() {
     const [roleUser, setRoleUser] = useState("");
     const [userName, setUserName] = useState("");
     const [isLogin, setIsLogin] = useState()
+    console.log(isLogin);
 
 
     useEffect(() => {
@@ -24,23 +25,30 @@ export default function HeaderTemplateAdmin() {
 
 
     const logout = async () => {
-        const accessTokenFB = sessionStorage.getItem("accessTokenFB")
-        if (accessTokenFB !== undefined) {
-            try {
-                const req = await LoginLogoutService.logout(accessTokenFB);
-            } catch (err) {
-                console.log(err)
-            }
-        }
-        sessionStorage.clear();
-        setUserName("");
-        setRoleUser("");
-        await SweetAlert(
-            "Đăng xuất thành công",
-            `Cám ơn bạn đã có những trải nghiệm với hệ thống của chúng tôi!`,
-            "success"
-        );
-        console.log(sessionStorage.getItem("user"))
+        // const accessTokenFB = sessionStorage.getItem("accessTokenFB")
+        // if (accessTokenFB !== undefined) {
+        //     try {
+        //         const req = await LoginLogoutService.logout(accessTokenFB);
+        //     } catch (err) {
+        //         console.log(err)
+        //     }
+        // }
+        // sessionStorage.clear();
+        // setUserName("");
+        // setRoleUser("");
+        // await SweetAlert(
+        //     "Đăng xuất thành công",
+        //     `Cám ơn bạn đã có những trải nghiệm với hệ thống của chúng tôi!`,
+        //     "success"
+        // );
+        // console.log(sessionStorage.getItem("user"))
+        // navigate('/home')
+        sessionStorage.removeItem('accessToken');
+        sessionStorage.removeItem('roleUser');
+        sessionStorage.removeItem('user');
+        sessionStorage.removeItem('userId');
+        sessionStorage.removeItem('userPhoto');
+        alert("logout")
         navigate('/home')
     }
 
@@ -51,15 +59,15 @@ export default function HeaderTemplateAdmin() {
                     <div className="container">
                         <nav className="navbar navbar-expand-lg navbar-dark px-0 navbar-onscroll-by-user">
                             <a className="navbar-brand" href="#"><img className="img__logo"
-                                                                      src="https://firebasestorage.googleapis.com/v0/b/newfirebase-1fe01.appspot.com/o/images%2FRemove-bg.ai_1708658790252.png?alt=media&token=93446917-2643-47f6-b15d-244b61f0adab"
-                                                                      alt/></a>
+                                src="https://firebasestorage.googleapis.com/v0/b/newfirebase-1fe01.appspot.com/o/images%2FRemove-bg.ai_1708658790252.png?alt=media&token=93446917-2643-47f6-b15d-244b61f0adab"
+                                alt /></a>
                             <button className="navbar-toggler" type="button" data-toggle="collapse"
-                                    data-target="#hideNavbar" aria-controls="navbarSupportedContent"
-                                    aria-expanded="false" aria-label="Toggle navigation">
-                                <span className="navbar-toggler-icon"/>
+                                data-target="#hideNavbar" aria-controls="navbarSupportedContent"
+                                aria-expanded="false" aria-label="Toggle navigation">
+                                <span className="navbar-toggler-icon" />
                             </button>
-                            <a  href="" className="buy__ticket">
-                                <img className="picture__ticket"  src="https://firebasestorage.googleapis.com/v0/b/newfirebase-1fe01.appspot.com/o/images%2Fbtn-ticket.42d72c96.webp?alt=media&token=614961a8-60e0-4e18-a9b4-bd733eda0537"></img>
+                            <a href="" className="buy__ticket">
+                                <img className="picture__ticket" src="https://firebasestorage.googleapis.com/v0/b/newfirebase-1fe01.appspot.com/o/images%2Fbtn-ticket.42d72c96.webp?alt=media&token=614961a8-60e0-4e18-a9b4-bd733eda0537"></img>
                             </a>
                             {/* Admin */}
                             {roleUser === "ROLE_ADMIN" && (
@@ -105,7 +113,7 @@ export default function HeaderTemplateAdmin() {
                                     <ul className="navbar-nav text-center ml-auto checkunder">
                                         <p className="name--user">Hello, {userName}</p>
                                         <li className="nav-item design__logout">
-                                            <button className="logout-name" onClick={logout}>Logout</button>
+                                            <a href="" className="logout-name" onClick={logout}>Logout</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -135,7 +143,7 @@ export default function HeaderTemplateAdmin() {
                     </div>
                 </div>
                 :
-                <Header/>
+                <Header />
             }
         </>
     )
