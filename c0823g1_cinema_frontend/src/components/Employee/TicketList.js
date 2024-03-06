@@ -6,6 +6,8 @@ import {EmployeeService} from "../../service/EmployeeService";
 import ReactPaginate from "react-paginate";
 import {useNavigate} from "react-router-dom";
 import SweetAlert from "sweetalert";
+import Footer from "../Home/Footer";
+import Header from "../Home/Header";
 export default function TicketList() {
     const navigate = useNavigate();
     const[listBooking,setListBooking] = useState([]);
@@ -110,8 +112,9 @@ export default function TicketList() {
 
     return (
         <>
-            <div className="container">
-                <h1>Quản lý vé</h1>
+            <Header/>
+            <div className="container" >
+                <h1 >Quản lý vé</h1>
                 <div className="table-wrapper">
                     <div className="table-title">
                         <div className="row">
@@ -206,8 +209,9 @@ export default function TicketList() {
 
                 </div>
             </div>
-
-
+         <div style={{borderTop: "170vh solid white"}}>
+                         <Footer/>
+                     </div>
         </>
 
     )

@@ -4,6 +4,8 @@ import '../../index.css';
 import {EmployeeService} from "../../service/EmployeeService";
 import SweetAlert from "sweetalert";
 import { saveAs } from 'file-saver';
+import Footer from "../Home/Footer";
+import Header from "../Home/Header";
 
 
 
@@ -53,6 +55,7 @@ const handleExportFile = async(id) => {
 }
     return(
         <>
+            <Header/>
             <h1 className="h1 text-center">Thông tin đặt vé</h1>
             {data.map((item) => (
                 <div className="container-fluid">
@@ -100,7 +103,9 @@ const handleExportFile = async(id) => {
                     onClick={() => handleExportFile(`${location.state.idBooking}`)}
             >Xuất file
             </button>
-
+            <div style={{borderTop: "170vh solid white"}}>
+                <Footer/>
+            </div>
         </>
     )
 }
