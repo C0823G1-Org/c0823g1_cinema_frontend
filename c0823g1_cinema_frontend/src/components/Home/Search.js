@@ -13,7 +13,7 @@ const Search = () => {
     const [movies, setMovies] = useState(data.content || []);
     const [pageCurrent, setPageCurrent] = useState(data.pageable.pageNumber || 0);
     const [totalPages, setTotalPages] = useState(data.totalPages || 0);
-    const [messageError, setMessageError] = useState("");
+    const [messageError, setMessageError] = useState("Không có kết quả tìm kiếm !");
 
     const handleSearch = (e) => {
         setSearch(e.target.value);
@@ -68,7 +68,7 @@ const Search = () => {
                         <i className="fas fa-search" />
                     </button>
                 </div>
-                {messageError && <p className='message_error'>{messageError}</p>}
+                {movies.length === 0 && <p className='message_error'>{messageError}</p>}
                 {!messageError && (
                     <div className="newIn__content">
                         <div className="row text-center">
