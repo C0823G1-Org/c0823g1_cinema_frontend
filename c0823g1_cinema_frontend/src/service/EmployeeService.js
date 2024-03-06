@@ -1,6 +1,5 @@
 import axios from "axios";
 
-
 const listBooking = async (page) => {
 
      const result = axios.get(`http://localhost:8080/booking/list?page=${page}`);
@@ -67,6 +66,7 @@ export const EmployeeService = {
     findBookingDetail,
     exportFile
 }
+
 
 export const getAllEmployee= async (page,searchName) => {
     try {
