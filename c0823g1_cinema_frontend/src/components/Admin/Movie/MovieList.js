@@ -56,6 +56,7 @@ export default function MovieList() {
                 let res = await fillAllMovie(0, nameSearch, nameSearch, startDate, endDate)
                 setMovies(res.content);
                 setTotalPages(res.totalPages);
+                setCurrentPage(0);
             }
         } catch (e) {
             console.log(e)
@@ -113,7 +114,7 @@ export default function MovieList() {
                                 {/* Col 9 */}
                                 <div className="col-12 col-sm-9 col-md-9 col-lg-9 col-xl-9">
                                     <form className="form-group my-2 my-lg-0 p-0 m-0 ">
-                                        <h5 style={{color: "white"}}>Chọn ngày khởi chiếu</h5>
+                                        <h5 style={{color: "white",paddingLeft:"15px"}}>Chọn ngày khởi chiếu</h5>
                                         <div className="d-flex flex-wrap">
                                             <div className="col-3">
                                                 <div className="d-flex">
@@ -204,6 +205,7 @@ export default function MovieList() {
                             <div className="clearfix">
                                 <div style={{float: "right"}} className="page">
                                     <ReactPaginate
+                                        forcePage = {currentPage}
                                         breakLabel="..."
                                         nextLabel="Trang Sau"
                                         onPageChange={handlePageClick}
