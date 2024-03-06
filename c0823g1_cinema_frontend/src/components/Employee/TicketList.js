@@ -113,8 +113,8 @@ export default function TicketList() {
     return (
         <>
             <Header/>
-            <div className="container" >
-                <h1 >Quản lý vé</h1>
+            <div className="container" style={{marginTop:"12%"}}>
+                <h1 style={{color:"black"}}>Quản lý vé</h1>
                 <div className="table-wrapper">
                     <div className="table-title">
                         <div className="row">
@@ -123,7 +123,7 @@ export default function TicketList() {
                                     <div className="d-flex">
 
                                         <label>
-                                            Date  <input  onChange={handleChangeDate} id="dateInput2"
+                                            Ngày <input  onChange={handleChangeDate} id="dateInput2"
                                                          className="form-control mr-sm-2"
                                                         style={{marginLeft: "5px"}} type="date"
                                                          min={new Date().toISOString().split("T")[0]}
@@ -209,7 +209,7 @@ export default function TicketList() {
 
                 </div>
             </div>
-         <div style={{borderTop: "170vh solid white"}}>
+         <div style={{borderTop: " solid white"}}>
                          <Footer/>
                      </div>
         </>
