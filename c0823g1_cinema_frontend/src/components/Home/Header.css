@@ -55,6 +55,7 @@ header {
     transition: top 0.5s;
     background-color: black;
     z-index: 12345;
+    top: 0;
 }
 
 .btn__edit-login {
@@ -132,3 +133,49 @@ header {
 #hideNavbar li.nav-item.active::after {
     width: 100%;
 }
+
+/* Name user */
+.name--user {
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: none
+}
+.checkunder {
+    border-bottom: none !important;
+}
+
+.design__logout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 27%;
+    transform: translateX(300%);
+    text-decoration: none;  
+}
+
+.logout-name {
+    color: white;
+    text-decoration: none;
+}
+
+/* Ticket */
+.buy__ticket  {
+    position: absolute;
+    top: 27%;
+    transform: translateX(215%);
+}
+
+.picture__ticket {
+    width: 85px;
+    height: 36px;
+}
+
+/* Logout */
+.container__logout {
+    position: absolute;
+    right: -13%;
+    transform: translateY(-18%);
+}
+

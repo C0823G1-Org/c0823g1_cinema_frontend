@@ -61,18 +61,17 @@ body {
 }
 
 .hero1 {
-    /* background: url("../img/hero-1.jpg") no-repeat center center; */
-    /* "../img/hero-1.jpg"  */
+    background: url(https://firebasestorage.googleapis.com/v0/b/newfirebase-1fe01.appspot.com/o/images%2Fhero-1.jpg?alt=media&token=60dcfcdb-9454-46e3-ab8d-990db86eac35) no-repeat center center;
     background-size: cover;
 }
 
 .hero2 {
-    /* background: url("../img/hero-2.jpg") no-repeat center center; */
+    background: url(https://firebasestorage.googleapis.com/v0/b/newfirebase-1fe01.appspot.com/o/images%2Fhero-2.jpg?alt=media&token=25a764c8-1f35-4415-beab-1dc923129d9e) no-repeat center center;
     background-size: cover;
 }
 
 .hero3 {
-    /* background: url("../img/hero-3.jpg") no-repeat center center; */
+    background: url(https://firebasestorage.googleapis.com/v0/b/newfirebase-1fe01.appspot.com/o/images%2Fhero-3.jpg?alt=media&token=50443ad7-e4fc-4e37-8bf3-06400a9a49b5) no-repeat center center;
     background-size: cover;
 }
 
@@ -149,6 +148,7 @@ body {
     position: relative;
     overflow: hidden;
     border-radius: 10px;
+    text-align: center;
 }
 
 .newIn__play {
@@ -279,7 +279,7 @@ a {
 }
 
 .comingSoon__bg {
-    /* background-image: url(../img/slide-3.png); */
+    background-image: url(https://firebasestorage.googleapis.com/v0/b/newfirebase-1fe01.appspot.com/o/images%2Fslide-3.png?alt=media&token=b6f692e6-eaba-4464-8369-bec2785c239a);
     width: 100%;
     height: 100%;
     position: absolute;
@@ -535,8 +535,9 @@ a {
 .container__button-position {
     position: absolute;
     /* position: relative; */
+    width: 100%;
     bottom: 26px;
-    transform: translateX(56px);
+    /* transform: translateX(56px); */
 }
 
 /* Format Description */
@@ -545,7 +546,8 @@ a {
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    margin-top: 50px;
+    /* margin-top: 50px; */
+    margin-top: 50%;
 }
 
 /* Title name phim */
@@ -616,7 +618,7 @@ a {
 .slick-next {
     border: none;
     font-size: 0;
-    /* background: url(../img/sort-up-solid.svg) no-repeat center; */
+    background: url(https://firebasestorage.googleapis.com/v0/b/newfirebase-1fe01.appspot.com/o/images%2Farrow.png?alt=media&token=69fde179-048e-48ee-b9d3-fc2f89fade97) no-repeat center;
     position: absolute;
     right: -30px;
     top: 38%;
@@ -642,7 +644,7 @@ a {
 .slick-prev {
     border: none;
     font-size: 0;
-    /* background: url(../img/sort-up-solid.svg) no-repeat center; */
+    background: url(https://firebasestorage.googleapis.com/v0/b/newfirebase-1fe01.appspot.com/o/images%2Farrow.png?alt=media&token=69fde179-048e-48ee-b9d3-fc2f89fade97) no-repeat center;
     position: absolute;
     left: -30px;
     top: 38%;
@@ -711,4 +713,26 @@ a {
     text-align: center;
     font-size: 25px;
     margin: 10% 0 20% 0;
+}
+
+
+/* Carosel current */
+.react-multi-carousel-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 50px;
+}
+
+.react-multiple-carousel__arrow--left  {
+    top: 37%;
+    left: 0;   
+     transform: translateX(-105%);
+
+}
+.react-multiple-carousel__arrow--right{
+    top: 37%;
+    transform: translateX(105%);
+
+
 }
