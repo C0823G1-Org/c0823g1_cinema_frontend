@@ -35,7 +35,7 @@ export default function Header() {
                                 </ul>
                                 <ul className="navbar-nav text-center ml-auto">
                                     <li className="nav-item">
-                                        <a onClick={handleLogin} className="btn__edit-login" href="">Đăng Nhập</a>
+                                        <button onClick={handleLogin} className="btn__edit-login">Đăng Nhập</button>
                                     </li>
                                 </ul>
                             </div>

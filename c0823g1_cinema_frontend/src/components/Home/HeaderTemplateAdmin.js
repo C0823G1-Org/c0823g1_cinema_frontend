@@ -10,16 +10,23 @@ export default function HeaderTemplateAdmin() {
     const navigate = useNavigate();
     const [roleUser, setRoleUser] = useState("");
     const [userName, setUserName] = useState("");
-    const [isLogin, setIsLogin] = useState()
+    const [isLogin, setIsLogin] = useState(false)
+    const [img,setImg] = useState("");
 
 
     useEffect(() => {
         const token = sessionStorage.getItem('accessToken')
         const role = sessionStorage.getItem('roleUser');
         const user = sessionStorage.getItem('user');
-        setIsLogin(token)
+        const userPhoto = sessionStorage.getItem('userPhoto')
+        if (user !== null) {
+            setIsLogin(true);
+        }
         setRoleUser(role);
         setUserName(user);
+        setImg(userPhoto);
+
+        console.log(img)
     }, []);
 
 
@@ -35,6 +42,8 @@ export default function HeaderTemplateAdmin() {
         sessionStorage.clear();
         setUserName("");
         setRoleUser("");
+        setIsLogin(false);
+        setImg("");
         await SweetAlert(
             "Đăng xuất thành công",
             `Cám ơn bạn đã có những trải nghiệm với hệ thống của chúng tôi!`,
@@ -44,9 +53,6 @@ export default function HeaderTemplateAdmin() {
         navigate('/home')
     }
 
-    const handleLogin = () => {
-        navigate('/login')
-    }
     return (
         <>
             {isLogin ?
@@ -79,10 +85,9 @@ export default function HeaderTemplateAdmin() {
                                         </li>
                                     </ul>
                                     <ul className="navbar-nav text-center ml-auto checkunder">
-                                        <p className="name--user">Hello,Admin {userName}</p>
-                                        <li className="nav-item design__logout">
-                                            <button className="logout-name" onClick={logout}>Logout</button>
-                                        </li>
+                                        <p style={{color: "white", marginRight: "1rem", marginTop:"0.6rem"}} className="name--user">{userName}</p>
+                                        <img src={`${img}`} alt="Profile" style={{borderRadius: "50%", height: "3rem", marginRight: "1rem"}}/>
+                                        <i onClick={logout} className="fas fa-sign-out-alt" style={{fontSize: "2rem", marginTop:"0.5rem" , color: "#EE5A24"}}></i>
                                     </ul>
                                 </div>
                             )}
@@ -103,10 +108,9 @@ export default function HeaderTemplateAdmin() {
                                         </li>
                                     </ul>
                                     <ul className="navbar-nav text-center ml-auto checkunder">
-                                        <p className="name--user">Hello, {userName}</p>
-                                        <li className="nav-item design__logout">
-                                            <button className="logout-name" onClick={logout}>Logout</button>
-                                        </li>
+                                        <p style={{color: "white", marginRight: "1rem", marginTop:"0.6rem"}} className="name--user">{userName}</p>
+                                        <img src={`${img}`} alt="Profile" style={{borderRadius: "50%", height: "3rem", marginRight: "1rem"}}/>
+                                        <i onClick={logout} className="fas fa-sign-out-alt" style={{fontSize: "2rem", marginTop:"0.5rem" , color: "#EE5A24"}}></i>
                                     </ul>
                                 </div>
                             )}
@@ -124,10 +128,9 @@ export default function HeaderTemplateAdmin() {
                                         </li>
                                     </ul>
                                     <ul className="navbar-nav text-center ml-auto checkunder">
-                                        <p className="name--user">Hello, {userName}</p>
-                                        <li className="nav-item design__logout">
-                                            <button className="logout-name" onClick={logout}>Logout</button>
-                                        </li>
+                                        <p style={{color: "white", marginRight: "1rem", marginTop:"0.6rem"}} className="name--user">{userName}</p>
+                                        <img src={`${img}`} alt="Profile" style={{borderRadius: "50%", height: "3rem", marginRight: "1rem"}}/>
+                                        <i onClick={logout} className="fas fa-sign-out-alt" style={{fontSize: "2rem", marginTop:"0.5rem" , color: "#EE5A24"}}></i>
                                     </ul>
                                 </div>
                             )}
