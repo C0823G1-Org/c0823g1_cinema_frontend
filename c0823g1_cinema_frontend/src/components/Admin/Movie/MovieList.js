@@ -107,7 +107,7 @@ export default function MovieList() {
             <Sidebar/>
             <section className="home-section">
                 <div className="container body_movie">
-                    <h1>Quản lý phim</h1>
+                    <h1 style={{paddingTop:"20px"}}>Quản lý phim</h1>
                     <div className="table-wrapper_movie">
                         <div className="table-title_movie">
                             <div className="row">

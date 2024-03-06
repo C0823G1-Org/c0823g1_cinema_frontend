@@ -5,6 +5,7 @@
     font-family:  roboto condensed, sans-serif;
 }
 
+
 .body {
     background: #f6f5f7;
     display: flex;
@@ -77,16 +78,7 @@ a {
     border-color: #FFFFFF;
 }
 
-/* form {
-    background-color: #FFFFFF;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    padding: 0 50px;
-    height: 100%;
-    text-align: center;
-} */
+
 
 .form {
     background-color: #FFFFFF;
@@ -98,14 +90,8 @@ a {
     height: 100%;
     text-align: center;
 }
-/*
-input {
-    background-color: #eee;
-    border: none;
-    padding: 12px 15px;
-    margin: 8px 0;
-    width: 100%;
-} */
+
+
 .input {
     background-color: #eee;
     border: none;
