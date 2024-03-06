@@ -17,6 +17,7 @@ const Home = () => {
     const [search, setSearch] = useState("")
     const [page, setPage] = useState("0");
     const native = useNavigate();
+    const [message,setMessage] = useState("Không có kết quả tìm kiếm !");
 
     const responsive = {
         desktop: {
