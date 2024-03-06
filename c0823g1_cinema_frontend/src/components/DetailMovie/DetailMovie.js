@@ -1,8 +1,8 @@
 import './DetailMovie.css'
-import {useEffect, useState} from "react";
-import {findAll, findByIdMovie, findByIdMovieHasGenre} from "../../service/MovieService";
-import {useNavigate, useParams} from "react-router-dom";
-import {getScheduleByMovieId} from "../../service/BookingService";
+import { useEffect, useState } from "react";
+import { findAll, findByIdMovie, findByIdMovieHasGenre } from "../../service/MovieService";
+import { useNavigate, useParams } from "react-router-dom";
+import { getScheduleByMovieId } from "../../service/BookingService";
 import Header from "../Home/Header";
 import Footer from "../Home/Footer";
 
@@ -11,7 +11,7 @@ export default function DetailMovie() {
     const [typeMovie, setTypeMovie] = useState([]);
     const [schedule, setSchedule] = useState([]);
     const [actor, setActor] = useState([]);
-    const {id} = useParams();
+    const { id } = useParams();
     const [selectedDateTime, setSelectedDateTime] = useState({
         movieId: id,
         date: null,
@@ -74,29 +74,30 @@ export default function DetailMovie() {
     useEffect(() => {
         console.log(selectedDateTime);
         if (selectedDateTime.movieId !== null && selectedDateTime.date !== null && selectedDateTime.scheduleTimeId !== null) {
-            navigate("/booking/seat", {state: {myResult: selectedDateTime}});
+            navigate("/booking/seat", { state: { myResult: selectedDateTime } });
         }
     }, [selectedDateTime]);
+    if (!schedule) { return "loadingg" }
     return (
-        <><Header/>
-            <div style={{position: "absolute", top: "-39%", transform: "translateY(50%)", minWidth: "100%"}}>
+        <><Header />
+            <div style={{ position: "absolute", top: "-39%", transform: "translateY(50%)", minWidth: "100%" }}>
                 <div className="fontText">
                     <div className="movie-details">
                         <div className="left_detail"></div>
                         <div>
                             <iframe className="mid_detail" src={movie.trailer}
-                                    frameBorder="0"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                    allowFullScreen></iframe>
+                                frameBorder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                allowFullScreen></iframe>
                         </div>
                         <div className="right_detail"></div>
 
                         <div className="left1_detail"></div>
                         <div className="mid_detail">
                             <div className="picture_detail">
-                                <img style={{width: '300px', height: '400px'}}
-                                     src={movie.poster}
-                                     alt="Movie Poster"/>
+                                <img style={{ width: '300px', height: '400px' }}
+                                    src={movie.poster}
+                                    alt="Movie Poster" />
                             </div>
                             <div style={{
                                 float: 'left',
@@ -105,14 +106,14 @@ export default function DetailMovie() {
                                 marginTop: '0px'
                             }}>
                                 <h1>{movie.name}</h1>
-                                <div style={{fontSize: 'large'}}>
-                                    <div style={{marginTop: "13px"}}>
-                                        <i style={{color: 'orange'}} className="far fa-clock"></i>
-                                        <p style={{display: 'inline-block', marginRight: '10px'}}><p
-                                            style={{marginLeft: '10px'}}>{movie.duration} Phút</p></p>
-                                        <i style={{color: 'orange'}} className="fas fa-calendar-alt"></i>
-                                        <p style={{display: 'inline-block'}}><p
-                                            style={{marginLeft: '10px'}}>{formatDate(movie.startDate)}</p>
+                                <div style={{ fontSize: 'large' }}>
+                                    <div style={{ marginTop: "13px" }}>
+                                        <i style={{ color: 'orange' }} className="far fa-clock"></i>
+                                        <p style={{ display: 'inline-block', marginRight: '10px' }}><p
+                                            style={{ marginLeft: '10px' }}>{movie.duration} Phút</p></p>
+                                        <i style={{ color: 'orange' }} className="fas fa-calendar-alt"></i>
+                                        <p style={{ display: 'inline-block' }}><p
+                                            style={{ marginLeft: '10px' }}>{formatDate(movie.startDate)}</p>
                                         </p>
                                     </div>
                                     <p>Quốc gia: {movie.country}</p>
@@ -121,30 +122,30 @@ export default function DetailMovie() {
                                         Thể loại:
                                         {typeMovie.map((type) => (
 
-                                            <button style={{marginLeft: "10px"}} type="button" className="btn btn-light"
+                                            <button style={{ marginLeft: "10px" }} type="button" className="btn btn-light"
                                             >{type[1]}</button>
                                         ))}
                                     </p>
 
                                     <p>Đạo diễn:
-                                        <button style={{marginLeft: "10px"}} type="button"
-                                                className="btn btn-light">{movie.director}</button>
+                                        <button style={{ marginLeft: "10px" }} type="button"
+                                            className="btn btn-light">{movie.director}</button>
                                     </p>
                                     <p>Diễn viên:
                                         {actor.map((at) => (
-                                            <button style={{marginLeft: "10px"}} type="button"
-                                                    className="btn btn-light">{at}</button>
+                                            <button style={{ marginLeft: "10px" }} type="button"
+                                                className="btn btn-light">{at}</button>
                                         ))}
                                     </p>
                                     <button className="btn btn__add_detail my-2 my-sm-0" type="submit">Đặt
                                         vé
                                     </button>
                                 </div>
-                                <hr/>
+                                <hr />
                                 <h3>Nội dung phim</h3>
-                                <p style={{fontSize: "20px"}}>{movie.description}
+                                <p style={{ fontSize: "20px" }}>{movie.description}
                                 </p>
-                                <hr/>
+                                <hr />
                                 <h3>Lịch chiếu</h3>
                                 <div className="showtime_detail">
                                     {schedule.reduce((result, time) => {
@@ -167,11 +168,11 @@ export default function DetailMovie() {
                                         }
 
                                         return result;
-                                    }, []).map(({date, showtimes}) => (
+                                    }, []).map(({ date, showtimes }) => (
                                         <div key={date}>
                                             <div>Ngày {formatDate(date)}</div>
                                             <div className="showtime_detail">
-                                                {showtimes.map(({scheduleTimeId, time}) => (
+                                                {showtimes.map(({ scheduleTimeId, time }) => (
                                                     formatTime(time, date, scheduleTimeId)
                                                 ))}
                                             </div>
@@ -183,8 +184,8 @@ export default function DetailMovie() {
                     </div>
                 </div>
             </div>
-            <div style={{borderTop: "170vh solid white"}}>
-                <Footer/>
+            <div style={{ borderTop: "170vh solid white" }}>
+                <Footer />
             </div>
         </>
 

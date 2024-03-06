@@ -2,14 +2,11 @@ import React, { useEffect, useState } from 'react'
 import '../Home/Home.css'
 import { getAllMovieCurrent, getAllMovieHot, searchName } from '../../service/MovieService'
 import Footer from '../Home/Footer'
-import {Link, useNavigate} from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import HeaderTemplateAdmin from './HeaderTemplateAdmin'
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import Spinner from 'react-bootstrap/Spinner';
-
-
-
 const Home = () => {
     const [movies, setMovies] = useState();
     const [listMovie, setListMovie] = useState()
@@ -17,7 +14,7 @@ const Home = () => {
     const [search, setSearch] = useState("")
     const [page, setPage] = useState("0");
     const native = useNavigate();
-    const [message,setMessage] = useState("Không có kết quả tìm kiếm !");
+    const [message, setMessage] = useState("Không có kết quả tìm kiếm !");
 
     const responsive = {
         desktop: {
@@ -201,7 +198,7 @@ const Home = () => {
                                         <div className="newIn__play text-white">
                                             <span className="format-description">{value.description}</span>
                                             <div className="container__button-position">
-                                                <Link style={{ margin: '0px 10px' }}  className="btn__edit" to={`/home/detail/${value.movieId}`}>Chi tiết</Link>
+                                                <Link style={{ margin: '0px 10px' }} className="btn__edit" to={`/home/detail/${value.movieId}`}>Chi tiết</Link>
                                                 <a style={{ margin: '0px 10px' }} className="btn__add" href="../template/TuanNM_detailcnm.html">Đặt vé</a>
                                             </div>
                                         </div>

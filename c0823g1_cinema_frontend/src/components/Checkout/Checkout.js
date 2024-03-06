@@ -56,7 +56,7 @@ export default function Checkout() {
                                         </th>
                                     </tr>
                                     <tr>
-                                        <th>Màn hình</th>
+                                        <th>Phòng chiếu</th>
                                         <td>{data.screen}</td>
                                     </tr>
                                     <tr>
