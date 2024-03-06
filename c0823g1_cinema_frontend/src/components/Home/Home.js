@@ -157,7 +157,7 @@ const Home = () => {
                                         <div className="newIn__play text-white">
                                             <span className="format-description">{value.description}</span>
                                             <div className="container__button-position">
-                                                <a style={{ margin: '0px 10px' }} className="btn__edit">Chi tiết</a>
+                                                <Link style={{ margin: '0px 10px' }} className="btn__edit" to={`/home/detail/${value.movieId}`}>Chi tiết</Link>
                                                 <a style={{ margin: '0px 10px' }} className="btn__add" href="../template/TuanNM_detailcnm.html">Đặt vé</a>
                                             </div>
                                         </div>
