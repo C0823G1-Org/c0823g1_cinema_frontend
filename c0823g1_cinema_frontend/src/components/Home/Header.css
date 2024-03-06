@@ -55,6 +55,7 @@ header {
     transition: top 0.5s;
     background-color: black;
     z-index: 12345;
+    top: 0;
 }
 
 .btn__edit-login {
@@ -158,3 +159,23 @@ header {
     color: white;
     text-decoration: none;
 }
+
+/* Ticket */
+.buy__ticket  {
+    position: absolute;
+    top: 27%;
+    transform: translateX(215%);
+}
+
+.picture__ticket {
+    width: 85px;
+    height: 36px;
+}
+
+/* Logout */
+.container__logout {
+    position: absolute;
+    right: -13%;
+    transform: translateY(-18%);
+}
+
