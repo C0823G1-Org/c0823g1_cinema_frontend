@@ -1,10 +1,10 @@
 import "./User.css";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import {
     getHistoryBooking,
     getListHistoryBooking,
 } from "../../service/BookingService";
-import { ErrorMessage, Field, Form, Formik } from "formik";
+import {ErrorMessage, Field, Form, Formik} from "formik";
 import {
     changeInfoUser,
     changePasswordUser,
@@ -50,7 +50,7 @@ export default function UserInformation() {
         };
         console.log(account1)
         getAccountById();
-    }, [startDate,id]);
+    }, [startDate, id]);
 
     const handlePageClick = async (event) => {
         try {
@@ -79,7 +79,7 @@ export default function UserInformation() {
     function formatDate(inputDate) {
         const date = new Date(inputDate);
 
-        const options = { day: "2-digit", month: "2-digit", year: "numeric" };
+        const options = {day: "2-digit", month: "2-digit", year: "numeric"};
 
         return date.toLocaleDateString("en-GB", options);
     }
@@ -87,10 +87,11 @@ export default function UserInformation() {
     function formatNumber(number) {
         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
+
     // --------------------------------------------------- Thông Tin Tài Khoản
 
 
-    const editAccount = async (values, { setErrors }) => {
+    const editAccount = async (values, {setErrors}) => {
         try {
             await changeInfoUser(values);
             await SweetAlert(
@@ -107,7 +108,7 @@ export default function UserInformation() {
             );
         }
     };
-    const editPassword = async (values, { setErrors }) => {
+    const editPassword = async (values, {setErrors}) => {
         try {
             await changePasswordUser(values);
             await SweetAlert(
@@ -159,11 +160,11 @@ export default function UserInformation() {
     }
     return (
         <>
-
-
-            {/* historyBooking !== [] && */}
+            <div style={{marginTop: "0px"}}>
+                <Header/>
+            </div>
             {
-                <div className="container light-style flex-grow-1 container-p-y">
+                <div style={{marginTop: "22vh"}} className="container light-style flex-grow-1 container-p-y">
                     <h4 className="font-weight-bold py-3 mb-4">Thông Tin Tài Khoản</h4>
                     <div className="card overflow-hidden">
                         <div className="row no-gutters row-bordered row-border-light">
@@ -173,7 +174,7 @@ export default function UserInformation() {
                                         className="list-group-item list-group-item-action "
                                         href="#account-general"
                                     >
-                                        <div style={{ textAlign: "center" }}>
+                                        <div style={{textAlign: "center"}}>
                                             <figure className="image-container">
                                                 {account1.profilePicture.length > 5 ?
                                                     <img
@@ -235,14 +236,14 @@ export default function UserInformation() {
                                         data-toggle="list"
                                         href="#account-change-password"
                                     >
-                                        <i className="fas fa-exchange-alt" /> Đổi Mật Khẩu
+                                        <i className="fas fa-exchange-alt"/> Đổi Mật Khẩu
                                     </a>
                                     <a
                                         className="list-group-item list-group-item-action"
                                         data-toggle="list"
                                         href="#account-info"
                                     >
-                                        <i className="fas fa-history" /> Lịch Sử
+                                        <i className="fas fa-history"/> Lịch Sử
                                     </a>
                                 </div>
                             </div>
@@ -252,7 +253,7 @@ export default function UserInformation() {
                                         className="tab-pane fade active show"
                                         id="account-general"
                                     >
-                                        <hr className="border-light m-0" />
+                                        <hr className="border-light m-0"/>
                                         <div className="card-body">
                                             <Formik
                                                 initialValues={{
@@ -272,8 +273,8 @@ export default function UserInformation() {
                                                     memberCode: account1.memberCode,
                                                 }}
                                                 validationSchema={Yup.object(validateObject)}
-                                                onSubmit={(values, { setErrors }) =>
-                                                    editAccount(values, { setErrors })
+                                                onSubmit={(values, {setErrors}) =>
+                                                    editAccount(values, {setErrors})
                                                 }
                                             >
                                                 <Form>
@@ -306,7 +307,7 @@ export default function UserInformation() {
                                                             name="email"
                                                             component="span"
                                                             className="form-err"
-                                                            style={{ color: "red" }}
+                                                            style={{color: "red"}}
                                                         />
                                                     </div>
                                                     <div className="form-group">
@@ -332,7 +333,7 @@ export default function UserInformation() {
                                                             name="idNumber"
                                                             component="span"
                                                             className="form-err"
-                                                            style={{ color: "red" }}
+                                                            style={{color: "red"}}
                                                         />
                                                     </div>
                                                     <div className="form-group">
@@ -346,7 +347,7 @@ export default function UserInformation() {
                                                             name="phoneNumber"
                                                             component="span"
                                                             className="form-err"
-                                                            style={{ color: "red" }}
+                                                            style={{color: "red"}}
                                                         />
                                                     </div>
                                                     <div className="form-group">
@@ -360,7 +361,7 @@ export default function UserInformation() {
                                                             name="address"
                                                             component="span"
                                                             className="form-err"
-                                                            style={{ color: "red" }}
+                                                            style={{color: "red"}}
                                                         />
                                                     </div>
                                                     <div className="text-right mt-3">
@@ -386,8 +387,8 @@ export default function UserInformation() {
                                                     confirmationPassword: "",
                                                 }}
                                                 validationSchema={Yup.object(validateObject2)}
-                                                onSubmit={(values, { setErrors }) =>
-                                                    editPassword(values, { setErrors })
+                                                onSubmit={(values, {setErrors}) =>
+                                                    editPassword(values, {setErrors})
                                                 }
                                             >
                                                 <Form>
@@ -404,7 +405,7 @@ export default function UserInformation() {
                                                             name="currentPassword"
                                                             component="span"
                                                             className="form-err"
-                                                            style={{ color: "red" }}
+                                                            style={{color: "red"}}
                                                         />
                                                     </div>
                                                     <div className="form-group">
@@ -418,7 +419,7 @@ export default function UserInformation() {
                                                             name="newPassword"
                                                             component="span"
                                                             className="form-err"
-                                                            style={{ color: "red" }}
+                                                            style={{color: "red"}}
                                                         />
                                                     </div>
                                                     <div className="form-group">
@@ -434,10 +435,10 @@ export default function UserInformation() {
                                                             name="confirmationPassword"
                                                             component="span"
                                                             className="form-err"
-                                                            style={{ color: "red" }}
+                                                            style={{color: "red"}}
                                                         />
                                                     </div>
-                                                    <div style={{marginLeft: "70%" , marginTop: "35%"}}>
+                                                    <div style={{marginLeft: "70%", marginTop: "35%"}}>
 
                                                         <button type="submit" className="btn btnAdd">
                                                             Lưu
@@ -446,7 +447,6 @@ export default function UserInformation() {
                                                             Huỷ
                                                         </button>
                                                     </div>
-
                                                     &nbsp;
                                                 </Form>
                                             </Formik>
@@ -478,7 +478,7 @@ export default function UserInformation() {
                                                     submitValue();
                                                 }}
                                             >
-                                                {({ handleSubmit }) => (
+                                                {({handleSubmit}) => (
                                                     <form onSubmit={handleSubmit}>
                                                         <div className="d-flex">
                                                             <table>
@@ -489,7 +489,7 @@ export default function UserInformation() {
                                                                             Từ ngày:{" "}
                                                                         </label>
                                                                     </td>
-                                                                    <td style={{ paddingLeft: "30px" }}>
+                                                                    <td style={{paddingLeft: "30px"}}>
                                                                         <Field
                                                                             className="form-control"
                                                                             type="date"
@@ -497,12 +497,12 @@ export default function UserInformation() {
                                                                             name="startDate"
                                                                         />
                                                                     </td>
-                                                                    <td style={{ paddingLeft: "30px" }}>
+                                                                    <td style={{paddingLeft: "30px"}}>
                                                                         <label htmlFor="endDate">
                                                                             Đến ngày:{" "}
                                                                         </label>
                                                                     </td>
-                                                                    <td style={{ paddingLeft: "30px" }}>
+                                                                    <td style={{paddingLeft: "30px"}}>
                                                                         <Field
                                                                             className="form-control"
                                                                             type="date"
@@ -524,7 +524,7 @@ export default function UserInformation() {
                                                                     {/*        Lịch sử dùng điểm*/}
                                                                     {/*    </label>*/}
                                                                     {/*</td>*/}
-                                                                    <td style={{ paddingLeft: "30px" }}>
+                                                                    <td style={{paddingLeft: "30px"}}>
                                                                         <button
                                                                             className="btn btnSearch my-2 my-sm-0"
 
@@ -536,13 +536,19 @@ export default function UserInformation() {
                                                                 </tr>
                                                                 <tr>
                                                                     <td colSpan={2}>
-                                                                        <ErrorMessage name="startDate" />
+                                                                        <ErrorMessage name="startDate"
+                                                                                      className="form-err"
+                                                                                      style={{color: "red"}}
+                                                                        />
                                                                     </td>
                                                                     <td
-                                                                        style={{ paddingLeft: "30px" }}
+                                                                        style={{paddingLeft: "30px"}}
                                                                         colSpan={2}
                                                                     >
-                                                                        <ErrorMessage name="endDate" />
+                                                                        <ErrorMessage name="endDate"
+                                                                                      className="form-err"
+                                                                                      style={{color: "red"}}
+                                                                        />
                                                                     </td>
                                                                 </tr>
                                                                 </tbody>
@@ -552,27 +558,28 @@ export default function UserInformation() {
                                                 )}
                                             </Formik>
                                         </div>
-                                        <hr className="border-light m-0" />
+                                        <hr className="border-light m-0"/>
                                         <div className="card-body pb-2">
                                             {historyBooking.length !== 0 && (
                                                 <table className="table table-bordered">
                                                     <thead>
                                                     <tr>
                                                         <th style={{width: "300px"}} scope="col">Tên Phim</th>
-                                                        <th scope="col">Ngày Tạo</th>
-                                                        <th scope="col">Tổng tiền</th>
+                                                        <th scope="col">Ngày Đặt Vé</th>
+                                                        <th scope="col">Tổng Tiền</th>
                                                         <th scope="col">Điểm</th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
                                                     {historyBooking.map((booking) => (
                                                         <tr key={booking.id}>
-                                                            <td style={{ fontWeight: "bold", width: "300px"}} scope="row">
+                                                            <td style={{fontWeight: "bold", width: "300px"}}
+                                                                scope="row">
                                                                 {booking.nameMovie}
                                                             </td>
                                                             <td>{formatDate(booking.dateBooking)}</td>
                                                             <td>{formatNumber(booking.price)}</td>
-                                                            <td>{formatNumber(booking.price / 50)}</td>
+                                                            <td>{formatNumber(booking.price / 300)}</td>
                                                         </tr>
                                                     ))}
                                                     </tbody>
@@ -583,7 +590,7 @@ export default function UserInformation() {
                                                     <h4>Không tìm thấy dữ liệu</h4>
                                                     <div
                                                         className="clearfix"
-                                                        style={{ marginTop: "50%", paddingLeft: "50%" }}
+                                                        style={{marginTop: "50%", paddingLeft: "50%"}}
                                                     >
                                                         <div className="hint-text"></div>
                                                         <div className="page">
@@ -613,7 +620,7 @@ export default function UserInformation() {
                                             {historyBooking.length !== 0 && (
                                                 <div
                                                     className="clearfix"
-                                                    style={{ paddingLeft: "60%" }}
+                                                    style={{paddingLeft: "60%"}}
                                                 >
                                                     <div className="hint-text"></div>
                                                     <div className="page">
@@ -649,9 +656,9 @@ export default function UserInformation() {
                     </div>
                 </div>
             }
-
-
-
+            <div style={{borderTop: "10vh solid white"}}>
+                <Footer/>
+            </div>
         </>
     );
 }
