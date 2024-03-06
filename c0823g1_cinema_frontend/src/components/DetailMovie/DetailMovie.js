@@ -148,7 +148,7 @@ export default function DetailMovie() {
                                 <hr />
                                 <h3>Lịch chiếu</h3>
                                 <div className="showtime_detail">
-                                    {schedule.reduce((result, time) => {
+                                    { schedule.reduce((result, time) => {
                                         const currentDate = time.date;
                                         const existingDateIndex = result.findIndex(item => item.date === currentDate);
 
