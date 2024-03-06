@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import '../Home/Home.css'
 import { searchName } from '../../service/MovieService';
 import { useLocation } from 'react-router-dom';
+import HeaderTemplateAdmin from './HeaderTemplateAdmin';
+import Footer from './Footer';
 
 const Search = () => {
     const location = useLocation();
@@ -15,7 +17,6 @@ const Search = () => {
 
     const handleSearch = (e) => {
         setSearch(e.target.value);
-        console.log(search);
     };
 
     const onHandleSearch = () => {
@@ -26,11 +27,9 @@ const Search = () => {
                 setTotalPages(res.totalPages);
                 setPageCurrent(res.pageable.pageNumber);
                 setMessageError("");
-                console.log("aaa");
-                console.log(res);
                 if(res.content.length === 0) {
                     console.log("a");
-                    setMessageError("Không tìm thấy kết quả");
+                    setMessageError("Không có kết quả tìm kiếm !");
                     setMovies([]);
                     setTotalPages(0);
                     setPageCurrent(0);
@@ -44,8 +43,6 @@ const Search = () => {
             .then(res => {
                 setMovies(res.content);
                 setPageCurrent(res.pageable.pageNumber);
-                console.log(res.pageable.pageNumber);
-
             });
     };
 
@@ -56,18 +53,17 @@ const Search = () => {
             .then(res => {
                 setMovies(res.content);
                 setPageCurrent(res.pageable.pageNumber);
-                console.log(res.pageable.pageNumber);
-
             });
     };
 
     return (
-        <div>
-            <section style={{ position: 'relative', marginTop: 80 }} className="newIn container py-5">
-                <h3 style={{ position: 'absolute', top: '-50px', transform: 'translateX(109%)', fontWeight: 'bold', fontSize: 35 }}>KẾT QUẢ TÌM KIẾM PHIM</h3>
+        <>
+            <HeaderTemplateAdmin/>
+            <section style={{ position: 'relative', marginTop: '16%' }} className="newIn container py-5">
+                <h3 style={{ position: 'absolute', top: '-70px', transform: 'translateX(109%)', fontWeight: 'bold', fontSize: 35 }}>KẾT QUẢ TÌM KIẾM PHIM</h3>
                 <div className="container__input">
                     <input onChange={handleSearch} name='name' placeholder=" Tìm kiếm phim ..." type="text" />
-                    <button onClick={onHandleSearch} className="btn__add-search">
+                    <button onClick={onHandleSearch} className="btn__edit-search">
                         Tìm
                         <i className="fas fa-search" />
                     </button>
@@ -102,7 +98,8 @@ const Search = () => {
                     <button className='btn_pageable' onClick={nextPage} disabled={pageCurrent === totalPages - 1}>Next</button>
                 </div>
             </section>
-        </div>
+            <Footer/>
+        </>
     );
 };
 

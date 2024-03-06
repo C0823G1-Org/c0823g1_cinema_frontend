@@ -1,0 +1,31 @@
+table {
+    margin-top: 1em;
+}
+
+#smart-button-container {
+    width: 100%;
+}
+
+#text {
+    color: red;
+    font-style: italic;
+}
+/* 
+img {
+    width: 80%;
+    height: 80%;
+    margin-top: 2em;
+} */
+
+.buttonAH {
+    width: 49%;
+
+}
+
+* {
+    font-family: roboto condensed, sans-serif
+}
+
+span {
+    padding-right: 2px;
+}
