@@ -1,9 +1,12 @@
 import "../Booking/BookingSeat.css"
-import {Link, useNavigate} from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
-import { getSchedule, getSeat} from "../../service/BookingService";
+import {getSchedule, getSeat} from "../../service/BookingService";
 import classNames from 'classnames';
 import Figure from 'react-bootstrap/Figure';
+import Header from "../Home/Header";
+import {Form} from "formik";
+import Footer from "../Home/Footer";
 
 export default function BookingSeat() {
     const [tickets, setTickets] = useState([])
@@ -12,14 +15,18 @@ export default function BookingSeat() {
     const [schedule, setSchedule] = useState(null)
     const [result, setResult] = useState({})
     const navigate = useNavigate();
+    const location = useLocation()
+    const data = location.state.myResult;
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const scheduleResult = await getSchedule();
+                const scheduleResult = await getSchedule(data.movieId, data.date, data.scheduleTimeId);
                 const seatResult = await getSeat(scheduleResult.id);
+                if (seatResult) {
+                    const seatNumbers = seatResult.map((ticket) => ticket.seatNumber);
+                    setTickets(seatNumbers);
+                }
 
-                const seatNumbers = seatResult.map((ticket) => ticket.seatNumber);
-                setTickets(seatNumbers);
                 setTotalSeat(scheduleResult.hall.totalSeat);
                 setSchedule(scheduleResult)
 
@@ -31,16 +38,17 @@ export default function BookingSeat() {
         fetchData();
 
     }, []);
-    // if (!loading) {
-    //     return <div>Loading...</div>;
-    // }
-    const handleSubmit =()=>{
+    console.log(data)
+    const handleSubmit = () => {
         setResult({
-            seatList: selected,
-            scheduleId:schedule.id
+            "seatList": selected,
+            "scheduleId": schedule.id,
+            "accountId":1
         })
-        navigate("/checkout",{state:{myResult:result}})
+
+        navigate("/booking/checkout", {state: {myResult: result}})
     }
+    console.log(result)
     const handleClick = (e, seatNumber) => {
         if ((e.target.classList.contains('seat')
                 || e.target.classList.contains('vip')
@@ -134,7 +142,7 @@ export default function BookingSeat() {
 
         return seats;
     };
-    if(!schedule) return "loading"
+    if (!schedule) return "loading"
     console.log(schedule)
     //Format dates
     const formatDate = (dateString) => {
@@ -156,98 +164,105 @@ export default function BookingSeat() {
         return number.toLocaleString('en-US');
     };
     return (
-        <>
-            <div className="row m-0">
-                <div className=" map1 col-8 p-0 mx-0">
-                    <ul className="showcase" style={{backgroundColor: 'white'}}>
-                        <li>
-                            <div className="seat"></div>
-                            <small style={{color: 'black'}}>Ghế trống</small>
-                        </li>
-                        <li>
-                            <div className="seat selected"></div>
-                            <small style={{color: 'black'}}>Ghế đang chọn</small>
-                        </li>
-                        <li>
-                            <div className=" occupied"></div>
-                            <small style={{color: 'black'}}>Ghế đã có người đặt</small>
-                        </li>
-                        <li>
-                            <div className=" couple"></div>
-                            <small style={{color: 'black'}}>Ghế đôi</small>
-                        </li>
-                    </ul>
-                    <div className="containerBS" id="container1">
-                        <div className=" screen" style={{fontSize: '200%', paddingTop: '10px'}}> MÀN HÌNH</div>
-                        {
-                            renderSeats()
-                        }
-                    </div>
-                </div>
-                <div className=" col-4 p-0 mx-0" style={{boxShadow: '10px 10px 20px black'}}>
-                    <div className="col-span-1 xl:pl-4 xl:order-none order-first">
-                        <div className="booking__summary md:mb-4">
-                            <div className="bg-white px-4 grid grid-cols-3 xl:gap-2 items-center"
-                                 style={{paddingRight: '0 !important'}}>
-                                <div
-                                    className="row-span-2 md:row-span-1 xl:row-span-2 block md:hidden xl:block d-flex justify-content-center"
-                                    style={{marginTop: '7%'}}>
-          {/*                          <img alt="Madame Web"*/}
-          {/*                               loading="lazy"*/}
-          {/*                               width="60%"*/}
-          {/*                               height="auto"*/}
 
-          {/*                               decoding="async"*/}
-          {/*                               data-nimg="1"*/}
-          {/*                               className="xl:w-full xl:h-full md:w-[80px] md:h-[120px] w-[90px] h-[110px] rounded object-cover object-cover duration-500 ease-in-out group-hover:opacity-100*/}
-          {/*scale-100 blur-0 grayscale-0)"*/}
-          {/*                               src={schedule.movie.poster}*/}
-          {/*                               style={{color: 'transparent'}}/>*/}
-                                    <Figure>
-                                        <Figure.Image
-                                            width={190}
-                                            height={300}
-                                            alt="171x180"
-                                            src={schedule.movie.poster}
-                                        />
-                                    </Figure>
-                                </div>
-                                <div className="flex-1 col-span-2 md:col-span-1 row-span-1 xl:col-span-2"><h3
-                                    className="text-sm xl:text-base font-bold xl:mb-0 d-flex justify-content-center mt-2 text-align-center">
-                                    {schedule.movie.name}</h3>
-                                    <p className="text-sm inline-block">2D Phụ Đề</p>
-                                    <hr className="my-0"/>
-                                </div>
-                                <div className="col-span-2 md:col-span-1 xl:col-span-3">
-                                    <div>
-                                        <div className="xl:mt-0  xl:text-base">
-                                            <strong>Suất: </strong>
-                                            <strong>{formatTime(schedule.scheduleTime.scheduleTime)}</strong><strong> - </strong><strong>{formatDate(schedule.date)}</strong>
-                                        </div>
+        <>
+            <Header/>
+            <div style={{marginTop: "20vh"}}>
+                <div  className="row m-0">
+                    <div className=" map1 col-8 p-0 mx-0">
+                        <ul className="showcase" style={{backgroundColor: 'white'}}>
+                            <li>
+                                <div className="seat"></div>
+                                <small style={{color: 'black'}}>Ghế trống</small>
+                            </li>
+                            <li>
+                                <div className="seat selected"></div>
+                                <small style={{color: 'black'}}>Ghế đang chọn</small>
+                            </li>
+                            <li>
+                                <div className=" occupied"></div>
+                                <small style={{color: 'black'}}>Ghế đã có người đặt</small>
+                            </li>
+                            <li>
+                                <div className=" couple"></div>
+                                <small style={{color: 'black'}}>Ghế đôi</small>
+                            </li>
+                        </ul>
+                        <div className="containerBS" id="container1">
+                            <div className=" screen" style={{fontSize: '200%', paddingTop: '10px'}}> MÀN HÌNH</div>
+                            {
+                                renderSeats()
+                            }
+                        </div>
+                    </div>
+                    <div className=" col-4 p-0 mx-0" style={{boxShadow: '10px 10px 20px black'}}>
+                        <div className="col-span-1 xl:pl-4 xl:order-none order-first">
+                            <div className="booking__summary md:mb-4">
+                                <div className="bg-white px-4 grid grid-cols-3 xl:gap-2 items-center"
+                                     style={{paddingRight: '0 !important'}}>
+                                    <div
+                                        className="row-span-2 md:row-span-1 xl:row-span-2 block md:hidden xl:block d-flex justify-content-center"
+                                        style={{marginTop: '7%'}}>
+                                        {/*                          <img alt="Madame Web"*/}
+                                        {/*                               loading="lazy"*/}
+                                        {/*                               width="60%"*/}
+                                        {/*                               height="auto"*/}
+
+                                        {/*                               decoding="async"*/}
+                                        {/*                               data-nimg="1"*/}
+                                        {/*                               className="xl:w-full xl:h-full md:w-[80px] md:h-[120px] w-[90px] h-[110px] rounded object-cover object-cover duration-500 ease-in-out group-hover:opacity-100*/}
+                                        {/*scale-100 blur-0 grayscale-0)"*/}
+                                        {/*                               src={schedule.movie.poster}*/}
+                                        {/*                               style={{color: 'transparent'}}/>*/}
+                                        <Figure>
+                                            <Figure.Image
+                                                width={190}
+                                                height={300}
+                                                alt="171x180"
+                                                src={schedule.movie.poster}
+                                            />
+                                        </Figure>
                                     </div>
-                                    <div className="my-2 border-t border-grey-60 border-dashed xl:block hidden"></div>
-                                </div>
-                                <div className="xl:flex hidden justify-between col-span-3"><strong
-                                    className="text-base"> Bạn đã chọn <span
-                                    className="inline-block font-bold text-primary " style={{frontSize: '200%'}}>&nbsp;{selected.length}</span> vé.
-                                    Tổng
-                                    cộng</strong><span
-                                    className="inline-block font-bold text-primary ">&nbsp;{formatNumberWithThousandSeparator(schedule.movie.ticketPrice * selected.length)}</span> VNĐ
-                                </div>
-                                <div
-                                    className="xl:flex mt-5 px-5 hidden d-flex justify-content-between align-items-center col-span-3">
-                                    <Link to="/booking">
-                                        <button style={{width: '100px'}} className="btn__back">Quay lại</button>
-                                    </Link>
-                                    <Link to="/booking/confirm">
-                                        <button style={{width: '100px'}} className="btn__booking" disabled={selected.length === 0} onClick={handleSubmit} >Đặt vé</button>
-                                    </Link>
+                                    <div className="flex-1 col-span-2 md:col-span-1 row-span-1 xl:col-span-2"><h3
+                                        className="text-sm xl:text-base font-bold xl:mb-0 d-flex justify-content-center mt-2 text-align-center">
+                                        {schedule.movie.name}</h3>
+                                        <p className="text-sm inline-block">2D Phụ Đề</p>
+                                        <hr className="my-0"/>
+                                    </div>
+                                    <div className="col-span-2 md:col-span-1 xl:col-span-3">
+                                        <div>
+                                            <div className="xl:mt-0  xl:text-base">
+                                                <strong>Suất: </strong>
+                                                <strong>{formatTime(schedule.scheduleTime.scheduleTime)}</strong><strong> - </strong><strong>{formatDate(schedule.date)}</strong>
+                                            </div>
+                                        </div>
+                                        <div
+                                            className="my-2 border-t border-grey-60 border-dashed xl:block hidden"></div>
+                                    </div>
+                                    <div className="xl:flex hidden justify-between col-span-3"><strong
+                                        className="text-base"> Bạn đã chọn <span
+                                        className="inline-block font-bold text-primary "
+                                        style={{frontSize: '200%'}}>&nbsp;{selected.length}</span> vé.
+                                        Tổng
+                                        cộng</strong><span
+                                        className="inline-block font-bold text-primary ">&nbsp;{formatNumberWithThousandSeparator(schedule.movie.ticketPrice * selected.length)}</span> VNĐ
+                                    </div>
+                                    <div
+                                        className="xl:flex mt-5 px-5 hidden d-flex justify-content-between align-items-center col-span-3">
+                                        <Link to="/booking">
+                                            <button style={{width: '100px'}} className="btn__back">Quay lại</button>
+                                        </Link>
+                                            <button style={{width: '100px'}} className="btn__booking"
+                                                    disabled={selected.length === 0} onClick={handleSubmit}>Đặt vé
+                                            </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <Footer/>
         </>
     )
 }
