@@ -1,39 +1,61 @@
 import axios from "axios";
 
 
-const listBooking = async () => {
-    return axios.get("http://localhost:8080/booking/list");
+const listBooking = async (page) => {
+
+     const result = axios.get(`http://localhost:8080/booking/list?page=${page}`);
+     return(await  result).data
 }
-const searchWithoutParam = async () => {
-    const result = axios.get("http://localhost:8080/booking/search");
+const exportFile = async (id) => {
+    const rs = axios.get(`http://localhost:8080/booking/exportPDF`,{params:{
+            idBooking: id
+        }});
+    return(await  rs).data
+
+}
+const searchWithoutParam = async (page) => {
+    const result = axios.get(`http://localhost:8080/booking/search?page=${page}`);
 return (await result).data;
 }
 
-const searchWithParamInput = async (searchInput) => {
+const searchWithParamInput = async (searchInput,page) => {
 
     const result = axios.get("http://localhost:8080/booking/search",{params:{
-            searchInput: `${searchInput}`
+            searchInput: `${searchInput}`,
+            page: `${page}`
         }});
 
     return (await result).data;
 }
 
-const searchWithParamDate = async (searchDate) => {
+const searchWithParamDate = async (searchDate,page) => {
         const result = await axios.get("http://localhost:8080/booking/search", {
             params: {
-                date: `${searchDate}`
+                date: `${searchDate}`,
+                page: `${page}`
             }
         });
         return (await result).data;
 }
-const searchWithParamDateAndValue = async (search, searchDate) => {
+const searchWithParamDateAndValue = async (search, searchDate, page) => {
     const result = await axios.get("http://localhost:8080/booking/search", {
         params: {
             date: `${searchDate}`,
-            searchInput: `${search}`
+            searchInput: `${search}`,
+            page: `${page}`
         }
     });
     return (await result).data;
+}
+
+const findBookingDetail = async (idBooking) => {
+    const rs = await axios.get("http://localhost:8080/booking/exportDetail", {
+        params: {
+            idBooking: `${idBooking}`
+        }
+    })
+    return (await rs).data;
+
 }
 
 export const EmployeeService = {
@@ -41,5 +63,7 @@ export const EmployeeService = {
     searchWithoutParam,
     searchWithParamInput,
     searchWithParamDate,
-    searchWithParamDateAndValue
+    searchWithParamDateAndValue,
+    findBookingDetail,
+    exportFile
 }

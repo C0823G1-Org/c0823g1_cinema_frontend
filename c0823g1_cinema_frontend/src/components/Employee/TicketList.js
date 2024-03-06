@@ -3,10 +3,18 @@ import '../../../src/css/HungVXK_EmployeeManager.css'
 import '../../index.css'
 import {useEffect, useState} from "react";
 import {EmployeeService} from "../../service/EmployeeService";
+import ReactPaginate from "react-paginate";
+import {useNavigate} from "react-router-dom";
+import SweetAlert from "sweetalert";
 export default function TicketList() {
+    const navigate = useNavigate();
     const[listBooking,setListBooking] = useState([]);
     const[search,setSearch] = useState("");
     const[searchDate,setSearchDate] = useState("");
+    const [totalPages, setTotalPages] = useState(0);
+    const [searchPage, setSearchPage] = useState(false)
+    const [currentPage, setCurrentPage] = useState(0);
+
 
     const handleChangeValue =  (e) => {
         setSearch(e.target.value);
@@ -15,43 +23,90 @@ export default function TicketList() {
         setSearchDate(e.target.value);
     }
 
+    const handleDetailExport = async (bookingId) => {
+        let result = await EmployeeService.findBookingDetail(bookingId);
+
+
+        if (result.flag === "FOUND"){
+            navigate("/employee/exportDetail",{state:{listBooking:result.data,idBooking:bookingId}})
+        } else if (result.flag === "BAD_REQUEST"){
+            await SweetAlert("Vé không tồn tại hoặc đã được in rồi!","", "error")
+            setListBooking(result.data.content);
+            setTotalPages(result.data.totalPages);
+        }
+    }
+
     const handleSearch = async () => {
             let result;
             if (search && searchDate) {
-                result = await EmployeeService.searchWithParamDateAndValue(search, searchDate);
+                result = await EmployeeService.searchWithParamDateAndValue(search, searchDate,0);
             } else if (search && !searchDate) {
-                result = await EmployeeService.searchWithParamInput(search);
+                result = await EmployeeService.searchWithParamInput(search,0);
             } else if (!search && searchDate) {
-                result = await EmployeeService.searchWithParamDate(searchDate);
+                result = await EmployeeService.searchWithParamDate(searchDate,0);
             } else {
-                result = await EmployeeService.searchWithoutParam();
+                result = await EmployeeService.searchWithoutParam(0);
             }
 
             if (result.flag === "FOUND") {
                 console.log(result.flag)
                 setListBooking(result.data.content);
+                setTotalPages(result.data.totalPages);
+                setSearchPage(true);
             } else {
                 console.log(result.flag)
-                alert("Không tìm thấy");
+                await SweetAlert("Thông tin khách hàng không tồn tại!", "", "error")
                 setListBooking(result.data.content);
+                setTotalPages(result.data.totalPages);
+            }
+            setCurrentPage(0)
+        console.log(currentPage)
+
+    }
+
+    const handlePageClick = async (event) => {
+        let result;
+        try {
+            const pageNumber = event.selected;
+            setCurrentPage(pageNumber);
+            if (searchPage){
+                if (search && searchDate) {
+                    result = await EmployeeService.searchWithParamDateAndValue(search, searchDate,pageNumber);
+                } else if (search && !searchDate) {
+                    result = await EmployeeService.searchWithParamInput(search,pageNumber);
+                } else if (!search && searchDate) {
+                    result = await EmployeeService.searchWithParamDate(searchDate,pageNumber);
+                } else {
+                    result = await EmployeeService.searchWithoutParam(pageNumber);
+                }
+                setListBooking(result.data.content);
+                setTotalPages(result.data.totalPages);
+
+            } else {
+                const listData = await EmployeeService.listBooking(pageNumber);
+                setListBooking(listData.data.content);
+                setTotalPages(listData.data.totalPages);
             }
 
-    }
-    const  fetchData = async () => {
-        try {
-            const listData = await EmployeeService.listBooking();
-            setListBooking(listData.data.content);
-        } catch (e){
-            console.log(e)
+        } catch (error) {
+            console.log(error);
         }
-    }
+    };
+
 
     useEffect(() => {
-            fetchData()
-
+        const  fetchData = async (page) => {
+            try {
+                const listData = await EmployeeService.listBooking(page);
+                setListBooking(listData.data.content);
+                setTotalPages(listData.data.totalPages);
+            } catch (e){
+                console.log(e)
+            }
+        }
+            fetchData(currentPage)
+        console.log("Current Page:", currentPage);
     }, []);
-
-
 
     return (
         <>
@@ -110,7 +165,7 @@ export default function TicketList() {
 
                                 <td>
 
-                                    <a href="../template/DoLV_ExportPDF.html" className="delete"><span
+                                    <a onClick={() => handleDetailExport(`${item.bookingCode}`)}  className="delete btn"><span
                                         className="material-icons">
                           exit_to_app
                           </span></a>
@@ -125,16 +180,30 @@ export default function TicketList() {
                     </table>
                     <div className="clearfix">
                         <div className="hint-text"></div>
-                        <ul className="pagination">
-                            <li className="page-item disabled"><a href="#">Trang sau</a></li>
-                            <li className="page-item active"><a href="#" className="page-link">1</a></li>
-                            <li className="page-item"><a href="#" className="page-link">2</a></li>
-                            <li className="page-item"><a href="#" className="page-link">3</a></li>
-                            <li className="page-item"><a href="#" className="page-link">4</a></li>
-                            <li className="page-item"><a href="#" className="page-link">5</a></li>
-                            <li className="page-item"><a href="#" className="page-link">Trang trước</a></li>
-                        </ul>
+                        <div className="page">
+                            <ReactPaginate
+                                breakLabel="..."
+                                nextLabel="Trang Sau"
+                                onPageChange={handlePageClick}
+                                pageRangeDisplayed={2}
+                                marginPagesDisplayed={2}
+                                pageCount={totalPages}
+                                previousLabel="Trang Trước"
+                                pageClassName="page-item"
+                                pageLinkClassName="page-link"
+                                previousClassName="page-item"
+                                previousLinkClassName="page-link"
+                                nextClassName="page-item"
+                                nextLinkClassName="page-link"
+                                breakClassName="page-item"
+                                breakLinkClassName="page-link"
+                                containerClassName="pagination"
+                                activeClassName="active"
+                                initialPage={currentPage}
+                            />
+                        </div>
                     </div>
+
                 </div>
             </div>
 
