@@ -1,10 +1,12 @@
 import {useEffect, useState} from "react";
 import ".//css/movie.css"
-import {getAllCountries, getAllMovieAttributes, getScheduleByHallId} from "../../../service/MovieService";
-import {Field, Form, Formik} from "formik";
+import {createMovie, getAllCountries, getAllMovieAttributes, getScheduleByHallId} from "../../../service/MovieService";
+import {ErrorMessage, Field, Form, Formik} from "formik";
 import {Link} from "react-router-dom";
 import * as Yup from 'yup';
-import {forEach} from "react-bootstrap/ElementChildren";
+import {storage} from "../../config/config";
+import {ref, uploadBytes, getDownloadURL} from "firebase/storage";
+import {v4} from "uuid";
 
 
 export default function MovieCreate() {
@@ -17,10 +19,11 @@ export default function MovieCreate() {
     const [isTableUpdating, setIsTableUpdating] = useState(false)
     const [hallId, setHallId] = useState(-1)
     const [newSchedule, setNewSchedule] = useState([])
+    const [imageUpload, setImageUpload] = useState(null)
+    const [imageDownloaded, setImageDownloaded] = useState("")
 
 
     const initialValue = {
-        poster: "",
         name: "",
         actor: "",
         publisher: "",
@@ -28,7 +31,7 @@ export default function MovieCreate() {
         country: "",
         startDate: "",
         duration: "",
-        version: [],
+        version: "",
         trailer: "",
         genre: "",
         description: "",
@@ -36,25 +39,27 @@ export default function MovieCreate() {
     }
 
     const validationObject = {
-        poster: Yup.mixed().required("Cần up ảnh poster"),
-        name: Yup.string().required("Tên không được để trống").min(2, "Tên phimm ít nhất 2 ký tự").max(100, "Tên phim tối đa 100 ký tự"),
-        actor: null,
-        publisher: null,
-        director: null,
+        name: Yup.string().required("Tên không được để trống").min(2, "Tên phim ít nhất 2 ký tự").max(255, "Tên phim tối đa 255 ký tự"),
+        actor: Yup.string().required("Tên diễn viên không được để trống").min(2, "Tên diễn viên ít nhất 2 ký tự").max(255, "Tên phim tối đa 255 ký tự"),
+        publisher: Yup.string().required("Tên nhà sản xuất không được để trống").min(2, "Tên nhà sản xuất ít nhất 2 ký tự").max(255, "Tên nhà sản xuất tối đa 255 ký tự"),
+        director: Yup.string().required("Tên đạo diễn không được để trống").min(2, "Tên đạo diễn ít nhất 2 ký tự").max(255, "Tên đạo diễn tối đa 255 ký tự"),
         country: null,
-        startDate: null,
-        duration: null,
-        version: null,
-        trailer: null,
-        genre: null,
-        description: null,
-        ticketPrice: null,
+        startDate: Yup.date().required("Ngày khởi chiếu không được để trống"),
+        duration: Yup.number().required("Thời lượng phim không được để trống"),
+        version: Yup.array().required("Vui lòng chọn ít nhất một phiên bản"),
+        trailer: Yup.string().required("Trailer không được để trống"),
+        genre: Yup.array().required("Vui lòng chọn ít nhất một thể loại"),
+        description: Yup.string().max(65535,"Nội dung tối đa 65535 ký tự"),
+        ticketPrice: Yup.number().required("Giá vé không được để trống").min(1,"Giá vé phải lớn hơn 0").max(10000000,"Giá vé không quá 10 triệu VND"),
     }
 
     useEffect(() => {
         updateScheduleTable();
         setIsTableUpdating(false)
+        console.log("Suất chiếu lưu")
+        console.log(newSchedule)
     }, [schedulesList])
+
     useEffect(() => {
         async function fetchApi() {
             try {
@@ -86,53 +91,54 @@ export default function MovieCreate() {
             return
         }
         let checkbox = cell.children[0]
-        console.log(checkbox)
         checkbox.checked = !checkbox.checked
         if (checkbox.checked) {
             cell.style.backgroundColor = "lightblue"
-            updateNewSchedule(true, checkbox.value)
         } else {
             cell.style.backgroundColor = "white"
-            updateNewSchedule(false, checkbox.value)
         }
-
+        updateNewSchedule(checkbox.value)
     }
 
-    function updateNewSchedule(add, scheduleValue) {
+    function updateNewSchedule(scheduleValue) {
         if (hallId < 0) {
             return
         }
         let valueArray = scheduleValue.split(",")
-        console.log(add)
+        let idTempValue = scheduleValue + "," + hallId
         let newScheduleDTO = {
+            "idTemp": idTempValue,
             "date": valueArray[0],
             "scheduleTime": valueArray[1],
             "hall": hallId
         }
-        if (add) {
+        if (newSchedule.length === 0) {
+            setNewSchedule((prevState) => [newScheduleDTO, ...prevState])
+            return
+        }
+
+        const found = newSchedule.findIndex((element) => element.idTemp === idTempValue)
+        console.log("length: " + newSchedule.length)
+        if (found < 0) {
             setNewSchedule((prevState) => [newScheduleDTO, ...prevState])
         } else {
-
+            console.log("index to remove: " + found)
+            newSchedule.splice(found, 1)
         }
-        console.log(newSchedule)
     }
 
     async function hallOnChangeHandler(event) {
         try {
             setIsTableUpdating(true)
             let id = event.target.value
-            console.log(id)
             setHallId(id)
             if (id < 0) {
                 resetScheduleTable()
                 setIsTableUpdating(false)
-                console.log("Finish update no hall")
                 return
             }
             const scheduleData = await getScheduleByHallId(id)
             setSchedulesList(scheduleData)
-
-            console.log("Finish update")
         } catch (e) {
             console.log(e)
         }
@@ -165,15 +171,25 @@ export default function MovieCreate() {
         let id
         let label
         let cell
-        console.log(schedulesList)
         schedulesList.forEach((scheduleList) => {
             id = scheduleList.date + "," + scheduleList.scheduleTime.scheduleTime
-            console.log("Movie: " + scheduleList.movie.name)
             label = document.getElementById(id + " title")
             label.innerText = scheduleList.movie.name
             label.style.color = "white"
             cell = label.parentElement
             cell.style.backgroundColor = "grey";
+        })
+    }
+
+    function uploadImage() {
+        if (imageUpload === null) return
+        console.log(imageUpload.name)
+        const imageRefLocal = ref(storage, `poster/${imageUpload.name + v4()}`)
+        uploadBytes(imageRefLocal, imageUpload).then(() => {
+            getDownloadURL(imageRefLocal).then((url) => {
+                setImageDownloaded(url)
+                // document.getElementById("inputPoster").value = url
+            })
         })
     }
 
@@ -183,8 +199,15 @@ export default function MovieCreate() {
                 isLoading ? <h2>Loading...</h2> :
                     <>
                         <Formik initialValues={initialValue}
-                                onSubmit={(data) => {
-                                    console.log(data)
+                                validationSchema={Yup.object(validationObject)}
+                                onSubmit={async (data) => {
+                                    data.poster = imageDownloaded
+                                    let jsonObject = {}
+                                    jsonObject.movieDTO = data
+                                    jsonObject.scheduleDTO = newSchedule
+                                    console.log(jsonObject)
+                                    let result = await createMovie(jsonObject)
+                                    console.log(result)
                                 }}>
                             <div className="container-fluid mb-5">
                                 <h2 style={{textAlign: "center"}} className="mt-3">Thêm mới phim</h2>
@@ -213,29 +236,43 @@ export default function MovieCreate() {
                                                         <div className="col-3 d-flex align-items-center">
                                                             <b>Poster phim</b><span className="red-dot">&nbsp;*</span>
                                                         </div>
-                                                        <div className="col">
-                                                            <div className="custom-file">
-                                                                <Field
+                                                        <div className="col row" style={{marginLeft: "initial"}}>
+                                                            <div className="custom-file col">
+                                                                <input
+                                                                    onChange={(event) => {
+                                                                        setImageUpload(event.target.files[0])
+                                                                    }}
                                                                     type="file"
                                                                     className="custom-file-input"
-                                                                    id="inputGroupFile01"
+                                                                    id="inputPoster"
                                                                     name="poster"
                                                                 />
-                                                                <label className="custom-file-label"
-                                                                       htmlFor="inputGroupFile01"
-                                                                >Chọn ảnh</label
-                                                                >
+                                                                <label
+                                                                    className="custom-file-label"
+                                                                    htmlFor="inputPoster">Chọn ảnh</label>
+                                                            </div>
+                                                            <div className="col-md-auto">
+                                                                <button type="button" onClick={uploadImage}
+                                                                        className="btn btn-outline-secondary ">Up ảnh
+                                                                </button>
                                                             </div>
                                                         </div>
                                                     </div>
-
+                                                    {imageDownloaded === null ? null :
+                                                        <div className="row mt-3 d-flex justify-content-center">
+                                                            <img style={{maxWidth: "400px"}} src={imageDownloaded}
+                                                                 alt=""/>
+                                                        </div>}
                                                     <div className="row mt-3">
                                                         <div className="col-3 d-flex align-items-center">
                                                             <b>Tên phim</b><span className="red-dot">&nbsp;*</span>
                                                         </div>
                                                         <div className="col">
                                                             <Field type="text" className="form-control" name="name"/>
+                                                            <ErrorMessage name="name" component='p' className="form-err"
+                                                                          style={{color: 'red'}}/>
                                                         </div>
+
                                                     </div>
                                                     <div className="row mt-3">
                                                         <div className="col-3 d-flex align-items-center">
@@ -243,6 +280,8 @@ export default function MovieCreate() {
                                                         </div>
                                                         <div className="col">
                                                             <Field type="text" className="form-control" name="actor"/>
+                                                            <ErrorMessage name="actor" component='p' className="form-err"
+                                                                          style={{color: 'red'}}/>
                                                         </div>
                                                     </div>
 
@@ -253,6 +292,8 @@ export default function MovieCreate() {
                                                         <div className="col">
                                                             <Field type="text" className="form-control"
                                                                    name="publisher"/>
+                                                            <ErrorMessage name="publisher" component='p' className="form-err"
+                                                                          style={{color: 'red'}}/>
                                                         </div>
                                                     </div>
 
@@ -263,6 +304,8 @@ export default function MovieCreate() {
                                                         <div className="col">
                                                             <Field type="text" className="form-control"
                                                                    name="director"/>
+                                                            <ErrorMessage name="director" component='p' className="form-err"
+                                                                          style={{color: 'red'}}/>
                                                         </div>
                                                     </div>
 
@@ -288,6 +331,8 @@ export default function MovieCreate() {
                                                         <div className="col">
                                                             <Field type="date" className="form-control"
                                                                    name="startDate"/>
+                                                            <ErrorMessage name="startDate" component='p' className="form-err"
+                                                                          style={{color: 'red'}}/>
                                                         </div>
                                                     </div>
 
@@ -299,6 +344,8 @@ export default function MovieCreate() {
                                                         <div className="col">
                                                             <Field type="number" className="form-control"
                                                                    name="duration"/>
+                                                            <ErrorMessage name="duration" component='p' className="form-err"
+                                                                          style={{color: 'red'}}/>
                                                         </div>
                                                     </div>
                                                     <div className="row mt-3">
@@ -317,6 +364,8 @@ export default function MovieCreate() {
                                                                            htmlFor={"version" + version.id}>{version.name}</label>
                                                                 </div>
                                                             ))}
+                                                            <ErrorMessage name="version" component='p' className="form-err"
+                                                                          style={{color: 'red'}}/>
                                                         </div>
                                                     </div>
 
@@ -326,6 +375,8 @@ export default function MovieCreate() {
                                                         </div>
                                                         <div className="col">
                                                             <Field type="text" className="form-control" name="trailer"/>
+                                                            <ErrorMessage name="trailer" component='p' className="form-err"
+                                                                          style={{color: 'red'}}/>
                                                         </div>
                                                     </div>
 
@@ -347,6 +398,8 @@ export default function MovieCreate() {
                                                                            htmlFor={"genre" + genre.id}>{genre.name}</label>
                                                                 </div>
                                                             ))}
+                                                            <ErrorMessage name="genre" component='p' className="form-err"
+                                                                          style={{color: 'red'}}/>
                                                         </div>
                                                     </div>
                                                     <div className="row mt-3">
@@ -356,6 +409,8 @@ export default function MovieCreate() {
                                                         <div className="col">
                                                             <Field name="description" type="text"
                                                                    className="form-control"/>
+                                                            <ErrorMessage name="description" component='p' className="form-err"
+                                                                          style={{color: 'red'}}/>
                                                         </div>
                                                     </div>
                                                     <div className="row mt-3">
@@ -365,6 +420,8 @@ export default function MovieCreate() {
                                                         <div className="col">
                                                             <Field type="number" className="form-control"
                                                                    name="ticketPrice"/>
+                                                            <ErrorMessage name="ticketPrice" component='p' className="form-err"
+                                                                          style={{color: 'red'}}/>
                                                         </div>
                                                     </div>
                                                 </div>

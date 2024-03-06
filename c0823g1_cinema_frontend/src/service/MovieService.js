@@ -51,10 +51,16 @@ export async function getAllCountries() {
 
 export async function getScheduleByHallId(id) {
     try {
-        console.log("http://localhost:8080/schedule/hall/" + id)
         const result = await axios.get("http://localhost:8080/schedule/hall/" + id)
-        console.log(result.data)
         return result.data
+    } catch (e) {
+        console.log(e)
+    }
+}
+
+export async function createMovie(data) {
+    try {
+        return await axios.post("http://localhost:8080/movie/create", data)
     } catch (e) {
         console.log(e)
     }
