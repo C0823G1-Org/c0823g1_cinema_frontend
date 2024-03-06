@@ -10,45 +10,46 @@ export default function HeaderTemplateAdmin() {
     const navigate = useNavigate();
     const [roleUser, setRoleUser] = useState("");
     const [userName, setUserName] = useState("");
-    const [isLogin, setIsLogin] = useState()
-    console.log(isLogin);
+    const [isLogin, setIsLogin] = useState(false)
+    const [img,setImg] = useState("");
 
 
     useEffect(() => {
         const token = sessionStorage.getItem('accessToken')
         const role = sessionStorage.getItem('roleUser');
         const user = sessionStorage.getItem('user');
-        setIsLogin(token)
+        const userPhoto = sessionStorage.getItem('userPhoto')
+        if (user !== null) {
+            setIsLogin(true);
+        }
         setRoleUser(role);
         setUserName(user);
+        setImg(userPhoto);
+
+        console.log(img)
     }, []);
 
 
     const logout = async () => {
-        // const accessTokenFB = sessionStorage.getItem("accessTokenFB")
-        // if (accessTokenFB !== undefined) {
-        //     try {
-        //         const req = await LoginLogoutService.logout(accessTokenFB);
-        //     } catch (err) {
-        //         console.log(err)
-        //     }
-        // }
-        // sessionStorage.clear();
-        // setUserName("");
-        // setRoleUser("");
-        // await SweetAlert(
-        //     "Đăng xuất thành công",
-        //     `Cám ơn bạn đã có những trải nghiệm với hệ thống của chúng tôi!`,
-        //     "success"
-        // );
-        // console.log(sessionStorage.getItem("user"))
-        // navigate('/home')
-        sessionStorage.removeItem('accessToken');
-        sessionStorage.removeItem('roleUser');
-        sessionStorage.removeItem('user');
-        sessionStorage.removeItem('userId');
-        sessionStorage.removeItem('userPhoto');
-        alert("logout")
+        const accessTokenFB = sessionStorage.getItem("accessTokenFB")
+        if (accessTokenFB !== undefined) {
+            try {
+                const req = await LoginLogoutService.logout(accessTokenFB);
+            } catch (err) {
+                console.log(err)
+            }
+        }
+        sessionStorage.clear();
+        setUserName("");
+        setRoleUser("");
+        setIsLogin(false);
+        setImg("");
+        await SweetAlert(
+            "Đăng xuất thành công",
+            `Cám ơn bạn đã có những trải nghiệm với hệ thống của chúng tôi!`,
+            "success"
+        );
+        console.log(sessionStorage.getItem("user"))
         navigate('/home')
     }
 
@@ -87,10 +88,9 @@ export default function HeaderTemplateAdmin() {
                                         </li>
                                     </ul>
                                     <ul className="navbar-nav text-center ml-auto checkunder">
-                                        <p className="name--user">Hello,Admin {userName}</p>
-                                        <li className="nav-item design__logout">
-                                            <button className="logout-name" onClick={logout}>Logout</button>
-                                        </li>
+                                        <p style={{color: "white", marginRight: "1rem", marginTop:"0.6rem"}} className="name--user">{userName}</p>
+                                        <img src={`${img}`} alt="Profile" style={{borderRadius: "50%", height: "3rem", marginRight: "1rem"}}/>
+                                        <i onClick={logout} className="fas fa-sign-out-alt" style={{fontSize: "2rem", marginTop:"0.5rem" , color: "#EE5A24"}}></i>
                                     </ul>
                                 </div>
                             )}
@@ -111,10 +111,9 @@ export default function HeaderTemplateAdmin() {
                                         </li>
                                     </ul>
                                     <ul className="navbar-nav text-center ml-auto checkunder">
-                                        <p className="name--user">Hello, {userName}</p>
-                                        <li className="nav-item design__logout">
-                                            <a href="" className="logout-name" onClick={logout}>Logout</a>
-                                        </li>
+                                        <p style={{color: "white", marginRight: "1rem", marginTop:"0.6rem"}} className="name--user">{userName}</p>
+                                        <img src={`${img}`} alt="Profile" style={{borderRadius: "50%", height: "3rem", marginRight: "1rem"}}/>
+                                        <i onClick={logout} className="fas fa-sign-out-alt" style={{fontSize: "2rem", marginTop:"0.5rem" , color: "#EE5A24"}}></i>
                                     </ul>
                                 </div>
                             )}
@@ -132,10 +131,9 @@ export default function HeaderTemplateAdmin() {
                                         </li>
                                     </ul>
                                     <ul className="navbar-nav text-center ml-auto checkunder">
-                                        <p className="name--user">Hello, {userName}</p>
-                                        <li className="nav-item design__logout">
-                                            <button className="logout-name" onClick={logout}>Logout</button>
-                                        </li>
+                                        <p style={{color: "white", marginRight: "1rem", marginTop:"0.6rem"}} className="name--user">{userName}</p>
+                                        <img src={`${img}`} alt="Profile" style={{borderRadius: "50%", height: "3rem", marginRight: "1rem"}}/>
+                                        <i onClick={logout} className="fas fa-sign-out-alt" style={{fontSize: "2rem", marginTop:"0.5rem" , color: "#EE5A24"}}></i>
                                     </ul>
                                 </div>
                             )}
