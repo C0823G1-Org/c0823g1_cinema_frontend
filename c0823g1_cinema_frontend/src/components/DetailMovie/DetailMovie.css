@@ -53,8 +53,8 @@
 .picture_detail {
     position: absolute;
     z-index: 10;
-    top: 51%;
-    left: 12%;
+    top: 48%;
+    left: 13%;
     -webkit-transform: translateX(-50%) translateY(-50%);
     transform: translateX(-50%) translateY(-50%);
     box-sizing: content-box;
