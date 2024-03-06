@@ -15,6 +15,8 @@ import {ColorRing} from "react-loader-spinner";
 import {register} from "../../service/AccountService";
 import * as Yup from 'yup';
 import {ErrorMessage, Field, Form, Formik} from "formik";
+import HeaderTemplateAdmin from "../Home/HeaderTemplateAdmin";
+import Footer from "../Home/Footer";
 
 export default function Login() {
 
@@ -296,11 +298,12 @@ export default function Login() {
 
     return (
         <>
+            <HeaderTemplateAdmin/>
             <div className="body">
 
                 <div
                     className={`containerLogin ${status ? "" : "right-panel-active"}`}
-                    id="container"
+                    id="container"  style={{marginTop: "10rem", marginBottom: "2rem"}}
                 >
                     <Formik initialValues={initValues} validationSchema={Yup.object(validateObject)}
                             onSubmit={(values, {setErrors}) => registerAccount(values, {setErrors})}>
@@ -639,7 +642,7 @@ export default function Login() {
                     </Modal.Footer>
                 </Modal>
             </div>
-
+            <Footer />
         </>
     );
 }
