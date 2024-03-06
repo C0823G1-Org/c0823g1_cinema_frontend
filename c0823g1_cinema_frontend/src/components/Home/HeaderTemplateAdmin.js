@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from 'react'
 import '../Home/Header.css'
 import Header from "./Header";
@@ -75,7 +75,7 @@ export default function HeaderTemplateAdmin() {
                                 <div className="collapse navbar-collapse" id="hideNavbar">
                                     <ul className="navbar-nav text-center ml-auto">
                                         <li className="nav-item">
-                                            <a className="nav-link" href="#">Trang Chủ</a>
+                                            <Link className="nav-link" to={'/home'}>Trang Chủ</Link>
                                         </li>
                                         <li className="nav-item">
                                             <a className="nav-link" href="#">Hổ Trợ</a>
@@ -98,7 +98,7 @@ export default function HeaderTemplateAdmin() {
                                 <div className="collapse navbar-collapse" id="hideNavbar">
                                     <ul className="navbar-nav text-center ml-auto">
                                         <li className="nav-item">
-                                            <a className="nav-link" href="#">Trang Chủ</a>
+                                        <Link className="nav-link" to={'/home'}>Trang Chủ</Link>
                                         </li>
                                         <li className="nav-item">
                                             <a className="nav-link" href="#">Hổ Trợ</a>
@@ -121,7 +121,7 @@ export default function HeaderTemplateAdmin() {
                                 <div className="collapse navbar-collapse" id="hideNavbar">
                                     <ul className="navbar-nav text-center ml-auto">
                                         <li className="nav-item">
-                                            <a className="nav-link" href="#">Trang Chủ</a>
+                                        <Link className="nav-link" to={'/home'}>Trang Chủ</Link>
                                         </li>
                                         <li className="nav-item">
                                             <a className="nav-link" href="#">Hổ Trợ</a>

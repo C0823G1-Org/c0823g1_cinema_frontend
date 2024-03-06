@@ -1,13 +1,10 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import React from 'react'
 import '../Home/Header.css'
 
 export default function Header() {
     const navigate = useNavigate();
 
-    const handleLogin = () => {
-        navigate('/login')
-    }
     return (
         <div>
             <div className="hide-menubar" id="hide-navbar">
@@ -23,7 +20,7 @@ export default function Header() {
                         <div className="collapse navbar-collapse" id="hideNavbar">
                             <ul className="navbar-nav text-center ml-auto">
                                 <li className="nav-item">
-                                    <a className="nav-link" href="">Trang Chủ</a>
+                                    <Link to={'/home'} className="nav-link" >Trang Chủ</Link>
                                 </li>
                                 <li className="nav-item">
                                     <a className="nav-link" href="">Hổ Trợ</a>
@@ -34,7 +31,7 @@ export default function Header() {
                             </ul>
                             <ul className="navbar-nav text-center ml-auto">
                                 <li className="nav-item">
-                                    <a onClick={handleLogin} className="btn__edit-login" href="">Đăng Nhập</a>
+                                    <Link to={'/login'} className="btn__edit-login" href="">Đăng Nhập</Link>
                                 </li>
                             </ul>
                         </div>

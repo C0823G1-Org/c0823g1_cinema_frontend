@@ -17,7 +17,6 @@ const Search = () => {
 
     const handleSearch = (e) => {
         setSearch(e.target.value);
-        console.log(search);
     };
 
     const onHandleSearch = () => {
@@ -28,11 +27,9 @@ const Search = () => {
                 setTotalPages(res.totalPages);
                 setPageCurrent(res.pageable.pageNumber);
                 setMessageError("");
-                console.log("aaa");
-                console.log(res);
                 if(res.content.length === 0) {
                     console.log("a");
-                    setMessageError("Không tìm thấy kết quả");
+                    setMessageError("Không có kết quả tìm kiếm !");
                     setMovies([]);
                     setTotalPages(0);
                     setPageCurrent(0);
@@ -46,8 +43,6 @@ const Search = () => {
             .then(res => {
                 setMovies(res.content);
                 setPageCurrent(res.pageable.pageNumber);
-                console.log(res.pageable.pageNumber);
-
             });
     };
 
@@ -58,8 +53,6 @@ const Search = () => {
             .then(res => {
                 setMovies(res.content);
                 setPageCurrent(res.pageable.pageNumber);
-                console.log(res.pageable.pageNumber);
-
             });
     };
 
