@@ -18,3 +18,51 @@ export async function getListHistoryBooking(id, startDate, endDate, page) {
         console.log(err)
     }
 }
+export const getSeat = async (scheduleId) =>{
+    try {
+        const response = await axios.get(`http://localhost:8080/api-ticket/ticket?scheduleId=${scheduleId}`);
+        return response.data;
+    } catch (e) {
+        console.log(e)
+    }
+}
+export const getMovie = async (movieId) =>{
+    try {
+        const response = await axios.get(`http://localhost:8080/movie/find/${movieId}`);
+        return response.data;
+    } catch (e) {
+        console.log(e)
+    }
+}
+export const getSchedule = async (movieId,date,scheduleTimeId) =>{
+    try {
+        const response = await axios.get(`http://localhost:8080/schedule/schedule?movieId=${movieId}&date=${encodeURIComponent(date)}&scheduleTimeId=${scheduleTimeId}`);
+        return response.data;
+    } catch (e) {
+        console.log(e)
+    }
+}
+export const getDate = async (movieId) =>{
+    try {
+        const response = await axios.get(`http://localhost:8080/schedule/date?movieId=${movieId}`);
+        return response.data;
+    } catch (e) {
+        console.log(e)
+    }
+}
+export const getScheduleTime = async (movieId,date) =>{
+    try {
+        const response = await axios.get(`http://localhost:8080/schedule/time?movieId=${movieId}&date=${encodeURIComponent(date)}`);
+        return response.data;
+    } catch (e) {
+        console.log(e)
+    }
+}
+export const getScheduleByMovieId = async (movieId) =>{
+    try {
+        const response = await axios.get(`http://localhost:8080/schedule/movie?movieId=${movieId}`);
+        return response.data;
+    } catch (e) {
+        console.log(e)
+    }
+}
