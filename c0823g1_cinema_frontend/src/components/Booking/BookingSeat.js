@@ -45,10 +45,9 @@ export default function BookingSeat() {
             "scheduleId": schedule.id,
             "accountId":1
         })
-
+        console.log(result)
         navigate("/booking/checkout", {state: {myResult: result}})
     }
-    console.log(result)
     const handleClick = (e, seatNumber) => {
         if ((e.target.classList.contains('seat')
                 || e.target.classList.contains('vip')

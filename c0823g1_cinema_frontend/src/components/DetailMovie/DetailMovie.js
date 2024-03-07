@@ -25,6 +25,7 @@ export default function DetailMovie() {
             const movie1 = await findByIdMovie(id);
             const movie2 = await findByIdMovieHasGenre(id);
             const dataResult = await getScheduleByMovieId(id)
+            console.log(dataResult)
             setSchedule(dataResult)
             setMovie(movie1);
             setTypeMovie(movie2);

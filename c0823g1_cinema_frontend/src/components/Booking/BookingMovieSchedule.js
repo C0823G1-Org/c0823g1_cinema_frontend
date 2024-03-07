@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import {Link, useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import "../Home/Home.css"
-import {getAllMovieCurrent} from "../../service/MovieService";
+import {getAllMovieCurrent, getAllMovieCurrentTo3Day} from "../../service/MovieService";
 import {getDate, getScheduleTime} from "../../service/BookingService";
 import "../Booking/BookingMovieSchedule.css"
 import Footer from "../Home/Footer";
@@ -25,7 +25,6 @@ export default function BookingMovieSchedule() {
     };
 
     const handleDateSelection = (date) => {
-        console.log(scheduleTime)
         setSelectedDate(date);
     };
 
@@ -36,7 +35,7 @@ export default function BookingMovieSchedule() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const moviesResult = await getAllMovieCurrent();
+                const moviesResult = await getAllMovieCurrentTo3Day();
                 setMovies(moviesResult)
             } catch (error) {
             }
@@ -49,7 +48,10 @@ export default function BookingMovieSchedule() {
             if (selectedMovie) {
                 try {
                     const datesResult = await getDate(selectedMovie.movieId);
+                    console.log(selectedMovie.movieId)
                     setListDate(datesResult);
+                    setScheduleTime([])
+                    setSelectedSchedule(null)
                 } catch (error) {
                     // Lỗi
                 }
@@ -102,7 +104,6 @@ export default function BookingMovieSchedule() {
             navigate("/booking/seat", {state: {myResult: result}});
         }
     }, [result]);
-    console.log(scheduleTime)
     return (
         <>
             <Header/>
@@ -153,15 +154,19 @@ export default function BookingMovieSchedule() {
                                 <Accordion.Header>Chọn suất</Accordion.Header>
                                 <Accordion.Body>
                                     <div className="d-flex flex-wrap">
-                                        {scheduleTime && scheduleTime.map((time) => (
-                                            <button
-                                                key={time.id}
-                                                className={`movie-item ${activeSchedule === time.id ? 'active' : ''}`}
-                                                onClick={() => handleScheduleSelection(time)}
-                                            >
-                                                <h4>{formatTime(time.scheduleTime)}</h4>
-                                            </button>
-                                        ))}
+                                        {scheduleTime && scheduleTime.length > 0 ? (
+                                            scheduleTime.map((time) => (
+                                                <button
+                                                    key={time.id}
+                                                    className={`movie-item ${activeSchedule === time.id ? 'active' : ''}`}
+                                                    onClick={() => handleScheduleSelection(time)}
+                                                >
+                                                    <h4>{formatTime(time.scheduleTime)}</h4>
+                                                </button>
+                                            ))
+                                        ) : (
+                                            <p>Không tìm thấy suất chiếu</p>
+                                        )}
                                     </div>
                                 </Accordion.Body>
                             </Accordion.Item>
