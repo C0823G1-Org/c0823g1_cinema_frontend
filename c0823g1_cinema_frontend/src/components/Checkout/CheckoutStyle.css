@@ -1,4 +1,4 @@
-table {
+.tableTicket {
     margin-top: 1em;
 }
 
@@ -11,7 +11,7 @@ table {
     font-style: italic;
 }
 
-img {
+.imgMovie {
     width: 20em;
     height: 30em;
     margin-top: 2em;
@@ -22,9 +22,9 @@ img {
     font-family: roboto condensed, sans-serif
 }
 
-span {
+/* .spanText {
     padding-right: 2px;
-}
+} */
 
 .close:hover {
     background-color: red;
@@ -84,12 +84,12 @@ span {
     background: linear-gradient(90deg, #DE5B5B 0%, #EC4964 100%);
 }
 
-td {
+.tdTable {
     width: 50%;
     text-align: left;
 }
 
-th {
+.thTable {
     width: 50%;
     text-align: left;
 
@@ -99,5 +99,3 @@ th {
     padding-top: 15%;
 
 }
-
-;

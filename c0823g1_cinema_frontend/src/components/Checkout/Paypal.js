@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import * as bookingService from "../../service/BookingService"
 import { useNavigate } from "react-router-dom";
 import swal from 'sweetalert';
@@ -7,15 +7,15 @@ export function Paypal(props) {
     const paypal = useRef();
     const sum = props.information.totalAmount;
     const dataTicket = props.information;
+    const vnd = props.information.vnd.vnd;
     console.log(dataTicket)
     const navigate = useNavigate()
-
     useEffect(() => {
         window.paypal
             .Buttons({
-                createOrder: function (data, actions) {
+                createOrder: async (data, actions) => {
                     return actions.order.create({
-                        purchase_units: [{ "amount": { "currency_code": "USD", "value": (sum / 25000) } }]
+                        purchase_units: [{ "amount": { "currency_code": "USD", "value": (Number((sum / vnd).toFixed(2))) } }]
                     });
                 },
 

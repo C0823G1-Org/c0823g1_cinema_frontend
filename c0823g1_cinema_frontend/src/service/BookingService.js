@@ -81,6 +81,16 @@ export const getDate = async (movieId) => {
         console.log(e)
     }
 }
+
+export const getUsd = async () => {
+    try {
+        const response = await axios.get(`https://v6.exchangerate-api.com/v6/21e06263576c496fe2175f9d/latest/USD`);
+        return response.data;
+    } catch (e) {
+        console.log(e)
+    }
+}
+
 export const getScheduleTime = async (movieId, date) => {
     try {
         const response = await axios.get(`http://localhost:8080/schedule/time?movieId=${movieId}&date=${encodeURIComponent(date)}`);
