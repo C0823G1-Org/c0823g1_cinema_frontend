@@ -4,11 +4,25 @@ import { getTopMovie } from "../../../service/MovieService"
 import ReactPaginate from "react-paginate";
 export default function MovieStatistic() {
     const [movies, setMovies] = useState([])
+    const [totalPages, setTotalPages] = useState(0);
+    const [currentPage, setCurrentPage] = useState(0);
     const topMovies = async () => {
         let temp = await getTopMovie()
         console.log(temp.content);
         setMovies(temp.content)
     }
+
+    const handlePageClick = async (event) => {
+      try {
+          const pageNumber = event.selected;
+          setCurrentPage(pageNumber);
+          const result = await getTopMovie(pageNumber);
+          setMovies(result.content);
+          setTotalPages(result.totalPages);
+      } catch (error) {
+          console.log(error);
+      }
+  }
 
     useEffect(() => {
         topMovies()
@@ -82,9 +96,30 @@ export default function MovieStatistic() {
             </div>
           </div>
           
-          <div className="row">
-            
-          </div>
+          <div className="clearfix">
+                                <div style={{float: "right"}} className="page">
+                                    <ReactPaginate
+                                        forcePage = {currentPage}
+                                        breakLabel="..."
+                                        nextLabel="Trang Sau"
+                                        onPageChange={handlePageClick}
+                                        pageRangeDisplayed={2}
+                                        marginPagesDisplayed={2}
+                                        pageCount={totalPages}
+                                        previousLabel="Trang Trước"
+                                        pageClassName="page-item"
+                                        pageLinkClassName="page-link"
+                                        previousClassName="page-item"
+                                        previousLinkClassName="page-link"
+                                        nextClassName="page-item"
+                                        nextLinkClassName="page-link"
+                                        breakClassName="page-item"
+                                        breakLinkClassName="page-link"
+                                        containerClassName="pagination"
+                                        activeClassName="active"
+                                    />
+                                </div>
+                            </div>
         </div>
       </>
     )
