@@ -1,5 +1,4 @@
 import {useEffect, useState} from "react";
-import ".//css/movie.css"
 import {createMovie, getAllCountries, getAllMovieAttributes, getScheduleByHallId} from "../../../service/MovieService";
 import {ErrorMessage, Field, Form, Formik} from "formik";
 import {Link, useNavigate} from "react-router-dom";
@@ -8,7 +7,7 @@ import {storage} from "../../config/config";
 import {ref, uploadBytes, getDownloadURL} from "firebase/storage";
 import {v4} from "uuid";
 import {Sidebar} from "../Sidebar/Sidebar";
-
+import MovieCss from "./css/movie.module.css"
 
 export default function MovieCreate() {
     const navigate = useNavigate();
@@ -215,7 +214,7 @@ export default function MovieCreate() {
                                             await createMovie(jsonObject);
                                             navigate("/movie")
                                         }}>
-                                <div className="container-fluid mb-5">
+                                    <div className="container-fluid mb-5">
                                         <Form>
                                             <ul className="nav nav-tabs d-flex justify-content-center" id="myTab"
                                                 role="tablist">
@@ -490,7 +489,7 @@ export default function MovieCreate() {
                                                         <table className="table table-bordered" id="scheduleTable">
                                                             <thead>
                                                             <tr>
-                                                                <th></th>
+                                                                <th style={{width: "3%"}}></th>
                                                                 {sevenLoop.map((i) => {
                                                                     let dayResult;
                                                                     let dayIncrease = new Date();
@@ -522,7 +521,8 @@ export default function MovieCreate() {
                                                                             dayResult = "Lỗi"
                                                                     }
                                                                     return (
-                                                                        <th key={i}>{dayResult + ` / Ngày ${curDate.getDate() + i}`}</th>)
+                                                                        <th style={{width: "13%"}}
+                                                                            key={i}>{dayResult + ` / Ngày ${curDate.getDate() + i}`}</th>)
                                                                 })}
                                                             </tr>
                                                             </thead>
