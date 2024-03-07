@@ -1,5 +1,5 @@
 import './App.css';
-import {Route, Routes} from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import Home from "./components/Home/Home";
 import Login from "./components/Login/Login";
 import MovieList from "./components/Admin/Movie/MovieList";
@@ -29,29 +29,52 @@ function App() {
     return (
         <>
             <Routes>
-                <Route path={"/home"} element={<Home/>}></Route>
-                <Route path={"/search"} element={<Search/>}/>
-                <Route path={"/login"} element={<Login/>}></Route>
-                <Route path={"/check"} element={<HeaderTemplateAdmin/>}  />
-                <Route path={"/register"} element={<Register/>}></Route>
-                <Route path={"/movie"} element={<MovieList/>}></Route>
-                <Route path={"/movie/create"} element={<MovieCreate/>}></Route>
-                <Route path={"/movie/edit:id"} element={<MovieEdit/>}></Route>
-                <Route path={"/employee"} element={<EmployeeList/>}></Route>
-                <Route path={"/employee/create"} element={<EmployeeCreate/>}></Route>
-                <Route path={"/employee/edit:id"} element={<EmployeeEdit/>}></Route>
-                <Route path={"/statistic/member"} element={<MemberStatistic/>}></Route>
-                <Route path={"/statistic/movie"} element={<MovieStatistic/>}></Route>
-                <Route path={"/booking"} element={<BookingMovieSchedule/>}></Route>
-                <Route path={"/booking/seat"} element={<BookingSeat/>}></Route>
-                <Route path={"/booking/confirm"} element={<TicketBookingConfirmation/>}></Route>
-                <Route path={"/booking/checkout"} element={<Checkout/>}></Route>
-                <Route path={"/home/detail/:id"} element={<DetailMovie/>}></Route>
-                <Route path={"/employee/ticketCheckout"} element={<TicketCheckout/>}></Route>
-                <Route path={"/employee/ticketList"} element={<TicketList/>}></Route>
-                <Route path={"/employee/exportDetail"} element={<ExportDetail/>}></Route>
-                <Route path={"/user/information"} element={<UserInformation/>}></Route>
-                <Route path={"/user/history"} element={<HistoryBooking/>}></Route>
+
+                <Route path={"/home"} element={<Home />}></Route>
+                <Route path={"/search"} element={<Search />} />
+                <Route path={"/login"} element={<Login />}></Route>
+                <Route path={"/check"} element={<HeaderTemplateAdmin />} />
+                <Route path={"/register"} element={<Register />}></Route>
+                <Route path={"/movie"} element={<MovieList />}></Route>
+                <Route path={"/movie/create"} element={<MovieCreate />}></Route>
+                <Route path={"/movie/edit:id"} element={<MovieEdit />}></Route>
+                <Route path={"/employee"} element={<EmployeeList />}></Route>
+                <Route path={"/employee/create"} element={<EmployeeCreate />}></Route>
+                <Route path={"/employee/edit:id"} element={<EmployeeEdit />}></Route>
+                <Route path={"/statistic/member"} element={<MemberStatistic />}></Route>
+                <Route path={"/statistic/movie"} element={<MovieStatistic />}></Route>
+                <Route path={"/booking"} element={<TicketBookingConfirmation />}></Route>
+                <Route path={"/booking/confirm"} element={<TicketBookingConfirmation />}></Route>
+                <Route path={"/booking/checkout"} element={<Checkout />}></Route>
+                <Route path={"/home/detail/:id"} element={<DetailMovie />}></Route>
+                <Route path={"/employee/ticketCheckout"} element={<TicketCheckout />}></Route>
+                <Route path={"/employee/ticketList"} element={<TicketList />}></Route>
+                <Route path={"/employee/exportDetail"} element={<ExportDetail />}></Route>
+                <Route path={"/user/information"} element={<UserInformation />}></Route>
+                <Route path={"/user/history"} element={<HistoryBooking />}></Route>
+                <Route path={"/home"} element={<Home />}></Route>
+                <Route path={"/search"} element={<Search />} />
+                <Route path={"/login"} element={<Login />}></Route>
+                <Route path={"/check"} element={<HeaderTemplateAdmin />} />
+                <Route path={"/register"} element={<Register />}></Route>
+                <Route path={"/movie"} element={<MovieList />}></Route>
+                <Route path={"/movie/create"} element={<MovieCreate />}></Route>
+                <Route path={"/movie/edit:id"} element={<MovieEdit />}></Route>
+                <Route path={"/employee"} element={<EmployeeList />}></Route>
+                <Route path={"/employee/create"} element={<EmployeeCreate />}></Route>
+                <Route path={"/employee/edit:id"} element={<EmployeeEdit />}></Route>
+                <Route path={"/statistic/member"} element={<MemberStatistic />}></Route>
+                <Route path={"/statistic/movie"} element={<MovieStatistic />}></Route>
+                <Route path={"/booking"} element={<BookingMovieSchedule />}></Route>
+                <Route path={"/booking/seat"} element={<BookingSeat />}></Route>
+                <Route path={"/booking/confirm"} element={<TicketBookingConfirmation />}></Route>
+                <Route path={"/booking/checkout"} element={<Checkout />}></Route>
+                <Route path={"/home/detail/:id"} element={<DetailMovie />}></Route>
+                <Route path={"/employee/ticketCheckout"} element={<TicketCheckout />}></Route>
+                <Route path={"/employee/ticketList"} element={<TicketList />}></Route>
+                <Route path={"/employee/exportDetail"} element={<ExportDetail />}></Route>
+                <Route path={"/user/information"} element={<UserInformation />}></Route>
+                <Route path={"/user/history"} element={<HistoryBooking />}></Route>
             </Routes>
         </>
     );
