@@ -1,5 +1,4 @@
 import {useLocation, useNavigate} from "react-router-dom";
-import '../../../src/css/HaiNT_TicketBooking.css';
 import '../../index.css';
 import {EmployeeService} from "../../service/EmployeeService";
 import SweetAlert from "sweetalert";
@@ -21,10 +20,10 @@ export  default function ExportDetail(){
         // document.body.appendChild(element);
         // element.click();
         // document.body.removeChild(element);
-        const pdfUrl = "Samplez.pdf";
+        const pdfUrl = file;
         const link = document.createElement("a");
         link.href = pdfUrl;
-        link.download = "kaka"; // specify the filename
+        link.download = "ticket"; // specify the filename
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);

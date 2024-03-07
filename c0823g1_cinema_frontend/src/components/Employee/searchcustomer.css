@@ -1,0 +1,19 @@
+.btn__search_customer {
+    background: linear-gradient(90deg, #649fde 0%, #2b4db5 100%);
+    border-radius: 2px;
+    border: none;
+    outline: none;
+    padding: 8px 12px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 400;
+    font-family: inherit;
+    text-align: center;
+    cursor: pointer;
+    width: 20%;
+    position: absolute;
+    transform: translateX(179%);
+}
+.btn__search_customer :hover {
+    background: linear-gradient(90deg, #87bcf5 0%, #3863e2 100%);
+}

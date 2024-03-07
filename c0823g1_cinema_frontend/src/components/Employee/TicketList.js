@@ -1,5 +1,7 @@
 
-import '../../../src/css/HungVXK_EmployeeManager.css'
+import '../../../src/components/Admin/Employee/HungVXK_EmployeeList.css'
+import '../Employee/searchcustomer.css'
+// import '../Employee/HaiNT_TicketBooking.css'
 import '../../index.css'
 import {useEffect, useState} from "react";
 import {EmployeeService} from "../../service/EmployeeService";
@@ -111,29 +113,34 @@ export default function TicketList() {
     return (
         <>
             <Header/>
-            <div className="container" style={{marginTop:"12%"}}>
+            <div className="container body__employee" style={{marginTop:"12%"}}>
                 <h1 style={{color:"black"}}>Quản lý vé</h1>
                 <div className="table-wrapper">
                     <div className="table-title">
                         <div className="row">
-                            <div className="col-sm-6">
-                                <div  className="form-inline my-2 my-lg-0">
+                            <div className="col-12 col-sm-8 col-md-8 col-lg-8 col-xl-8">
+                                <div className="form-inline my-2 my-lg-0">
+                                    <div className="d-inline">
                                     <div className="d-flex">
 
                                         <label>
-                                            Ngày <input  onChange={handleChangeDate} id="dateInput2"
-                                                         className="form-control mr-sm-2"
+                                            Ngày <input onChange={handleChangeDate} id="dateInput2"
+                                                        className="form-control mr-sm-2"
                                                         style={{marginLeft: "5px"}} type="date"
-                                                         min={new Date().toISOString().split("T")[0]}
+                                                        min={new Date().toISOString().split("T")[0]}
                                         />
                                         </label>
-                                        <input onChange={handleChangeValue} className="form-control mr-sm-2" type="search"
+                                        <input onChange={handleChangeValue} className="form-control mr-sm-2"
+                                               type="search"
                                                placeholder="Thông tin khách hàng"
                                                aria-label="Search"/>
-                                        <button onClick={handleSearch} className="btn btn__search my-2 my-sm-0" type="submit">Tìm kiếm
+                                        <button style={{marginLeft:"20vh",marginBottom:"15%"}} className="btn__search_customer" type="button"
+                                                onClick={() => handleSearch()}>
+                                            Tìm kiếm
                                         </button>
                                     </div>
                                 </div>
+                            </div>
                             </div>
 
                         </div>
@@ -141,7 +148,7 @@ export default function TicketList() {
                     <table className="table table-striped table-hover">
                         <thead>
                         <tr>
-                            <th>STT</th>
+                        <th>STT</th>
                             <th>Mã đặt vé</th>
                             <th>Họ tên</th>
                             <th>CMND</th>

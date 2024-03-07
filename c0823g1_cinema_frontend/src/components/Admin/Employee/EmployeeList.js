@@ -100,7 +100,7 @@ export default function EmployeeList() {
                       />
                       <button
                         
-                        className="my-2 my-sm-0 btn__search_employee"
+                        className="my-2 my-sm-0 btn__search_custumer"
                         type="button"
                         onClick={() => submitSearch()}
                       >
