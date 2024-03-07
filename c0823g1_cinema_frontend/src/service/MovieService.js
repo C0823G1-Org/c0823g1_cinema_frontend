@@ -28,7 +28,13 @@ export const getAllMovieCurrent = async () => {
 export const searchName = async (name, page) => {
     const rest = await axios.get(`http://localhost:8080/movie/search?name=${name}&page=${page}`);
     return rest.data;
+}   
+
+export const getTopMovie = async (page) => {
+    const temp = await axios.get(`http://localhost:8080/movie/statistics?page=${page}`);
+    return temp.data;
 }
+
 
 export async function getAllMovieAttributes() {
     try {
