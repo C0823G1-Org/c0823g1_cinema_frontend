@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import MovieStatisticChart from "./MovieStatisticChart"
 import { getTopMovie } from "../../../service/MovieService"
+import ReactPaginate from "react-paginate";
 export default function MovieStatistic() {
     const [movies, setMovies] = useState([])
     const topMovies = async () => {
@@ -56,10 +57,10 @@ export default function MovieStatistic() {
             </div>
           </div>
           <div className="row mt-5">  
-            <MovieStatisticChart />
-          </div>
-          <div className="row mt-5">
           <div className="col lg-6">
+          <MovieStatisticChart />
+          </div>
+            <div className="col lg-6">
               <table className="table table-sm">
                 <thead>
                   <tr>
@@ -80,35 +81,9 @@ export default function MovieStatistic() {
               </table>
             </div>
           </div>
+          
           <div className="row">
-            <nav aria-label="Page navigation example">
-              <ul className="pagination justify-content-center">
-                <li className="page-item">
-                  <a
-                    className="page-link disabled"
-                    href="#"
-                    aria-label="Previous"
-                  >
-                    <span aria-hidden="true">«</span>
-                  </a>
-                </li>
-                <li className="page-item">
-                  <a className="page-link active" href="#">
-                    1
-                  </a>
-                </li>
-                <li className="page-item">
-                  <a className="page-link" href="#">
-                    2
-                  </a>
-                </li>
-                <li className="page-item">
-                  <a className="page-link" href="#" aria-label="Next">
-                    <span aria-hidden="true">»</span>
-                  </a>
-                </li>
-              </ul>
-            </nav>
+            
           </div>
         </div>
       </>
