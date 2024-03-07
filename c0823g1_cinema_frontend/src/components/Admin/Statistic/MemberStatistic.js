@@ -13,6 +13,9 @@ export default function MemberStatistic() {
     let temp = await getTopAccount();
     setMemberList(temp);
   };
+  if (!memberList) {
+    return null
+  }
   return (
     <>
       <div className="container mt-3">
