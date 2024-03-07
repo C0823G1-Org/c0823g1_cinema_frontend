@@ -256,7 +256,7 @@ html:not(.dark-style) .account-settings-links .list-group-item.active {
     transition: transform 80ms ease-in;
 }
 .btnAdd :hover {
-    border-radius: 20px;
+    /* border-radius: 20px; */
     border: 1px solid #FBBD61;
     background: linear-gradient(to right, #FBBD61, #EC7532);
     color: #FFFFFF;
@@ -269,7 +269,7 @@ html:not(.dark-style) .account-settings-links .list-group-item.active {
 }
 /* Button search */
 .btnSearch {
-    border-radius: 20px;
+    /* border-radius: 20px; */
     border: 1px solid  #87BCF5 ;
     background: linear-gradient(90deg, #87BCF5 0%, #3863E2 100%);
     color: #FFFFFF;
@@ -296,4 +296,7 @@ svg.bi.bi-gender-male {
 }
 svg.bi.bi-gender-female {
     color: pink;
+}
+.containerOfUser{
+    margin-top: 10%;
 }

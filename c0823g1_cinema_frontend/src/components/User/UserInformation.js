@@ -25,7 +25,6 @@ export default function UserInformation() {
     const [startDate, setStartDate] = useState("2020-01-01T00:00:00");
     const [endDate, setEndDate] = useState("2024-03-10T00:00:00");
     const [totalPages, settotalPages] = useState(0);
-    const [account1, setAccount1] = useState();
 
     useEffect(() => {
         const fetchApi = async () => {
@@ -91,7 +90,27 @@ export default function UserInformation() {
     // --------------------------------------------------- Thông Tin Tài Khoản
 
 
-    const editAccount = async (values, {setErrors}) => {
+    const [account1, setAccount1] = useState();
+    const [account2,setAccount2] = useState();
+
+    useEffect(() => {
+        const getAccountById = async () => {
+            try {
+                const result = await findAccount(id);
+                setAccount1(result);
+                console.log(result);
+            } catch (error) {
+                console.error("Error fetching account:", error);
+            }
+        };
+
+        getAccountById();
+    }, [id]);
+    const handleGenderChange = (e) => {
+        setAccount1({...account1 , gender: e})
+        console.log(account1.gender);
+    }
+    const editAccount = async (values, { setErrors }) => {
         try {
             await changeInfoUser(values);
             await SweetAlert(
@@ -108,7 +127,7 @@ export default function UserInformation() {
             );
         }
     };
-    const editPassword = async (values, {setErrors}) => {
+    const editPassword = async (values, { setErrors }) => {
         try {
             await changePasswordUser(values);
             await SweetAlert(
@@ -116,6 +135,8 @@ export default function UserInformation() {
                 `Đã Cập Nhật Mật Khẩu Thành Công , Bạn có thể đăng xuất sau đó đăng nhập lại để kiểm tra mật khẩu`,
                 "success"
             );
+            sessionStorage.clear();
+            navigator("/login")
         } catch (error) {
             setErrors(error.data);
             await SweetAlert(
@@ -164,294 +185,305 @@ export default function UserInformation() {
                 <Header/>
             </div>
             {
-                <div style={{marginTop: "22vh"}} className="container light-style flex-grow-1 container-p-y">
-                    <h4 className="font-weight-bold py-3 mb-4">Thông Tin Tài Khoản</h4>
-                    <div className="card overflow-hidden">
-                        <div className="row no-gutters row-bordered row-border-light">
-                            <div className="col-md-3 pt-0">
-                                <div className="list-group list-group-flush account-settings-links">
-                                    <a
-                                        className="list-group-item list-group-item-action "
-                                        href="#account-general"
-                                    >
-                                        <div style={{textAlign: "center"}}>
-                                            <figure className="image-container">
-                                                {account1.profilePicture.length > 5 ?
-                                                    <img
-                                                        style={{
-                                                            borderRadius: "100%",
-                                                            width: 150,
-                                                            height: 150,
-                                                        }}
-                                                        id="chosen-image"
-                                                        src={account1.profilePicture}
-                                                    /> :
-                                                    <img
-                                                        style={{
-                                                            borderRadius: "100%",
-                                                            width: 150,
-                                                            height: 150,
-                                                        }}
-                                                        id="chosen-image"
-                                                        src="https://cdn.moveek.com/bundles/ornweb/img/no-avatar.png"
-                                                    />}
-
-                                                <p style={{
-                                                    marginTop: 10,
-                                                    fontWeight: "bold",
-                                                    fontSize: "18px"
-                                                }}> {!account1.gender ?
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                         fill="currentColor" class="bi bi-gender-female"
-                                                         viewBox="0 0 16 16">
-                                                        <path fill-rule="evenodd"
-                                                              d="M8 1a4 4 0 1 0 0 8 4 4 0 0 0 0-8M3 5a5 5 0 1 1 5.5 4.975V12h2a.5.5 0 0 1 0 1h-2v2.5a.5.5 0 0 1-1 0V13h-2a.5.5 0 0 1 0-1h2V9.975A5 5 0 0 1 3 5"/>
-                                                    </svg> :
-                                                    <svg style={{color: "blue"}} xmlns="http://www.w3.org/2000/svg"
-                                                         width="16" height="16" fill="currentColor"
-                                                         class="bi bi-gender-male" viewBox="0 0 16 16">
-                                                        <path fill-rule="evenodd"
-                                                              d="M9.5 2a.5.5 0 0 1 0-1h5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-1 0V2.707L9.871 6.836a5 5 0 1 1-.707-.707L13.293 2zM6 6a4 4 0 1 0 0 8 4 4 0 0 0 0-8"/>
-                                                    </svg>} {account1.fullName}</p>
-                                                <span>
-                          <i
-                              style={{color: "#EC7532"}}
-                              className="fas fa-piggy-bank"
-                          />{" "}
-                                                    Điểm tích luỹ: {account1.point}
-                        </span>
-                                                <br/>{" "}
-                                            </figure>
-                                        </div>
-                                    </a>
-                                    <a
-                                        className="list-group-item list-group-item-action active"
-                                        data-toggle="list"
-                                        href="#account-general"
-                                    >
-                                        <i className="far fa-address-card"/> Thông Tin Tài Khoản
-                                    </a>
-                                    <a
-                                        className="list-group-item list-group-item-action"
-                                        data-toggle="list"
-                                        href="#account-change-password"
-                                    >
-                                        <i className="fas fa-exchange-alt"/> Đổi Mật Khẩu
-                                    </a>
-                                    <a
-                                        className="list-group-item list-group-item-action"
-                                        data-toggle="list"
-                                        href="#account-info"
-                                    >
-                                        <i className="fas fa-history"/> Lịch Sử
-                                    </a>
-                                </div>
+                <div className="containerOfUser">
+                <div className="container light-style flex-grow-1 container-p-y">
+                <h4 className="font-weight-bold py-3 mb-4">Thông Tin Tài Khoản</h4>
+                <div className="card overflow-hidden">
+                    <div className="row no-gutters row-bordered row-border-light">
+                        <div className="col-md-3 pt-0">
+                            <div className="list-group list-group-flush account-settings-links">
+                                <a
+                                    className="list-group-item list-group-item-action "
+                                    href="#account-general"
+                                >
+                                    <div style={{ textAlign: "center" }}>
+                                        <figure className="image-container">
+                                            <img
+                                                style={{
+                                                    borderRadius: "100%",
+                                                    width: 150,
+                                                    height: 150,
+                                                }}
+                                                id="chosen-image"
+                                                src="https://cdn.moveek.com/bundles/ornweb/img/no-avatar.png"
+                                            />
+                                            <p style={{ marginTop: 10 , fontWeight : "bold" , fontSize : "18px"}}> {!account1.gender ? <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gender-female" viewBox="0 0 16 16">
+                                                <path fillRule="evenodd" d="M8 1a4 4 0 1 0 0 8 4 4 0 0 0 0-8M3 5a5 5 0 1 1 5.5 4.975V12h2a.5.5 0 0 1 0 1h-2v2.5a.5.5 0 0 1-1 0V13h-2a.5.5 0 0 1 0-1h2V9.975A5 5 0 0 1 3 5"/>
+                                            </svg> : <svg style={{color : "blue"}} xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gender-male" viewBox="0 0 16 16">
+                                                <path fillRule="evenodd" d="M9.5 2a.5.5 0 0 1 0-1h5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-1 0V2.707L9.871 6.836a5 5 0 1 1-.707-.707L13.293 2zM6 6a4 4 0 1 0 0 8 4 4 0 0 0 0-8"/>
+                                            </svg> } {account1.fullName}</p>
+                                            <span>
+                      <i
+                          style={{ color: "#EC7532" }}
+                          className="fas fa-piggy-bank"
+                      />{" "}
+                                                Điểm tích luỹ: {account1.point}
+                    </span>
+                                            <br />{" "}
+                                        </figure>
+                                    </div>
+                                </a>
+                                <a
+                                    className="list-group-item list-group-item-action active"
+                                    data-toggle="list"
+                                    href="#account-general"
+                                >
+                                    <i className="far fa-address-card" /> Thông Tin Tài Khoản
+                                </a>
+                                <a
+                                    className="list-group-item list-group-item-action"
+                                    data-toggle="list"
+                                    href="#account-change-password"
+                                >
+                                    <i className="fas fa-exchange-alt" /> Đổi Mật Khẩu
+                                </a>
+                                <a
+                                    className="list-group-item list-group-item-action"
+                                    data-toggle="list"
+                                    href="#account-info"
+                                >
+                                    <i className="fas fa-history" /> Lịch Sử
+                                </a>
                             </div>
-                            <div className="col-md-9">
-                                <div className="tab-content">
-                                    <div
-                                        className="tab-pane fade active show"
-                                        id="account-general"
-                                    >
-                                        <hr className="border-light m-0"/>
-                                        <div className="card-body">
-                                            <Formik
-                                                initialValues={{
-                                                    id: account1.id,
-                                                    accountName: account1.accountName,
-                                                    idNumber: account1.idNumber,
-                                                    email: account1.email,
-                                                    password: account1.password,
-                                                    fullName: account1.fullName,
-                                                    birthday: account1.birthday,
-                                                    gender: account1.gender,
-                                                    phoneNumber: account1.phoneNumber,
-                                                    address: account1.address,
-                                                    verificationCode: account1.verificationCode,
-                                                    point: account1.point,
-                                                    role: account1.role,
-                                                    memberCode: account1.memberCode,
-                                                }}
-                                                validationSchema={Yup.object(validateObject)}
-                                                onSubmit={(values, {setErrors}) =>
-                                                    editAccount(values, {setErrors})
-                                                }
-                                            >
-                                                <Form>
-                                                    <div className="form-group">
-                                                        <div className="form-group">
-                                                            <Field name="password" type="hidden"></Field>
-                                                            <Field name="fullName" type="hidden"></Field>
-                                                            <Field
-                                                                name="verificationCode"
-                                                                type="hidden"
-                                                            ></Field>
-                                                            <Field name="id" type="hidden"></Field>
-                                                            <label className="form-label">
-                                                                Tên đăng nhập
-                                                            </label>
-                                                            <Field
-                                                                type="text"
-                                                                className="form-control"
-                                                                disabled
-                                                                name="accountName"
-                                                            />
-                                                        </div>
-                                                        <label className="form-label">E-mail</label>
-                                                        <Field
-                                                            type="text"
-                                                            name="email"
-                                                            className="form-control mb-1"
-                                                        />
-                                                        <ErrorMessage
-                                                            name="email"
-                                                            component="span"
-                                                            className="form-err"
-                                                            style={{color: "red"}}
-                                                        />
-                                                    </div>
-                                                    <div className="form-group">
-                                                        <label className="form-label">Ngày Sinh</label>
-                                                        <Field
-                                                            type="date"
-                                                            className="form-control"
-                                                            name="birthday"
-                                                        />
-                                                    </div>
-                                                    <div className="form-group">
-                                                        <Field name="gender" type="hidden"></Field>
-                                                    </div>
-                                                    <div className="form-group">
-                                                        <label className="form-label">CMND</label>
-                                                        <Field
-                                                            type="text"
-                                                            className="form-control"
-                                                            name="idNumber"
-                                                            id="idNumber"
-                                                        />
-                                                        <ErrorMessage
-                                                            name="idNumber"
-                                                            component="span"
-                                                            className="form-err"
-                                                            style={{color: "red"}}
-                                                        />
-                                                    </div>
-                                                    <div className="form-group">
-                                                        <label className="form-label">Số Điện Thoại</label>
-                                                        <Field
-                                                            type="text"
-                                                            className="form-control"
-                                                            name="phoneNumber"
-                                                        />
-                                                        <ErrorMessage
-                                                            name="phoneNumber"
-                                                            component="span"
-                                                            className="form-err"
-                                                            style={{color: "red"}}
-                                                        />
-                                                    </div>
-                                                    <div className="form-group">
-                                                        <label className="form-label">Địa Chỉ</label>
-                                                        <Field
-                                                            type="text"
-                                                            className="form-control"
-                                                            name="address"
-                                                        />
-                                                        <ErrorMessage
-                                                            name="address"
-                                                            component="span"
-                                                            className="form-err"
-                                                            style={{color: "red"}}
-                                                        />
-                                                    </div>
-                                                    <div className="text-right mt-3">
-                                                        <button type="submit" className="btn btnAdd">
-                                                            Lưu
-                                                        </button>
-                                                        &nbsp;
-                                                        <button type="button" className="btn btnSearch">
-                                                            Huỷ
-                                                        </button>
-                                                    </div>
-                                                </Form>
-                                            </Formik>
-                                        </div>
-                                    </div>
+                        </div>
+                        <div className="col-md-9">
+                            <div className="tab-content">
+                                <div
+                                    className="tab-pane fade active show"
+                                    id="account-general"
+                                >
+                                    <hr className="border-light m-0" />
+                                    <div className="card-body">
+                                        <Formik
+                                            initialValues={{
+                                                id: account1.id,
+                                                accountName: account1.accountName,
+                                                idNumber: account1.idNumber,
+                                                email: account1.email,
+                                                password: account1.password,
+                                                fullName: account1.fullName,
+                                                birthday: account1.birthday,
+                                                gender: account1.gender,
+                                                phoneNumber: account1.phoneNumber,
+                                                address: account1.address,
+                                                verificationCode: account1.verificationCode,
+                                                point: account1.point,
+                                                role: account1.role,
+                                                memberCode: "TV-" + account1.memberCode,
+                                            }}
+                                            validationSchema={Yup.object(validateObject)}
+                                            onSubmit={(values, { setErrors }) => {
+                                                values = {...values, "gender":account1.gender} 
+                                                editAccount(values, { setErrors })
+                                                
+                                                console.log(values)
 
-                                    <div className="tab-pane fade" id="account-change-password">
-                                        <div className="card-body pb-2">
-                                            <Formik
-                                                initialValues={{
-                                                    currentPassword: "",
-                                                    newPassword: "",
-                                                    confirmationPassword: "",
-                                                }}
-                                                validationSchema={Yup.object(validateObject2)}
-                                                onSubmit={(values, {setErrors}) =>
-                                                    editPassword(values, {setErrors})
-                                                }
-                                            >
-                                                <Form>
+                                            }
+                                            }
+                                        >
+                                            <Form>
+                                                <div className="form-group">
                                                     <div className="form-group">
+                                                        <Field name="password" type="hidden"></Field>
+                                                        <Field name="fullName" type="hidden"></Field>
+                                                        <Field
+                                                            name="verificationCode"
+                                                            type="hidden"
+                                                        ></Field>
+                                                        <Field name="id" type="hidden"></Field>
                                                         <label className="form-label">
-                                                            Mật Khẩu Hiện Tại
+                                                            Mã Thành Viên
                                                         </label>
                                                         <Field
                                                             type="text"
-                                                            name="currentPassword"
                                                             className="form-control"
+                                                            disabled
+                                                            name="memberCode"
+                                                        
                                                         />
-                                                        <ErrorMessage
-                                                            name="currentPassword"
-                                                            component="span"
-                                                            className="form-err"
-                                                            style={{color: "red"}}
-                                                        />
-                                                    </div>
-                                                    <div className="form-group">
-                                                        <label className="form-label">Mật Khẩu Mới</label>
-                                                        <Field
-                                                            type="text"
-                                                            name="newPassword"
-                                                            className="form-control"
-                                                        />
-                                                        <ErrorMessage
-                                                            name="newPassword"
-                                                            component="span"
-                                                            className="form-err"
-                                                            style={{color: "red"}}
-                                                        />
-                                                    </div>
-                                                    <div className="form-group">
                                                         <label className="form-label">
-                                                            Xác Nhận Mật Khẩu Mới
+                                                            Tên đăng nhập
                                                         </label>
                                                         <Field
                                                             type="text"
-                                                            name="confirmationPassword"
                                                             className="form-control"
-                                                        />
-                                                        <ErrorMessage
-                                                            name="confirmationPassword"
-                                                            component="span"
-                                                            className="form-err"
-                                                            style={{color: "red"}}
+                                                            disabled
+                                                            name="accountName"
                                                         />
                                                     </div>
-                                                    <div style={{marginLeft: "70%", marginTop: "35%"}}>
-
-                                                        <button type="submit" className="btn btnAdd">
-                                                            Lưu
-                                                        </button>
-                                                        <button type="button" className="btn btnSearch">
-                                                            Huỷ
-                                                        </button>
-                                                    </div>
+                                                    <label className="form-label">E-mail</label>
+                                                    <Field
+                                                        type="text"
+                                                        name="email"
+                                                        className="form-control mb-1"
+                                                    />
+                                                    <ErrorMessage
+                                                        name="email"
+                                                        component="span"
+                                                        className="form-err"
+                                                        style={{ color: "red" }}
+                                                    />
+                                                </div>
+                                                <div className="form-group">
+                                                    <label className="form-label">Ngày Sinh</label>
+                                                    <Field
+                                                        type="date"
+                                                        className="form-control"
+                                                        name="birthday"
+                                                    />
+                                                </div>
+                                                <div className="form-group">
+                            <label className="form-label">Giới Tính : </label>
+                            <div className="custom-control custom-radio custom-control-inline">
+                                <Field type="radio" id="customRadioInline1" name="gender" value={true}
+                                checked={account1.gender === true}
+                                onChange={() => handleGenderChange(true)}
+                                className="custom-control-input" />
+                                <label className="custom-control-label" htmlFor="customRadioInline1">Nam</label>
+                            </div>
+                            <div className="custom-control custom-radio custom-control-inline">
+                                <Field type="radio" id="customRadioInline2" name="gender" value={false}
+                                  checked={account1.gender === false}
+                                  onChange={() => handleGenderChange(false)}
+                                  className="custom-control-input"/>
+                                <label className="custom-control-label" htmlFor="customRadioInline2">Nữ</label>
+                            </div>
+                        </div>
+                                                {/* <div className="form-group">
+                                                    <Field name="gender" type="hidden"></Field>
+                                                </div> */}
+                                                <div className="form-group">
+                                                    <label className="form-label">CMND</label>
+                                                    <Field
+                                                        type="text"
+                                                        className="form-control"
+                                                        name="idNumber"
+                                                        id="idNumber"
+                                                    />
+                                                    <ErrorMessage
+                                                        name="idNumber"
+                                                        component="span"
+                                                        className="form-err"
+                                                        style={{ color: "red" }}
+                                                    />
+                                                </div>
+                                                <div className="form-group">
+                                                    <label className="form-label">Số Điện Thoại</label>
+                                                    <Field
+                                                        type="text"
+                                                        className="form-control"
+                                                        name="phoneNumber"
+                                                    />
+                                                    <ErrorMessage
+                                                        name="phoneNumber"
+                                                        component="span"
+                                                        className="form-err"
+                                                        style={{ color: "red" }}
+                                                    />
+                                                </div>
+                                                <div className="form-group">
+                                                    <label className="form-label">Địa Chỉ</label>
+                                                    <Field
+                                                        type="text"
+                                                        className="form-control"
+                                                        name="address"
+                                                    />
+                                                    <ErrorMessage
+                                                        name="address"
+                                                        component="span"
+                                                        className="form-err"
+                                                        style={{ color: "red" }}
+                                                    />
+                                                </div>
+                                                <div className="text-right mt-3">
+                                                    <button type="submit" className="btn btnAdd">
+                                                        Lưu
+                                                    </button>
                                                     &nbsp;
-                                                </Form>
-                                            </Formik>
-                                        </div>
+                                                    <button type="button" className="btn btnSearch">
+                                                        Huỷ
+                                                    </button>
+                                                </div>
+                                            </Form>
+                                        </Formik>
                                     </div>
+                                </div>
+
+                                <div className="tab-pane fade" id="account-change-password">
+                                    <div className="card-body pb-2">
+                                        <Formik
+                                            initialValues={{
+                                                currentPassword: "",
+                                                newPassword: "",
+                                                confirmationPassword: "",
+                                            }}
+                                            validationSchema={Yup.object(validateObject2)}
+                                            onSubmit={(values, { setErrors }) =>
+                                                editPassword(values, { setErrors })
+                                            }
+                                        >
+                                            <Form>
+                                                <div className="form-group">
+                                                    <label className="form-label">
+                                                        Mật Khẩu Hiện Tại
+                                                    </label>
+                                                    <Field
+                                                        type="text"
+                                                        name="currentPassword"
+                                                        className="form-control"
+                                                    />
+                                                    <ErrorMessage
+                                                        name="currentPassword"
+                                                        component="span"
+                                                        className="form-err"
+                                                        style={{ color: "red" }}
+                                                    />
+                                                </div>
+                                                <div className="form-group">
+                                                    <label className="form-label">Mật Khẩu Mới</label>
+                                                    <Field
+                                                        type="text"
+                                                        name="newPassword"
+                                                        className="form-control"
+                                                    />
+                                                    <ErrorMessage
+                                                        name="newPassword"
+                                                        component="span"
+                                                        className="form-err"
+                                                        style={{ color: "red" }}
+                                                    />
+                                                </div>
+                                                <div className="form-group">
+                                                    <label className="form-label">
+                                                        Xác Nhận Mật Khẩu Mới
+                                                    </label>
+                                                    <Field
+                                                        type="text"
+                                                        name="confirmationPassword"
+                                                        className="form-control"
+                                                    />
+                                                    <ErrorMessage
+                                                        name="confirmationPassword"
+                                                        component="span"
+                                                        className="form-err"
+                                                        style={{ color: "red" }}
+                                                    />
+                                                </div>
+                                                <div style={{marginLeft: "70%" , marginTop: "35%"}}>
+
+                                                    <button type="submit" className="btn btnAdd">
+                                                        Lưu
+                                                    </button>
+                                                    <button type="button" className="btn btnSearch">
+                                                        Huỷ
+                                                    </button>
+                                                </div>
+
+                                                &nbsp;
+                                            </Form>
+                                        </Formik>
+                                    </div>
+                                </div>
 
                                     <div className="tab-pane fade" id="account-info">
                                         <div className="card-body pb-2">
@@ -654,6 +686,7 @@ export default function UserInformation() {
                             </div>
                         </div>
                     </div>
+                </div>
                 </div>
             }
             <div style={{borderTop: "10vh solid white"}}>

@@ -232,48 +232,46 @@ export default function Login() {
     //  --------------------------------------------------- Đăng Kí ---------------------------------------------------------------------------
 
 
-    // const [errors,setErrors] = useState()
-
-    const registerAccount = async (values, {setErrors}) => {
-        try {
-            if (values.gender == "male") {
-                values.gender = true;
-            } else {
-                values.gender = false;
-            }
-            const result = await register(values);
-            await SweetAlert(
-                "Đăng Kí Thành Công",
-                `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`,
-                "success"
-            );
-            navigate("/login")
-        } catch (err) {
-            setErrors(err.data)
-            await SweetAlert(
-                "Đăng Kí Thất Bại",
-                `Vui lòng nhập lại thông tin!`,
-                "error"
-            );
-
+    const registerAccount = async (values,{setErrors}) => {
+        try{
+          if(values.gender == "male"){
+            values.gender = true;
+          }else{
+            values.gender = false;
+          }
+          const result = await register(values);
+          await SweetAlert(
+              "Đăng Kí Thành Công",
+              `Chào mừng ${values.fullName} đến với hệ thống!`,
+              "success"
+          );
+          navigate("/login")
+        }catch(err){
+          setErrors(err.data)
+          await SweetAlert(
+              "Đăng Kí Thất Bại",
+              `Vui lòng nhập lại thông tin!`,
+              "error"
+          );
+    
         }
-
-    }
-
-    const initValues = {
-        accountName: "",
-        fullName: "",
-        password: "",
-        idNumber: "",
-        birthday: "",
-        phoneNumber: "",
-        gender: true,
-        email: "",
-        address: "",
-        verificationCode: "1",
-    }
-    const validateObject = {
-        accountName: Yup.string().required("Tài Khoản không được để trống").min(6, "Tài Khoản từ 6 - 20 kí tự").max(20, "Tài Khoản từ 6 - 20 kí tự").matches("^[a-z0-9_-]+$", "Tài Khoản Vui Lòng Nhập Đúng Định Dạng"),
+    
+      }
+    
+      const initValues = {
+        accountName : "",
+        fullName : "",
+        password : "" ,
+        idNumber : "" ,
+        birthday : "",
+        phoneNumber : "",
+        gender : true,
+        email : "",
+        address : "",
+        verificationCode : "1",
+      }
+      const validateObject = {
+        accountName : Yup.string().required("Tài Khoản không được để trống").min(6,"Tài Khoản từ 6 - 20 kí tự").max(20,"Tài Khoản từ 6 - 20 kí tự").matches("^[a-z0-9_-]+$","Tài Khoản Vui Lòng Nhập Đúng Định Dạng"),
         fullName: Yup.string()
             .required("Họ Và Tên không được để rỗng")
             .min(6, "Họ và Tên từ 6 - 45 kí tự")
@@ -282,188 +280,211 @@ export default function Login() {
                 /^[A-Za-zÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]*(?:\s+[A-Za-zÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]*)*\s*$/,
                 "Họ Và Tên vui lòng nhập đúng định dạng"
             ),
-
-        password: Yup.string().required("Mật Khẩu không được để rỗng").min(6, "Mật Khẩu độ dài từ 6-20 kí tự").max(20, "Mật Khẩu độ dài từ 6-20 kí tự"),
-        phoneNumber: Yup.string().required("Số Điện Thoại không được để rỗng").matches("^(0|84)(2(0[3-9]|1[0-6|8|9]|2[0-2|5-9]|3[2-9]|4[0-9]|5[1|2|4-9]|6[0-3|9]|7[0-7]|8[0-9]|9[0-4|6|7|9])|3[2-9]|5[5|6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])([0-9]{7})$", "Số điện thoại vui lòng nhập đúng định dạng"),
+    
+        password : Yup.string().required("Mật Khẩu không được để rỗng").min(6,"Mật Khẩu độ dài từ 6-20 kí tự").max(20,"Mật Khẩu độ dài từ 6-20 kí tự"),
+        phoneNumber : Yup.string().required("Số Điện Thoại không được để rỗng").matches("^(0|84)(2(0[3-9]|1[0-6|8|9]|2[0-2|5-9]|3[2-9]|4[0-9]|5[1|2|4-9]|6[0-3|9]|7[0-7]|8[0-9]|9[0-4|6|7|9])|3[2-9]|5[5|6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])([0-9]{7})$","Số điện thoại vui lòng nhập đúng định dạng"),
         email: Yup.string()
             .required("Email Không được để rỗng")
             .matches(/^[\w\-.]+@([\w\-]+\.)+[\w\-]{2,}$/, "Email vui lòng nhập đúng định dạng"),
         address: Yup.string().required("Địa chỉ không được để rỗng"),
-
-
-    }
-
+        birthday : Yup.string().required("Ngày Sinh không được để rỗng")
+    
+    
+      }
 
     return (
         <>
             <div className="body">
 
+            <div
+          className={`containerLogin ${status ? "" : "right-panel-active"}`}
+          id="container"
+      >
+        <Formik initialValues={initValues} validationSchema={Yup.object(validateObject)} onSubmit={(values,{setErrors}) => registerAccount(values,{setErrors})}>
+          {
+            ({isSubmitting}) =>(
+
+
                 <div
-                    className={`containerLogin ${status ? "" : "right-panel-active"}`}
-                    id="container"
+                    className="form-container sign-up-container"
+                    style={{ paddingTop: "3em" }}
                 >
-                    <Formik initialValues={initValues} validationSchema={Yup.object(validateObject)}
-                            onSubmit={(values, {setErrors}) => registerAccount(values, {setErrors})}>
-                        {
-                            ({isSubmitting}) => (
+                  <Form className="form">
+                    <h1>Đăng Kí</h1>
+                    <span>
+          Bạn Có Thể Quay Lại Trang Đăng Nhập Sử Dụng Email Và Facebook để
+          đăng nhập
+        </span>
+                    <table  style={{ width: "100%" }}>
+                      <tbody>
+                      <tr>
+                        <td style={{ width: 90 }}>
+                          <h6>Tài Khoản <sup style={{color : "red"}}>*</sup> </h6>
+                        </td>
+                        <td>
+                          <Field type="text" id="accountName" name="accountName" placeholder="Ex: example123456" className="input" /> <br></br>
+                        </td>
+                      </tr>
+                      <tr><td></td><td className="tr-error">
+                        <ErrorMessage name="accountName" component='span' className="form-err" style={{ color: 'red' }} />
+                      </td></tr>
+                      <tr>
+                        <td>
+                          <h6>Mật Khẩu <sup style={{color : "red"}}>*</sup></h6>
+                        </td>
+                        <td>
+                          <Field type="password" id="password" name="password" className="input" /> <br></br>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td className="tr-error"> <ErrorMessage name="password" component='span' className="form-err" style={{ color: 'red' }} /></td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <h6>Họ Và Tên <sup style={{color : "red"}}>*</sup></h6>
+                        </td>
+                        <td>
+                          <Field type="text" id="fullName" name="fullName" placeholder="Ex: Nguyễn Văn A" className="input" /> <br></br>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                    
+                        <td className="tr-error"><ErrorMessage name="fullName" component='span' className="form-err" style={{ color: 'red' }} /></td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <h6>Ngày Sinh <sup style={{color : "red"}}>*</sup></h6>
+                        </td>
+                        <td>
+                          {/* <input
+        type="date"
+        value={dateOfBirth}
+        onChange={(event)=>handleDateChange(event)}
+    /> */}
+                          <Field type="date" id="birthday" name="birthday"  className="input" />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td className="tr-error">
+                        <ErrorMessage name="birthday" component='span' className="form-err" style={{ color: 'red' }} />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <h6>Giới Tính <sup style={{color : "red"}}>*</sup></h6>
+                        </td>
+                        <td style={{textAlign : "left"}}>
+                          <div className="form-check form-check-inline">
+                            <Field
+                                className="form-check-input input"
+                                type="radio"
+                                name="gender"
+                                id="inlineRadio1"
+                                value="male"
+                                checked
+                            />
+                            <label
+                                style={{ marginBottom: 10 }}
+                                className="form-check-label"
+                                htmlFor="inlineRadio1"
+                            >
+                              Nam
+                            </label>
+                          </div>
+                          <div className="form-check form-check-inline">
+                            <Field
+                                className="form-check-input input"
+                                type="radio"
+                                name="gender"
+                                id="inlineRadio2"
+                                value="female"
+                            />
+                            <label
+                                style={{ marginBottom: 10 }}
+                                className="form-check-label"
+                                htmlFor="inlineRadio2"
+                            >
+                              Nữ
+                            </label>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <h6>CMND/CCCD</h6>
+                        </td>
+                        <td>
+                          <Field className="input" type="text" id="idNumber" name="idNumber" /> <br></br>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                     
+                        <td className="tr-error">
+                        <ErrorMessage name="idNumber" component='span' className="form-err" style={{ color: 'red' }}  />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <h6>Email <sup style={{color : "red"}}>*</sup></h6>
+                        </td>
+                        <td>
+                          <Field className="input" type="text" id="email" name="email" placeholder="Ex: example@gmail.com" /> <br></br>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                      
+                        <td className="tr-error">
+                        <ErrorMessage name="email" component='span' className="form-err" style={{ color: 'red' }} />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <h6>Địa Chỉ <sup style={{color : "red"}}>*</sup></h6>
+                        </td>
+                        <td>
+                          <Field className="input" type="text" id="address" name="address" placeholder="Ex: 295 Nguyễn Tất Thành" /> <br></br>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        
+                        <td className="tr-error">
+                        <ErrorMessage name="address" component='span' className="form-err" style={{ color: 'red' }} />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <h6 className="soDienThoaiTable" style={{width : "93px"}}>Số Điện Thoại<sup style={{color : "red"}}>*</sup></h6>
+                        </td>
+                        <td>
+                          <Field className="input" type="text" id="phoneNumber" name="phoneNumber" placeholder="Ex:0387274038" /> <br></br>
+                        </td>
+                        <td>
+                          <Field className="input" type="hidden" id="verificationCode" name="verificationCode"/> <br></br>
+                          <ErrorMessage name="verificationCode" component='span' className="form-err" style={{ color: 'red' }} />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
 
+                        </td>
+                       
+                        <td className="tr-error">  <ErrorMessage name="phoneNumber" component='span' className="form-err" style={{ color: 'red' }} /></td>
+                      </tr>
+                      </tbody>
+                    </table>
+                    <button type="submit" className="button">Đăng Kí</button>
+                  </Form>
+                </div>
+            )
+          }
 
-                                <div
-                                    className="form-container sign-up-container"
-                                    style={{paddingTop: "3em"}}
-                                >
-                                    <Form className="form">
-                                        <h1>Đăng Kí</h1>
-                                        <span>
-                      Bạn Có Thể Quay Lại Trang Đăng Nhập Sử Dụng Email Và Facebook để
-                      đăng nhập
-                    </span>
-                                        <table style={{width: "100%"}}>
-                                            <tbody>
-                                            <tr>
-                                                <td style={{width: 90}}>
-                                                    <h6>Tài Khoản </h6>
-                                                </td>
-                                                <td>
-                                                    <Field type="text" id="accountName" name="accountName"
-                                                           placeholder="Ex: example123456" className="input"/> <br></br>
-                                                    <ErrorMessage name="accountName" component='span'
-                                                                  className="form-err" style={{color: 'red'}}/>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <h6>Mật Khẩu</h6>
-                                                </td>
-                                                <td>
-                                                    <Field type="password" id="password" name="password"
-                                                           className="input"/> <br></br>
-                                                    <ErrorMessage name="password" component='span' className="form-err"
-                                                                  style={{color: 'red'}}/>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <h6>Họ Và Tên</h6>
-                                                </td>
-                                                <td>
-                                                    <Field type="text" id="fullName" name="fullName"
-                                                           placeholder="Ex: Nguyễn Văn A" className="input"/> <br></br>
-                                                    <ErrorMessage name="fullName" component='span' className="form-err"
-                                                                  style={{color: 'red'}}/>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <h6>Ngày Sinh</h6>
-                                                </td>
-                                                <td>
-                                                    {/* <input
-            type="date"
-            value={dateOfBirth}
-            onChange={(event)=>handleDateChange(event)}
-        /> */}
-                                                    <Field type="date" id="birthday" name="birthday" className="input"/>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <h6>Giới Tính</h6>
-                                                </td>
-                                                <td>
-                                                    <div className="form-check form-check-inline">
-                                                        <Field
-                                                            className="form-check-input input"
-                                                            type="radio"
-                                                            name="gender"
-                                                            id="inlineRadio1"
-                                                            value="male"
-                                                        />
-                                                        <label
-                                                            style={{marginBottom: 10}}
-                                                            className="form-check-label"
-                                                            htmlFor="inlineRadio1"
-                                                        >
-                                                            Nam
-                                                        </label>
-                                                    </div>
-                                                    <div className="form-check form-check-inline">
-                                                        <Field
-                                                            className="form-check-input input"
-                                                            type="radio"
-                                                            name="gender"
-                                                            id="inlineRadio2"
-                                                            value="female"
-                                                        />
-                                                        <label
-                                                            style={{marginBottom: 10}}
-                                                            className="form-check-label"
-                                                            htmlFor="inlineRadio2"
-                                                        >
-                                                            Nữ
-                                                        </label>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <h6>CMND/CCCD</h6>
-                                                </td>
-                                                <td>
-                                                    <Field className="input" type="text" id="idNumber" name="idNumber"/>
-                                                    <br></br>
-                                                    <ErrorMessage name="idNumber" component='span' className="form-err"
-                                                                  style={{color: 'red'}}/>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <h6>Email</h6>
-                                                </td>
-                                                <td>
-                                                    <Field className="input" type="text" id="email" name="email"
-                                                           placeholder="Ex: example@gmail.com"/> <br></br>
-                                                    <ErrorMessage name="email" component='span' className="form-err"
-                                                                  style={{color: 'red'}}/>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <h6>Địa Chỉ</h6>
-                                                </td>
-                                                <td>
-                                                    <Field className="input" type="text" id="address" name="address"
-                                                           placeholder="Ex: 295 Nguyễn Tất Thành"/> <br></br>
-                                                    <ErrorMessage name="address" component='span' className="form-err"
-                                                                  style={{color: 'red'}}/>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <h6 className="soDienThoaiTable">Số Điện Thoại</h6>
-                                                </td>
-                                                <td>
-                                                    <Field className="input" type="text" id="phoneNumber"
-                                                           name="phoneNumber" placeholder="Ex:0387274038"/> <br></br>
-                                                    <ErrorMessage name="phoneNumber" component='span'
-                                                                  className="form-err" style={{color: 'red'}}/>
-                                                </td>
-                                                <td>
-                                                    <Field className="input" type="hidden" id="verificationCode"
-                                                           name="verificationCode"/> <br></br>
-                                                    <ErrorMessage name="verificationCode" component='span'
-                                                                  className="form-err" style={{color: 'red'}}/>
-                                                </td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                        <button type="submit" className="button">Đăng Kí</button>
-                                    </Form>
-                                </div>
-                            )
-                        }
-
-                    </Formik>
+        </Formik>
 
                     <div className="form-container sign-in-container">
                         <form className="form" action="#">
