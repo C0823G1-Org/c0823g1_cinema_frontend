@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import {Link, useNavigate, useParams} from "react-router-dom";
 import {
-    createMovie,
     findByIdMovie,
     getAllCountries,
     getAllMovieAttributes,
@@ -13,9 +12,11 @@ import * as Yup from "yup";
 import {getDownloadURL, ref, uploadBytes} from "firebase/storage";
 import {storage} from "../../config/config";
 import {v4} from "uuid";
+import {getScheduleByMovieId} from "../../../service/BookingService";
+import Swal from 'sweetalert2'
 
 const MovieEdit = () => {
-    const id = useParams().id
+    const editingMovieId = useParams().id
     const [movie, setMovie] = useState({})
     const navigate = useNavigate();
     const curDate = new Date()
@@ -29,7 +30,7 @@ const MovieEdit = () => {
     const [newSchedule, setNewSchedule] = useState([])
     const [imageUpload, setImageUpload] = useState(null)
     const [imageDownloaded, setImageDownloaded] = useState(null)
-
+    const posterFileSizeLimit = 5242880
 
     const initialValue = {
         name: "",
@@ -79,8 +80,10 @@ const MovieEdit = () => {
             setCountries(countriesData)
             setIsLoading(false)
 
-            const data = await findByIdMovie(id)
-            setMovie(data)
+            const movieData = await findByIdMovie(editingMovieId)
+            setMovie(movieData)
+
+            const movieScheduleData = await getScheduleByMovieId(movie.id)
         }
 
         fetchApi()
@@ -181,16 +184,12 @@ const MovieEdit = () => {
         let label
         let cell
         schedulesList.forEach((scheduleList) => {
-            id = scheduleList.date + "," + scheduleList.scheduleTime.scheduleTime
+            console.log(scheduleList.movie.id)
+            if (scheduleList.movie.id === movie.id) return
+            id = scheduleList.date + "," + scheduleList.scheduleTime.id
             label = document.getElementById(id + " title")
             label.innerText = scheduleList.movie.name
             cell = label.parentElement
-            console.log("Id check " + scheduleList.movie.id)
-            if (scheduleList.movie.id === movie.id) {
-                cell.children[1].style.color = "white"
-                cell.style.backgroundColor = "lightblue"
-                return
-            }
             label.style.color = "white"
             cell.style.backgroundColor = "grey";
         })
@@ -261,12 +260,23 @@ const MovieEdit = () => {
                                                                     <div className="custom-file col">
                                                                         <input
                                                                             onChange={(event) => {
-                                                                                setImageUpload(event.target.files[0])
+                                                                                let file = event.target.files[0]
+                                                                                if (file.size > posterFileSizeLimit) {
+                                                                                    Swal.fire({
+                                                                                        icon: "error",
+                                                                                        title: "Dung lượng quá lớn",
+                                                                                        text: "File ảnh không được quá 5MB"
+                                                                                    });
+                                                                                    event.target.value = ""
+                                                                                    return
+                                                                                }
+                                                                                setImageUpload(file)
                                                                             }}
                                                                             type="file"
                                                                             className="custom-file-input"
                                                                             id="inputPoster"
                                                                             name="poster"
+                                                                            accept="image/*"
                                                                         />
                                                                         <label
                                                                             className="custom-file-label"
@@ -378,7 +388,8 @@ const MovieEdit = () => {
                                                                 </div>
                                                                 <div className="col">
                                                                     <Field type="number" className="form-control"
-                                                                           name="duration" value={movie.duration}/>
+                                                                           name="duration" value={movie.duration}
+                                                                           disabled/>
                                                                     <ErrorMessage name="duration" component='p'
                                                                                   className="form-err"
                                                                                   style={{color: 'red'}}/>
@@ -491,7 +502,7 @@ const MovieEdit = () => {
                                                                 </option>
                                                                 {movieAtt.halls.map((hall) => (
                                                                     <option key={hall.id} value={"" + hall.id}>
-                                                                        Sảnh {hall.name}
+                                                                        {hall.name}
                                                                     </option>
                                                                 ))}
                                                             </Field>
@@ -546,14 +557,14 @@ const MovieEdit = () => {
                                                                     {sevenLoop.map((i) => {
                                                                         let dayIncrease = new Date();
                                                                         dayIncrease.setDate(curDate.getDate() + i)
-                                                                        let idValue = dayIncrease.getFullYear() + "-" + ("0" + (dayIncrease.getMonth() + 1)).slice(-2) + "-" + ("0" + dayIncrease.getDate()).slice(-2) + "," + scheduleTime.scheduleTime
+                                                                        let idValue = dayIncrease.getFullYear() + "-" + ("0" + (dayIncrease.getMonth() + 1)).slice(-2) + "-" + ("0" + dayIncrease.getDate()).slice(-2) + "," + scheduleTime.id
                                                                         return (
                                                                             <td key={i} onClick={tdOnClickHandler}>
                                                                                 <input id={idValue}
                                                                                        hidden="true"
                                                                                        type="checkbox"
                                                                                        name="schedules"
-                                                                                       value={dayIncrease.getFullYear() + "-" + ("0" + (dayIncrease.getMonth() + 1)).slice(-2) + "-" + ("0" + dayIncrease.getDate()).slice(-2) + "," + scheduleTime.id}/>
+                                                                                       value={idValue}/>
                                                                                 <label id={idValue + " title"}></label>
                                                                             </td>
                                                                         )

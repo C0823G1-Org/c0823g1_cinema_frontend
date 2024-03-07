@@ -7,7 +7,8 @@ import {storage} from "../../config/config";
 import {ref, uploadBytes, getDownloadURL} from "firebase/storage";
 import {v4} from "uuid";
 import {Sidebar} from "../Sidebar/Sidebar";
-import MovieCss from "./css/movie.module.css"
+import Swal from "sweetalert2";
+import {ThreeCircles} from "react-loader-spinner";
 
 export default function MovieCreate() {
     const navigate = useNavigate();
@@ -23,7 +24,7 @@ export default function MovieCreate() {
     const [imageUpload, setImageUpload] = useState(null)
     const [imageDownloaded, setImageDownloaded] = useState(null)
 
-
+    const posterFileSizeLimit = 5242880
     const initialValue = {
         name: "",
         actor: "",
@@ -203,25 +204,102 @@ export default function MovieCreate() {
         })
     }
 
+    function previewImage(event) {
+        let reader = new FileReader();
+        reader.addEventListener(
+            "load",
+            () => {
+                // convert image file to base64 string
+                setImageUpload(reader.result);
+            },
+            false,
+        );
+        let file = event.target.files[0]
+        console.log(file)
+        // if (file.size > posterFileSizeLimit) {
+        //     Swal.fire({
+        //         icon: "error",
+        //         title: "Dung lượng quá lớn",
+        //         text: "File ảnh không được quá 5MB"
+        //     });
+        //     event.target.value = ""
+        //     return
+        // }
+        reader.readAsDataURL(file)
+
+    }
+
+
     return (
         <>
             {
-                isLoading ? <h2>Loading...</h2> :
+                isLoading ? <ThreeCircles
+                        visible={true}
+                        height="100"
+                        width="100"
+                        color="#4fa94d"
+                        ariaLabel="three-circles-loading"
+                        wrapperStyle={{}}
+                        wrapperClass=""
+                    /> :
                     <>
                         <Sidebar/>
                         <section className="home-section">
                             <div className="container body_movie bg-white">
                                 <h1 style={{paddingTop: "20px"}}>Thêm mới phim</h1>
                                 <Formik initialValues={initialValue}
-                                        validationSchema={Yup.object(validationObject)}
+                                    // validationSchema={Yup.object(validationObject)}
                                         onSubmit={async (data) => {
+                                            Swal.fire({
+                                                title: "Phim đang được lưu!",
+                                                timerProgressBar: true,
+                                                didOpen: () => {
+                                                    Swal.showLoading();
+                                                }
+                                            })
                                             data.poster = imageDownloaded
                                             let jsonObject = {}
                                             jsonObject.movieDTO = data
                                             jsonObject.scheduleDTO = newSchedule
                                             console.log(jsonObject)
-                                            await createMovie(jsonObject);
-                                            navigate("/movie")
+                                            try {
+                                                const result = await createMovie(jsonObject);
+                                                Swal.close()
+                                                console.log("Result code: " + result)
+                                                if (result < 400) {
+                                                    let timerInterval;
+                                                    Swal.fire({
+                                                        title: "Phim đã được lưu thành công!",
+                                                        html: "Trở về màn hình danh sách phim sau <b></b>s.",
+                                                        timer: 2000,
+                                                        timerProgressBar: true,
+                                                        didOpen: () => {
+                                                            Swal.showLoading();
+                                                            const timer = Swal.getPopup().querySelector("b");
+                                                            timerInterval = setInterval(() => {
+                                                                timer.textContent = `${Swal.getTimerLeft()}`;
+                                                            }, 100);
+                                                        },
+                                                        willClose: () => {
+                                                            clearInterval(timerInterval);
+                                                            navigate("/movie")
+                                                        }
+                                                    }).then((result) => {
+                                                        /* Read more about handling dismissals below */
+                                                        if (result.dismiss === Swal.DismissReason.timer) {
+                                                            console.log("I was closed by the timer");
+                                                        }
+                                                    });
+                                                } else {
+                                                    Swal.fire({
+                                                        icon: "error",
+                                                        title: "Lỗi...",
+                                                        text: "Lưu phim vào database không thành công...",
+                                                    });
+                                                }
+                                            } catch (e) {
+                                                console.log(e)
+                                            }
                                         }}>
                                     <div className="container-fluid mb-5">
                                         <Form>
@@ -256,31 +334,28 @@ export default function MovieCreate() {
                                                                      style={{marginLeft: "initial"}}>
                                                                     <div className="custom-file col">
                                                                         <input
-                                                                            onChange={(event) => {
-                                                                                setImageUpload(event.target.files[0])
-                                                                            }}
+                                                                            onChange={previewImage}
                                                                             type="file"
                                                                             className="custom-file-input"
                                                                             id="inputPoster"
                                                                             name="poster"
+                                                                            accept="image/*"
                                                                         />
                                                                         <label
                                                                             className="custom-file-label"
                                                                             htmlFor="inputPoster">Chọn ảnh</label>
                                                                     </div>
-                                                                    <div className="col-md-auto">
-                                                                        <button type="button" onClick={uploadImage}
-                                                                                className="btn btn-outline-secondary ">Up
-                                                                            ảnh
-                                                                        </button>
-                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                            {imageDownloaded === null ? null :
+                                                            {imageUpload == null ? null :
                                                                 <div className="row mt-3 d-flex justify-content-center">
-                                                                    <img style={{maxWidth: "400px"}}
-                                                                         src={imageDownloaded}
-                                                                         alt=""/>
+                                                                    <div className="col-3">
+                                                                    </div>
+                                                                    <div className="col">
+                                                                        <img style={{maxWidth:"300px"}}
+                                                                             src={imageUpload}
+                                                                             alt=""/>
+                                                                    </div>
                                                                 </div>}
                                                             <div className="row mt-3">
                                                                 <div className="col-3 d-flex align-items-center">
@@ -486,7 +561,7 @@ export default function MovieCreate() {
                                                                 </option>
                                                                 {movieAtt.halls.map((hall) => (
                                                                     <option key={hall.id} value={"" + hall.id}>
-                                                                        Sảnh {hall.name}
+                                                                        {hall.name}
                                                                     </option>
                                                                 ))}
                                                             </Field>
@@ -494,7 +569,15 @@ export default function MovieCreate() {
                                                     </div>
 
                                                     <div className="row mt-2 d-flex justify-content-center">
-                                                        {isTableUpdating ? <h2>Updating table...</h2> : <></>}
+                                                        {isTableUpdating ? <ThreeCircles
+                                                            visible={true}
+                                                            height="100"
+                                                            width="100"
+                                                            color="#4fa94d"
+                                                            ariaLabel="three-circles-loading"
+                                                            wrapperStyle={{}}
+                                                            wrapperClass=""
+                                                        /> : <></>}
                                                         <table className="table table-bordered" id="scheduleTable">
                                                             <thead>
                                                             <tr>
@@ -546,7 +629,7 @@ export default function MovieCreate() {
                                                                         return (
                                                                             <td key={i} onClick={tdOnClickHandler}>
                                                                                 <input id={idValue}
-                                                                                       hidden="true"
+                                                                                       hidden={true}
                                                                                        type="checkbox"
                                                                                        name="schedules"
                                                                                        value={idValue}/>
