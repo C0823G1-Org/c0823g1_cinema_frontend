@@ -19,6 +19,8 @@ import TicketList from "./components/Employee/TicketList";
 import Register from "./components/Register/Register";
 import UserInformation from "./components/User/UserInformation";
 import HistoryBooking from "./components/User/HistoryBooking";
+
+import ExportDetail from "./components/Employee/ExportDetail";
 import Search from './components/Home/Search';
 import HeaderTemplateAdmin from './components/Home/HeaderTemplateAdmin';
 
@@ -45,6 +47,7 @@ function App() {
                 <Route path={"/home/detail/:id"} element={<DetailMovie/>}></Route>
                 <Route path={"/employee/ticketCheckout"} element={<TicketCheckout/>}></Route>
                 <Route path={"/employee/ticketList"} element={<TicketList/>}></Route>
+                <Route path={"/employee/exportDetail"} element={<ExportDetail/>}></Route>
                 <Route path={"/user/information"} element={<UserInformation/>}></Route>
                 <Route path={"/user/history"} element={<HistoryBooking/>}></Route>
             </Routes>

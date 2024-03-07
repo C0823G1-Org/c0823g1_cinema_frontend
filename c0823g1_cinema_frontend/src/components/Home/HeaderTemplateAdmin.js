@@ -1,8 +1,8 @@
-import {useNavigate} from "react-router-dom";
-import React, {useState, useEffect} from 'react'
+import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react'
 import '../Home/Header.css'
 import Header from "./Header";
-import {LoginLogoutService} from "../../service/LoginLogoutService";
+import { LoginLogoutService } from "../../service/LoginLogoutService";
 import SweetAlert from "sweetalert";
 
 
@@ -11,7 +11,7 @@ export default function HeaderTemplateAdmin() {
     const [roleUser, setRoleUser] = useState("");
     const [userName, setUserName] = useState("");
     const [isLogin, setIsLogin] = useState(false)
-    const [img,setImg] = useState("");
+    const [img, setImg] = useState("");
 
 
     useEffect(() => {
@@ -60,19 +60,22 @@ export default function HeaderTemplateAdmin() {
                     <div className="container">
                         <nav className="navbar navbar-expand-lg navbar-dark px-0 navbar-onscroll-by-user">
                             <a className="navbar-brand" href="#"><img className="img__logo"
-                                                                      src="https://firebasestorage.googleapis.com/v0/b/newfirebase-1fe01.appspot.com/o/images%2FRemove-bg.ai_1708658790252.png?alt=media&token=93446917-2643-47f6-b15d-244b61f0adab"
-                                                                      alt/></a>
+                                src="https://firebasestorage.googleapis.com/v0/b/newfirebase-1fe01.appspot.com/o/images%2FRemove-bg.ai_1708658790252.png?alt=media&token=93446917-2643-47f6-b15d-244b61f0adab"
+                                alt /></a>
                             <button className="navbar-toggler" type="button" data-toggle="collapse"
-                                    data-target="#hideNavbar" aria-controls="navbarSupportedContent"
-                                    aria-expanded="false" aria-label="Toggle navigation">
-                                <span className="navbar-toggler-icon"/>
+                                data-target="#hideNavbar" aria-controls="navbarSupportedContent"
+                                aria-expanded="false" aria-label="Toggle navigation">
+                                <span className="navbar-toggler-icon" />
                             </button>
+                            <a href="" className="buy__ticket">
+                                <img className="picture__ticket" src="https://firebasestorage.googleapis.com/v0/b/newfirebase-1fe01.appspot.com/o/images%2Fbtn-ticket.42d72c96.webp?alt=media&token=614961a8-60e0-4e18-a9b4-bd733eda0537"></img>
+                            </a>
                             {/* Admin */}
                             {roleUser === "ROLE_ADMIN" && (
                                 <div className="collapse navbar-collapse" id="hideNavbar">
                                     <ul className="navbar-nav text-center ml-auto">
                                         <li className="nav-item">
-                                            <a className="nav-link" href="#">Trang Chủ</a>
+                                            <Link className="nav-link" to={'/home'}>Trang Chủ</Link>
                                         </li>
                                         <li className="nav-item">
                                             <a className="nav-link" href="#">Hổ Trợ</a>
@@ -85,9 +88,11 @@ export default function HeaderTemplateAdmin() {
                                         </li>
                                     </ul>
                                     <ul className="navbar-nav text-center ml-auto checkunder">
-                                        <p style={{color: "white", marginRight: "1rem", marginTop:"0.6rem"}} className="name--user">{userName}</p>
-                                        <img src={`${img}`} alt="Profile" style={{borderRadius: "50%", height: "3rem", marginRight: "1rem"}}/>
-                                        <i onClick={logout} className="fas fa-sign-out-alt" style={{fontSize: "2rem", marginTop:"0.5rem" , color: "#EE5A24"}}></i>
+                                        <p style={{ color: "white", marginRight: "1rem", marginTop: "0.6rem" }} className="name--user">{userName}</p>
+                                        <div className="container__logout">
+                                            <img src={`${img}`} alt="Profile" style={{ borderRadius: "50%", height: "3rem", marginRight: "1rem",marginTop:"20px" }} />
+                                            <i onClick={logout} className="fas fa-sign-out-alt" style={{ fontSize: "2rem", marginTop: "17px", color: "#EE5A24",position: "absolute" }}></i>
+                                        </div>
                                     </ul>
                                 </div>
                             )}
@@ -95,7 +100,7 @@ export default function HeaderTemplateAdmin() {
                                 <div className="collapse navbar-collapse" id="hideNavbar">
                                     <ul className="navbar-nav text-center ml-auto">
                                         <li className="nav-item">
-                                            <a className="nav-link" href="#">Trang Chủ</a>
+                                            <Link className="nav-link" to={'/home'}>Trang Chủ</Link>
                                         </li>
                                         <li className="nav-item">
                                             <a className="nav-link" href="#">Hổ Trợ</a>
@@ -108,9 +113,11 @@ export default function HeaderTemplateAdmin() {
                                         </li>
                                     </ul>
                                     <ul className="navbar-nav text-center ml-auto checkunder">
-                                        <p style={{color: "white", marginRight: "1rem", marginTop:"0.6rem"}} className="name--user">{userName}</p>
-                                        <img src={`${img}`} alt="Profile" style={{borderRadius: "50%", height: "3rem", marginRight: "1rem"}}/>
-                                        <i onClick={logout} className="fas fa-sign-out-alt" style={{fontSize: "2rem", marginTop:"0.5rem" , color: "#EE5A24"}}></i>
+                                        <p style={{ color: "white", marginRight: "1rem", marginTop: "0.6rem" }} className="name--user">{userName}</p>
+                                        <div className="container__logout">
+                                            <img src={`${img}`} alt="Profile" style={{ borderRadius: "50%", height: "3rem", marginRight: "1rem",marginTop:"20px" }} />
+                                            <i onClick={logout} className="fas fa-sign-out-alt" style={{ fontSize: "2rem", marginTop: "17px", color: "#EE5A24",position: "absolute" }}></i>
+                                        </div>
                                     </ul>
                                 </div>
                             )}
@@ -118,7 +125,7 @@ export default function HeaderTemplateAdmin() {
                                 <div className="collapse navbar-collapse" id="hideNavbar">
                                     <ul className="navbar-nav text-center ml-auto">
                                         <li className="nav-item">
-                                            <a className="nav-link" href="#">Trang Chủ</a>
+                                            <Link className="nav-link" to={'/home'}>Trang Chủ</Link>
                                         </li>
                                         <li className="nav-item">
                                             <a className="nav-link" href="#">Hổ Trợ</a>
@@ -128,9 +135,11 @@ export default function HeaderTemplateAdmin() {
                                         </li>
                                     </ul>
                                     <ul className="navbar-nav text-center ml-auto checkunder">
-                                        <p style={{color: "white", marginRight: "1rem", marginTop:"0.6rem"}} className="name--user">{userName}</p>
-                                        <img src={`${img}`} alt="Profile" style={{borderRadius: "50%", height: "3rem", marginRight: "1rem"}}/>
-                                        <i onClick={logout} className="fas fa-sign-out-alt" style={{fontSize: "2rem", marginTop:"0.5rem" , color: "#EE5A24"}}></i>
+                                        <p style={{ color: "white", marginRight: "1rem", marginTop: "0.6rem" }} className="name--user">{userName}</p>
+                                        <div className="container__logout">
+                                            <img src={`${img}`} alt="Profile" style={{ borderRadius: "50%", height: "3rem", marginRight: "1rem",marginTop:"20px" }} />
+                                            <i onClick={logout} className="fas fa-sign-out-alt" style={{ fontSize: "2rem", marginTop: "17px", color: "#EE5A24",position: "absolute" }}></i>
+                                        </div>
                                     </ul>
                                 </div>
                             )}
@@ -138,7 +147,7 @@ export default function HeaderTemplateAdmin() {
                     </div>
                 </div>
                 :
-                <Header/>
+                <Header />
             }
         </>
     )
