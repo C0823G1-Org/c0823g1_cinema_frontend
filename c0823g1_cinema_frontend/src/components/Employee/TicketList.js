@@ -27,8 +27,6 @@ export default function TicketList() {
 
     const handleDetailExport = async (bookingId) => {
         let result = await EmployeeService.findBookingDetail(bookingId);
-
-
         if (result.flag === "FOUND"){
             navigate("/employee/exportDetail",{state:{listBooking:result.data,idBooking:bookingId}})
         } else if (result.flag === "BAD_REQUEST"){
@@ -170,6 +168,7 @@ export default function TicketList() {
 
                                     <a onClick={() => handleDetailExport(`${item.bookingCode}`)}  className="delete btn"><span
                                         className="material-icons">
+
                           exit_to_app
                           </span></a>
                                 </td>
@@ -185,6 +184,7 @@ export default function TicketList() {
                         <div className="hint-text"></div>
                         <div className="page">
                             <ReactPaginate
+                                forcePage={currentPage}
                                 breakLabel="..."
                                 nextLabel="Trang Sau"
                                 onPageChange={handlePageClick}

@@ -3,7 +3,6 @@ import '../../../src/css/HaiNT_TicketBooking.css';
 import '../../index.css';
 import {EmployeeService} from "../../service/EmployeeService";
 import SweetAlert from "sweetalert";
-import { saveAs } from 'file-saver';
 import Footer from "../Home/Footer";
 import Header from "../Home/Header";
 
@@ -13,36 +12,28 @@ export  default function ExportDetail(){
     const navigate = useNavigate();
     const location = useLocation();
     const data = location.state.listBooking;
-    console.log(data)
-const handleExportFile = async(id) => {
-    // const fileInput = document.createElement("input");
-    // fileInput.type = "dow";
-    // fileInput.style.display = "none";
-    // let resolveChange;
-    // const changePromise = new Promise((resolve) => {
-    //     resolveChange = resolve;
-    // });
-    // fileInput.addEventListener("change", async (event) => {
-    //     const selectedFile = event.target.files[0];
-    //     resolveChange(selectedFile);
-    // });
-    // fileInput.click();
-    // const selectedFile = await changePromise;
-    // console.log(selectedFile)
-
-    const rs = await EmployeeService.exportFile(id);
 
     const downloadFile = (file) => {
-        const element = document.createElement('a');
-        element.setAttribute('href', "Download Btn");
-        element.setAttribute('download', file);
-        element.style.display = 'none';
-        document.body.appendChild(element);
-        element.click();
-        document.body.removeChild(element);
+        // const element = document.createElement('a');
+        // element.setAttribute('href', file);
+        // element.setAttribute('download', '');
+        // element.style.display = 'none';
+        // document.body.appendChild(element);
+        // element.click();
+        // document.body.removeChild(element);
+        const pdfUrl = "Samplez.pdf";
+        const link = document.createElement("a");
+        link.href = pdfUrl;
+        link.download = "kaka"; // specify the filename
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
-
-    downloadFile("D:\\filePdf")
+const handleExportFile = async(id) => {
+    const rs = await EmployeeService.exportFile(id);
+   // downloadFile(`D:\\filePdf\\ticket${id}.pdf`)
+    downloadFile(rs.data)
+    navigate("/employee/ticketList");
 
     if (rs.flag === "OK"){
         navigate("/employee/ticketList");
@@ -56,7 +47,7 @@ const handleExportFile = async(id) => {
     return(
         <>
             <Header/>
-            <h1 className="h1 text-center">Thông tin đặt vé</h1>
+            <h1 className="h1 text-center" style={{marginTop:"26vh"}}>Thông tin đặt vé</h1>
             {data.map((item) => (
                 <div className="container-fluid">
                     <div className="row">
@@ -103,7 +94,7 @@ const handleExportFile = async(id) => {
                     onClick={() => handleExportFile(`${location.state.idBooking}`)}
             >Xuất file
             </button>
-            <div style={{borderTop: "170vh solid white"}}>
+            <div style={{borderTop: "5vh solid white"}}>
                 <Footer/>
             </div>
         </>
