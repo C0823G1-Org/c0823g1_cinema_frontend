@@ -1,90 +1,94 @@
-* {
-    font-family: 'Roboto Condensed', sans-serif;
+.container_detail {
+    display: flex;
+    justify-content: center; /* Căn giữa phần tử theo chiều ngang */
+    align-items: center; /* Căn giữa phần tử theo chiều dọc */
+    height: 100vh; /* Sử dụng chiều cao 100% của cửa sổ trình duyệt */
+}
+.container_detail1 {
+    display: flex;
+}
+.column_footer{
+    flex: 100%;
 }
 
-.mid_detail {
-    float: left;
-    width: 60%;
-    height: 500px;
+.column_detail {
 }
 
-.left_detail {
-    float: left;
-    width: 20%;
-    height: 500px;
-    background-color: black;
-}
-
-.left1_detail {
-    float: left;
-    width: 20%;
-    height: 500px;
-    background-color: white;
-}
-
-.right_detail {
-    float: right;
-    width: 20%;
-    height: 500px;
-    background-color: black;
-}
-
-.right1_detail {
-    float: right;
-    width: 20%;
-    height: 500px;
-    background-color: white;
-}
-
-.video-play-button_detail {
-    position: absolute;
-    top: 25%;
-    left: 50%;
-    -webkit-transform: translateX(-50%) translateY(-50%);
-    transform: translateX(-50%) translateY(-50%);
-    display: block;
-    width: 0px;
-    height: 0px;
-    border-radius: 50%;
+.column1_detail,
+.column3_detail {
+    flex: 20%;
+    height: 67.9%;
 
 }
 
-
-.picture_detail {
-    position: absolute;
-    z-index: 10;
-    top: 48%;
-    left: 13%;
-    -webkit-transform: translateX(-50%) translateY(-50%);
-    transform: translateX(-50%) translateY(-50%);
-    box-sizing: content-box;
-    display: block;
-    width: 50px;
-    height: 44px;
-    border-radius: 50%;
-    padding: 18px 20px 18px 28px;
+.column2_detail {
+    flex: 60%; /* Thay đổi tỷ lệ flex để video lớn hơn */
 }
 
-.btn__add_detail {
+.video-wrapper {
     position: relative;
-    background: linear-gradient(90deg, #649FDE 0%, #2B4DB5 100%);
+    width: 100%;
+    height: 0;
+    padding-top: 56.25%; /* Tỉ lệ khung cho video 16:9 */
+}
+
+.video-frame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.video-frame iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+@media (max-width: 768px) {
+    .container_detail {
+        flex-direction: column; /* Chuyển sang layout dạng cột khi màn hình nhỏ hơn 768px */
+    }
+
+    .column_detail {
+        flex: 100%;
+    }
+
+    .column2_detail {
+        order: -1;
+    }
+    .footer_detail {
+        position: relative;
+        width: 100%; /* Chiều rộng 100% của trang */
+        color: white; /* Màu chữ cho footer */
+        text-align: center; /* Căn giữa nội dung của footer */
+        padding-top: 40%;
+    }
+}
+.btn__add_detail {
+    background: linear-gradient(90deg, #FBBD61 0%, #EC7532 100%);
     border-radius: 2px;
     border: none;
     outline: none;
-    padding: 12px;
+    padding: 8px 12px;
     color: #fff;
     font-size: 16px;
     font-weight: 400;
     font-family: inherit;
     text-align: center;
     cursor: pointer;
-    width: 270px;
 }
-
 .btn__add_detail :hover {
     background: linear-gradient(90deg, #87BCF5 0%, #3863E2 100%);
 }
 
+
+.btn__add_detail :hover {
+    background: linear-gradient(90deg, #87BCF5 0%, #3863E2 100%);
+}
 .showtime_detail > a_detail > button_detail {
     color: black;
     padding: 6px 20px;
@@ -97,11 +101,21 @@
     border-radius: 5px;
     background-color: white;
 }
-
-.showtime > a > button:hover {
-    color: white;
-    cursor: pointer;
-    background-color: #3863E2;
+.page-wrapper_detail {
+    position: relative; /* Thiết lập position là relative để footer không đè lên các phần khác */
+}
+.footer_detail5 {
+    position: relative;
+    width: 100%; /* Chiều rộng 100% của trang */
+    color: white; /* Màu chữ cho footer */
+    text-align: center; /* Căn giữa nội dung của footer */
+    padding-top: 55%;
+}
+.footer_detail {
+    width: 100%; /* Chiều rộng 100% của trang */
+    color: white; /* Màu chữ cho footer */
+    text-align: center; /* Căn giữa nội dung của footer */
+    padding-top: 30%;
 }
 
 .active1 {
@@ -116,48 +130,4 @@
     margin-top: 10px;
     border-radius: 5px;
     background-color: white;
-}
-
-/* DetailMovie.css */
-
-.btn__add_detail :hover {
-    background: linear-gradient(90deg, #87BCF5 0%, #3863E2 100%);
-}
-
-/* Button search */
-.btn__search_detail {
-    background: linear-gradient(90deg, #FBBD61 0%, #EC7532 100%);
-    border-radius: 2px;
-    border: none;
-    outline: none;
-    padding: 8px 12px;
-    color: #fff;
-    font-size: 16px;
-    font-weight: 400;
-    font-family: inherit;
-    text-align: center;
-    cursor: pointer;
-    width: 50%;
-}
-
-.btn__search_detail :hover {
-    background: linear-gradient(90deg, #87BCF5 0%, #3863E2 100%);
-}
-
-.btn__add_detail {
-    background: linear-gradient(90deg, #FBBD61 0%, #EC7532 100%);
-    border-radius: 2px;
-    border: none;
-    outline: none;
-    padding: 8px 12px;
-    color: #fff;
-    font-size: 16px;
-    font-weight: 400;
-    font-family: inherit;
-    text-align: center;
-    cursor: pointer;
-}
-
-.btn__add_detail :hover {
-    background: linear-gradient(90deg, #87BCF5 0%, #3863E2 100%);
 }

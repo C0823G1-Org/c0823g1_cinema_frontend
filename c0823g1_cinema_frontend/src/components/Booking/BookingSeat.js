@@ -5,7 +5,6 @@ import {getSchedule, getSeat} from "../../service/BookingService";
 import classNames from 'classnames';
 import Figure from 'react-bootstrap/Figure';
 import Header from "../Home/Header";
-import {Form} from "formik";
 import Footer from "../Home/Footer";
 
 export default function BookingSeat() {
@@ -17,6 +16,7 @@ export default function BookingSeat() {
     const navigate = useNavigate();
     const location = useLocation()
     const data = location.state.myResult;
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -38,16 +38,35 @@ export default function BookingSeat() {
         fetchData();
 
     }, []);
-    console.log(data)
-    const handleSubmit = () => {
-        setResult({
+    const handleBack = () => {
+        if(data.backId ===1){
+            navigate(`/home/detail/${data.movieId}`)
+        }else if(data.backId ===2){
+            navigate("/booking")
+        }
+
+    }
+
+    const handleSubmit = async () => {
+        const newResult = {
             "seatList": selected,
             "scheduleId": schedule.id,
-            "accountId":1
-        })
-        console.log(result)
-        navigate("/booking/checkout", {state: {myResult: result}})
-    }
+            "accountId": 1,
+            "backId": data.backId,
+            "movieId": data.movieId,
+            "date": data.date,
+            "scheduleTimeId": data.scheduleTimeId
+        };
+
+        setResult(newResult);
+
+        try {
+            navigate("/booking/checkout", { state: { myResult: newResult } });
+        } catch (error) {
+            console.error("Error during asynchronous operations:", error);
+        }
+    };
+    console.log(result)
     const handleClick = (e, seatNumber) => {
         if ((e.target.classList.contains('seat')
                 || e.target.classList.contains('vip')
@@ -189,6 +208,8 @@ export default function BookingSeat() {
                         </ul>
                         <div className="containerBS" id="container1">
                             <div className=" screen" style={{fontSize: '200%', paddingTop: '10px'}}> MÀN HÌNH</div>
+                            <div><svg style={{width:'5%'}} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M502.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224 192 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l210.7 0-73.4 73.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l128-128zM160 96c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 32C43 32 0 75 0 128L0 384c0 53 43 96 96 96l64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-64 0c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l64 0z"/></svg>
+                                <span style={{fontSize:'150%',marginTop:'100%'}}>Lối vào</span></div>
                             {
                                 renderSeats()
                             }
@@ -202,17 +223,7 @@ export default function BookingSeat() {
                                     <div
                                         className="row-span-2 md:row-span-1 xl:row-span-2 block md:hidden xl:block d-flex justify-content-center"
                                         style={{marginTop: '7%'}}>
-                                        {/*                          <img alt="Madame Web"*/}
-                                        {/*                               loading="lazy"*/}
-                                        {/*                               width="60%"*/}
-                                        {/*                               height="auto"*/}
 
-                                        {/*                               decoding="async"*/}
-                                        {/*                               data-nimg="1"*/}
-                                        {/*                               className="xl:w-full xl:h-full md:w-[80px] md:h-[120px] w-[90px] h-[110px] rounded object-cover object-cover duration-500 ease-in-out group-hover:opacity-100*/}
-                                        {/*scale-100 blur-0 grayscale-0)"*/}
-                                        {/*                               src={schedule.movie.poster}*/}
-                                        {/*                               style={{color: 'transparent'}}/>*/}
                                         <Figure>
                                             <Figure.Image
                                                 width={190}
@@ -225,14 +236,15 @@ export default function BookingSeat() {
                                     <div className="flex-1 col-span-2 md:col-span-1 row-span-1 xl:col-span-2"><h3
                                         className="text-sm xl:text-base font-bold xl:mb-0 d-flex justify-content-center mt-2 text-align-center">
                                         {schedule.movie.name}</h3>
-                                        <p className="text-sm inline-block">2D Phụ Đề</p>
+                                        <p className="text-sm inline-block">{schedule.hall.id ===1 ||schedule.hall.id ===2?"2D Phụ đề":"3D Phụ đề"}</p>
                                         <hr className="my-0"/>
                                     </div>
                                     <div className="col-span-2 md:col-span-1 xl:col-span-3">
                                         <div>
                                             <div className="xl:mt-0  xl:text-base">
                                                 <strong>Suất: </strong>
-                                                <strong>{formatTime(schedule.scheduleTime.scheduleTime)}</strong><strong> - </strong><strong>{formatDate(schedule.date)}</strong>
+                                                <strong>{formatTime(schedule.scheduleTime.scheduleTime)}</strong><strong> - </strong><strong>{formatDate(schedule.date)}</strong><br/>
+                                                <strong>Phòng: {schedule.hall.name}</strong>
                                             </div>
                                         </div>
                                         <div
@@ -241,18 +253,18 @@ export default function BookingSeat() {
                                     <div className="xl:flex hidden justify-between col-span-3"><strong
                                         className="text-base"> Bạn đã chọn <span
                                         className="inline-block font-bold text-primary "
-                                        style={{frontSize: '200%'}}>&nbsp;{selected.length}</span> vé.
+                                        style={{fontSize: "large"}}>&nbsp;{selected.length}</span> vé.
                                         Tổng
-                                        cộng</strong><span
-                                        className="inline-block font-bold text-primary ">&nbsp;{formatNumberWithThousandSeparator(schedule.movie.ticketPrice * selected.length)}</span> VNĐ
+                                        cộng</strong><strong
+                                        className="inline-block font-bold text-primary " style={{fontSize: "large"}}>&nbsp;{formatNumberWithThousandSeparator(schedule.movie.ticketPrice * selected.length)}</strong> VNĐ
                                     </div>
                                     <div
                                         className="xl:flex mt-5 px-5 hidden d-flex justify-content-between align-items-center col-span-3">
-                                        <Link to="/booking">
-                                            <button style={{width: '100px'}} className="btn__back">Quay lại</button>
-                                        </Link>
+
+                                            <button style={{width: '100px'}} className="btn__back" onClick={handleBack}>Quay lại</button>
+
                                             <button style={{width: '100px'}} className="btn__booking"
-                                                    disabled={selected.length === 0} onClick={handleSubmit}>Đặt vé
+                                                    disabled={selected.length === 0} onClick={()=>handleSubmit()}>Đặt vé
                                             </button>
                                     </div>
                                 </div>
