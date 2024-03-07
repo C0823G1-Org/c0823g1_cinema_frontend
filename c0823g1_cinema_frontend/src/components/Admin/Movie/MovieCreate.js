@@ -108,6 +108,7 @@ export default function MovieCreate() {
         let valueArray = scheduleValue.split(",")
         let idTempValue = scheduleValue + "," + hallId
         let newScheduleDTO = {
+            "idFind": scheduleValue,
             "idTemp": idTempValue,
             "date": valueArray[0],
             "scheduleTime": valueArray[1],
@@ -168,17 +169,25 @@ export default function MovieCreate() {
 
     function updateScheduleTable() {
         resetScheduleTable()
+        if (schedulesList.length === 0) return
         //update table
         let id
         let label
         let cell
         schedulesList.forEach((scheduleList) => {
-            id = scheduleList.date + "," + scheduleList.scheduleTime.scheduleTime
+            id = scheduleList.date + "," + scheduleList.scheduleTime.id
             label = document.getElementById(id + " title")
             label.innerText = scheduleList.movie.name
             label.style.color = "white"
             cell = label.parentElement
             cell.style.backgroundColor = "grey";
+        })
+        if (newSchedule.length === 0) return
+        newSchedule.forEach((element) => {
+            if (element.hall !== hallId) return
+            cell = document.getElementById(element.idFind).parentElement
+            cell.style.backgroundColor = "lightblue"
+            cell.children[0].checked = true
         })
     }
 
@@ -533,14 +542,14 @@ export default function MovieCreate() {
                                                                     {sevenLoop.map((i) => {
                                                                         let dayIncrease = new Date();
                                                                         dayIncrease.setDate(curDate.getDate() + i)
-                                                                        let idValue = dayIncrease.getFullYear() + "-" + ("0" + (dayIncrease.getMonth() + 1)).slice(-2) + "-" + ("0" + dayIncrease.getDate()).slice(-2) + "," + scheduleTime.scheduleTime
+                                                                        let idValue = dayIncrease.getFullYear() + "-" + ("0" + (dayIncrease.getMonth() + 1)).slice(-2) + "-" + ("0" + dayIncrease.getDate()).slice(-2) + "," + scheduleTime.id
                                                                         return (
                                                                             <td key={i} onClick={tdOnClickHandler}>
                                                                                 <input id={idValue}
                                                                                        hidden="true"
                                                                                        type="checkbox"
                                                                                        name="schedules"
-                                                                                       value={dayIncrease.getFullYear() + "-" + ("0" + (dayIncrease.getMonth() + 1)).slice(-2) + "-" + ("0" + dayIncrease.getDate()).slice(-2) + "," + scheduleTime.id}/>
+                                                                                       value={idValue}/>
                                                                                 <label id={idValue + " title"}></label>
                                                                             </td>
                                                                         )
