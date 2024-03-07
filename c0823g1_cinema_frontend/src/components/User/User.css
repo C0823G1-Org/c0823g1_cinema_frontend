@@ -215,10 +215,10 @@ html:not(.dark-style) .account-settings-links .list-group-item.active {
     height: 220px;
 }
 
-.container {
+/* .container {
     position: relative;
     width: 100%;
-}
+} */
 
 .input-upload[type="file"] {
     /* position: absolute; */
@@ -243,32 +243,57 @@ html:not(.dark-style) .account-settings-links .list-group-item.active {
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
-.btn__add :hover {
-    background: linear-gradient(90deg, #87BCF5 0%, #3863E2 100%);
+.btnAdd {
+    border-radius: 20px;
+    border: 1px solid #FBBD61;
+    background: linear-gradient(to right, #FBBD61, #EC7532);
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 12px 45px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: transform 80ms ease-in;
+}
+.btnAdd :hover {
+    border-radius: 20px;
+    border: 1px solid #FBBD61;
+    background: linear-gradient(to right, #FBBD61, #EC7532);
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 12px 45px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: transform 80ms ease-in;
 }
 /* Button search */
-.btn__search {
-    background: linear-gradient(90deg, #649FDE 0%, #2B4DB5 100%);
-    border-radius: 2px;
-    border: none;
-    outline: none;
-    padding: 8px 12px;
-    color: #fff;
-    font-size: 16px;
-    font-weight: 400;
-    font-family: inherit;
-    text-align: center;
-    cursor: pointer;
-    width: 50%;
+.btnSearch {
+    border-radius: 20px;
+    border: 1px solid  #87BCF5 ;
+    background: linear-gradient(90deg, #87BCF5 0%, #3863E2 100%);
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 12px 45px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: transform 80ms ease-in;
 }
-.btn__search :hover {
+.btnSearch:hover {
     background: linear-gradient(90deg, #87BCF5 0%, #3863E2 100%);
 }
 
-.btn__add :hover {
+.btnAdd :hover {
     background: linear-gradient(90deg, #87BCF5 0%, #3863E2 100%);
 }
 
 .margin-btn{
     margin-right: 90%;
+}
+svg.bi.bi-gender-male {
+    color: blue;
+}
+svg.bi.bi-gender-female {
+    color: pink;
 }

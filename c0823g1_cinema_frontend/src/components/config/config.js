@@ -1,15 +1,18 @@
-import { initializeApp } from "firebase/app";
-import { getAuth,GoogleAuthProvider } from "firebase/auth";
+import {initializeApp} from "firebase/app";
+import {getAuth, GoogleAuthProvider} from "firebase/auth";
+import {getStorage} from "firebase/storage";
+
 const firebaseConfig = {
-    apiKey: "AIzaSyC_s2yYtCEqi0h5NenIr7zd_qZITfKoKlI",
-    authDomain: "c08-cinema-24ac2.firebaseapp.com",
-    projectId: "c08-cinema-24ac2",
-    storageBucket: "c08-cinema-24ac2.appspot.com",
-    messagingSenderId: "816911925461",
-    appId: "1:816911925461:web:d342dbe71877472898a25c"
+    apiKey: "AIzaSyD7dKcxrDBquL3ZjhpCPzmy0stpTJlEwjo",
+    authDomain: "movie-ticket-f0285.firebaseapp.com",
+    projectId: "movie-ticket-f0285",
+    storageBucket: "movie-ticket-f0285.appspot.com",
+    messagingSenderId: "730633865034",
+    appId: "1:730633865034:web:d656d05bb78f82caa163b3"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
-export {auth,provider};
+export {auth, provider};
+export const storage = getStorage(app)

@@ -4,12 +4,14 @@ import "./HungVXK_EmployeeList.css";
 import { useEffect, useState } from "react";
 import MySwal from "sweetalert2";
 import ReactPaginate from "react-paginate";
+import { Sidebar } from "../Sidebar/Sidebar";
 
 export default function EmployeeList() {
   const navigate = useNavigate();
   const [employeeList, setEmployeeList] = useState([]);
   const [searchName, setSearchName] = useState("");
   const [totalPages, setTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
   useEffect(() => {
     const fetchApi = async (page, searchName) => {
       try {
@@ -17,6 +19,7 @@ export default function EmployeeList() {
         console.log(result);
         setEmployeeList(result.content);
         setTotalPages(result.totalPages);
+        document.title = "Quản lý nhân viên"
       } catch (e) {
         console.log(e);
       }
@@ -31,6 +34,7 @@ export default function EmployeeList() {
       let res = await service.getAllEmployee(0, searchName);
       setEmployeeList(res.content);
       setTotalPages(res.totalPages);
+      setCurrentPage(0);
     } catch (e) {
       console.log(e);
     }
@@ -38,6 +42,7 @@ export default function EmployeeList() {
   const handlePageClick = async (event) => {
     try {
       const pageNumber = event.selected;
+      setCurrentPage(pageNumber);
       const result = await service.getAllEmployee(pageNumber, searchName);
       setEmployeeList(result.content);
       setTotalPages(result.totalPages);
@@ -63,7 +68,7 @@ export default function EmployeeList() {
           `${employee.fullName} đã được xóa.`,
           "success"
         );
-        const result = await service.getAllEmployee(0, searchName);
+        const result = await service.getAllEmployee(currentPage, searchName);
         setEmployeeList(result.content);
         setTotalPages(result.totalPages);
       }
@@ -71,7 +76,9 @@ export default function EmployeeList() {
   };
   return (
     <>
-      <div className="container">
+      <Sidebar />
+      <section className="home-section">
+      <div className="container body__employee">
         <h1>Quản lý nhân viên</h1>
         <div className="table-wrapper">
           <div className="table-title">
@@ -81,7 +88,7 @@ export default function EmployeeList() {
                   <div className="d-inline">
                     <div className="d-flex">
                       <input
-                        className="form-control mr-sm-2"
+                        className="form-control_employee mr-sm-2"
                         type="search"
                         placeholder="Nhập tên nhân viên"
                         name="searchName"
@@ -92,7 +99,8 @@ export default function EmployeeList() {
                         id="searchName"
                       />
                       <button
-                        className="btn my-2 my-sm-0 btn__search"
+                        
+                        className="my-2 my-sm-0 btn__search_employee"
                         type="button"
                         onClick={() => submitSearch()}
                       >
@@ -104,9 +112,9 @@ export default function EmployeeList() {
               </div>
               <div
                 className="col-12 col-sm-4 col-md-4 col-lg-4 col-xl-4"
-                style={{ marginTop: "35px" }}
+                style={{ width: "35px" }}
               >
-                <Link to={"/employee/create"} className="btn  btn__add">
+                <Link to={"/employee/create"} className="btn__add_employee">
                   <i className="material-icons">&#xE147;</i>
                   <span>Thêm mới nhân viên</span>
                 </Link>
@@ -180,6 +188,7 @@ export default function EmployeeList() {
             <div className="hint-text"></div>
             <div className="page">
               <ReactPaginate
+                forcePage={currentPage}
                 breakLabel="..."
                 nextLabel="Trang Sau"
                 onPageChange={handlePageClick}
@@ -202,6 +211,8 @@ export default function EmployeeList() {
           </div>
         </div>
       </div>
+      </section>
+      
     </>
   );
 }
