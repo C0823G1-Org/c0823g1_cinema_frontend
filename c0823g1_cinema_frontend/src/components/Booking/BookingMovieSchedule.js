@@ -132,10 +132,11 @@ export default function BookingMovieSchedule() {
     return (
         <>
             <Header/>
+
             <div style={{marginTop: "25vh"}}>
                 <div className="row">
                     <div className=" map col-8 p-0 mx-0">
-                        <Accordion defaultActiveKey={['0']} alwaysOpen>
+                        <Accordion defaultActiveKey={['0']} alwaysOpen style={{width:'80%', marginTop:'2%', marginLeft:'5%'}}>
                             <Accordion.Item eventKey={status.chonPhim}>
                                 <Accordion.Header>Chọn phim</Accordion.Header>
                                 <Accordion.Body>
@@ -215,7 +216,7 @@ export default function BookingMovieSchedule() {
                                              data-nimg="1"
                                              className="xl:w-full xl:h-full md:w-[80px] md:h-[120px] w-[90px] h-[110px] rounded object-cover object-cover duration-500 ease-in-out group-hover:opacity-100
                                 scale-100 blur-0 grayscale-0)"
-                                             src={selectedMovie && selectedMovie.poster !== null ? selectedMovie.poster : "https://motivatevalmorgan.com/wp-content/uploads/2016/06/default-movie.jpg"}
+                                             src={selectedMovie && selectedMovie.poster !== null ? selectedMovie.poster : "https://www.galaxycine.vn/_next/static/media/img-blank.bb695736.svg"}
                                              style={{color: 'transparent'}}/>
                                     </div>
                                     <div className="flex-1 col-span-2 md:col-span-1 row-span-1 xl:col-span-2"><h3
@@ -229,20 +230,20 @@ export default function BookingMovieSchedule() {
                                             <div className="xl:mt-0  xl:text-base">
                                                 <strong>Ngày:{selectedDate ? formatDate(selectedDate.dateTime) : "------"} </strong>
                                                 <strong>-</strong><strong>Suất: {selectedSchedule ? formatTime(selectedSchedule.scheduleTime) : "----"}</strong><strong></strong>
+                                                <div style={{marginTop: "15px"}}
+                                                    className="">
+                                                    <Link to="/home">
+                                                        <button style={{width: '100px'}} className="btn__back">Quay lại</button>
+                                                    </Link>
+                                                    <button style={{width: '100px', marginLeft: "210px"}} className="btn__booking"
+                                                            disabled={selectedDate === null} onClick={handleSubmit}>Đặt vé
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                         <div
                                             className="my-2 border-t border-grey-60 border-dashed xl:block hidden"></div>
-                                    </div>
 
-                                    <div
-                                        className="xl:flex mt-5 px-5 hidden d-flex justify-content-between align-items-center col-span-3">
-                                        <Link to="/home">
-                                            <button style={{width: '100px'}} className="btn__back">Quay lại</button>
-                                        </Link>
-                                        <button style={{width: '100px'}} className="btn__booking"
-                                                disabled={selectedDate === null} onClick={handleSubmit}>Đặt vé
-                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -250,7 +251,7 @@ export default function BookingMovieSchedule() {
                     </div>
                 </div>
             </div>
-            <Footer/>
+<Footer/>
         </>
     )
 }
