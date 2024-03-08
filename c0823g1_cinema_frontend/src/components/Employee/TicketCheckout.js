@@ -1,68 +1,111 @@
-export default function TicketList(){
+import {useLocation, useNavigate} from "react-router-dom";
+import '../../../src/css/HaiNT_TicketBooking.css';
+import '../../index.css';
+import {EmployeeService} from "../../service/EmployeeService";
+import SweetAlert from "sweetalert";
+import { saveAs } from 'file-saver';
+import Footer from "../Home/Footer";
+import Header from "../Home/Header";
+import HeaderTemplateAdmin from "../Home/HeaderTemplateAdmin";
+
+
+
+export  default function ExportDetail(){
+    const navigate = useNavigate();
+    const location = useLocation();
+    const data = location.state.listBooking;
+    console.log(data)
+    const handleExportFile = async(id) => {
+        // const fileInput = document.createElement("input");
+        // fileInput.type = "dow";
+        // fileInput.style.display = "none";
+        // let resolveChange;
+        // const changePromise = new Promise((resolve) => {
+        //     resolveChange = resolve;
+        // });
+        // fileInput.addEventListener("change", async (event) => {
+        //     const selectedFile = event.target.files[0];
+        //     resolveChange(selectedFile);
+        // });
+        // fileInput.click();
+        // const selectedFile = await changePromise;
+        // console.log(selectedFile)
+
+        const rs = await EmployeeService.exportFile(id);
+
+        const downloadFile = (file) => {
+            const element = document.createElement('a');
+            element.setAttribute('href', "Download Btn");
+            element.setAttribute('download', file);
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+        }
+
+        downloadFile("D:\\filePdf")
+
+        if (rs.flag === "OK"){
+            navigate("/employee/ticketList");
+            await SweetAlert("Vé  được in thành công","", "success")
+        } else {
+            navigate("/employee/ticketList");
+            await SweetAlert("Vé đã có người in hoặc không tồn tại!","", "error");
+
+        }
+    }
     return(
         <>
-            <h1 className="h1 text-center">Xuất Vé Phim</h1>
-            <div className="container-fluid">
-                <div className="row">
-                    <div className="col-1"></div>
-                    <div className="col-3">
-                        <img src="https://cdn.galaxycine.vn/media/2024/1/24/madame-web-500_1706063512367.jpg" alt="Madame Web
-
-                Xem thêm tại: https://www.galaxycine.vn/"/>
-                    </div>
-                    <div className="col-6">
-
-                        <table className="table">
-                            <tr>
-                                <th colSpan="2">
-                                    <h4>Movie: Madame Web</h4>
-                                </th>
-                            </tr>
-                            <tr>
-                                <th>Màn hình</th>
-                                <td>Scrn 02</td>
-                            </tr>
-                            <tr className="tr">
-                                <th>Ngày chiếu</th>
-                                <td>22/02/2024</td>
-                            </tr>
-                            <tr>
-                                <th>Giờ chiếu</th>
-                                <td>08:20</td>
-                            </tr>
-                            <tr>
-                                <th>Ghế</th>
-                                <td>B8</td>
-                            </tr>
-                            <tr>
-                                <th>Giá</th>
-                                <td>
-                                    <p>B8: 60000đ</p>
-
-                                </td>
-                            </tr>
-                            <tr >
-                                <th>Tổng cộng</th>
-                                <td>60.000 đ</td>
-                            </tr>
-
-                        </table>
-                        <div style= {{display: "flex",
-                            justifyContent: "center"}}>
-                            <button type="button" className="btn btn-primary">
-                                <svg style={{width: "20",height: "20",paddingTop: 5}}
-                                     xmlns="http://www.w3.org/2000/svg"
-                                     viewBox="0 0 576 512">
-                                    <path
-                                        d="M64 64C28.7 64 0 92.7 0 128v64c0 8.8 7.4 15.7 15.7 18.6C34.5 217.1 48 235 48 256s-13.5 38.9-32.3 45.4C7.4 304.3 0 311.2 0 320v64c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V320c0-8.8-7.4-15.7-15.7-18.6C541.5 294.9 528 277 528 256s13.5-38.9 32.3-45.4c8.3-2.9 15.7-9.8 15.7-18.6V128c0-35.3-28.7-64-64-64H64zm64 112l0 160c0 8.8 7.2 16 16 16H432c8.8 0 16-7.2 16-16V176c0-8.8-7.2-16-16-16H144c-8.8 0-16 7.2-16 16zM96 160c0-17.7 14.3-32 32-32H448c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H128c-17.7 0-32-14.3-32-32V160z"/>
-
-                                </svg>
-                                Xuất Vé
-                            </button>
+            <HeaderTemplateAdmin />
+            <h1 className="h1 text-center">Thông tin đặt vé</h1>
+            {data.map((item) => (
+                <div className="container-fluid">
+                    <div className="row">
+                        <div className="col-1"></div>
+                        <div className="col-3">
+                            <img style={{width: "80%", height: "70%", marginTop: "1em"}}
+                                 src={`${item.posterFilm}`}/>
                         </div>
+                        <div className="col-6">
+                            <table className="table">
+                                <tr>
+                                    <th>Phòng</th>
+                                    <td>{item.cinemaHall}</td>
+                                </tr>
+                                <tr>
+                                    <th>Phim</th>
+                                    <td>{item.nameMovieFilm}</td>
+                                </tr>
+                                <tr className="tr">
+                                    <th>Tên khách hàng</th>
+                                    <td>{item.nameCustomer}</td>
+                                </tr>
+                                <tr className="tr">
+                                    <th>Ngày chiếu</th>
+                                    <td>{item.scheduleDate}</td>
+                                </tr>
 
+
+                                <tr>
+                                    <th>Giờ chiếu</th>
+                                    <td>{item.scheduleTime}</td>
+                                </tr>
+                                <tr>
+                                    <th>Ghế</th>
+                                    <td>{item.seatNumber}</td>
+                                </tr>
+
+                            </table>
+                        </div>
                     </div>
                 </div>
+            ))}
+            <button style={{marginLeft: "46%"}} className={"btn btn-danger"}
+                    onClick={() => handleExportFile(`${location.state.idBooking}`)}
+            >Xuất file
+            </button>
+            <div style={{borderTop: "170vh solid white"}}>
+                <Footer/>
             </div>
         </>
     )

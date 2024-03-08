@@ -74,6 +74,7 @@ header {
     text-align: center;
     cursor: pointer;
     width: 135px;
+    text-decoration: none;
 }
 
 .btn__edit-login:hover {

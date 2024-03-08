@@ -17,7 +17,6 @@ const Home = () => {
     const [search, setSearch] = useState("")
     const [page, setPage] = useState("0");
     const native = useNavigate();
-    const [message,setMessage] = useState("Không có kết quả tìm kiếm !");
 
     const responsive = {
         desktop: {
@@ -57,9 +56,9 @@ const Home = () => {
 
     const handleSearch = () => {
         searchName(search, page).then(res => {
-            console.log(res)
-            setListMovie(res)
-        }
+                console.log(res)
+                setListMovie(res)
+            }
         )
     }
 
@@ -86,15 +85,14 @@ const Home = () => {
                         <div className="carousel-item active hero1">
                             <div className="carousel-item__overlay" />
                             <div className="container carousel-caption d-md-block">
-                                <p>Hành Động, Thám Hiểu, Tình Cảm</p>
+                                <p>Hành động, thám hiểm, tình cảm</p>
                                 <h2 className="display-4">End of the World: Part I</h2>
                                 <p>Rõ ràng là một quy trình động, theo sau sự biến đổi của thói quen của người đọc. Điều đáng
                                     ngạc nhiên là chúng ta chú ý rằng chữ Gothic, mà chúng ta hiện nay cho là ít quan trọng
                                 </p>
                                 <div className="carousel-item__trailer mt-4">
                                     <span className="d-inline-block mr-2 text-white rounded-circle text-center">CO8</span>
-                                    <button className="btn-playTrailer"><i className="fa fa-play mr-2 playtrailer" /><span>XEM
-                                        TRAILER</span>
+                                    <button className="btn-playTrailer"><i className="fa fa-play mr-2 playtrailer" /><span style={{fontSize: "1rem"}}>Xem trailer</span>
                                         <div className="btn__overlay" />
                                     </button>
                                 </div>
@@ -103,15 +101,14 @@ const Home = () => {
                         <div className="carousel-item hero2">
                             <div className="carousel-item__overlay" />
                             <div className="container carousel-caption d-md-block">
-                                <p>Hành Động, Thám Hiểu, Tình Cảm</p>
+                                <p>Hành động, khám phá, tìm hiểu</p>
                                 <h2 className="display-4">End of the World: Part II</h2>
                                 <p>Rõ ràng là một quy trình động, theo sau sự biến đổi của thói quen của người đọc. Điều đáng
                                     ngạc nhiên là chúng ta chú ý rằng chữ Gothic, mà chúng ta hiện nay cho là ít quan trọng
                                 </p>
                                 <div className="carousel-item__trailer mt-4">
                                     <span className="d-inline-block mr-2 text-white rounded-circle text-center">C08</span>
-                                    <button className="btn-playTrailer"><i className="fa fa-play mr-2 playtrailer" /><span>XEM
-                                        TRAILER</span>
+                                    <button className="btn-playTrailer"><i className="fa fa-play mr-2 playtrailer" /><span style={{fontSize: "1rem"}}>Xem trailer</span>
                                         <div className="btn__overlay" />
                                     </button>
                                 </div>
@@ -120,15 +117,14 @@ const Home = () => {
                         <div className="carousel-item hero3">
                             <div className="carousel-item__overlay" />
                             <div className="container carousel-caption d-md-block">
-                                <p>Hành Động, Thám Hiểu, Tình Cảm</p>
+                                <p>Hành động, khám phá, tìm hiểu</p>
                                 <h2 className="display-4">End of the World: Part III</h2>
                                 <p>Rõ ràng là một quy trình động, theo sau sự biến đổi của thói quen của người đọc. Điều đáng
                                     ngạc nhiên là chúng ta chú ý rằng chữ Gothic, mà chúng ta hiện nay cho là ít quan trọng
                                 </p>
                                 <div className="carousel-item__trailer mt-4">
                                     <span className="d-inline-block mr-2 text-white rounded-circle text-center">C08</span>
-                                    <button className="btn-playTrailer"><i className="fa fa-play mr-2 playtrailer" /><span>XEM
-                                        TRAILER</span>
+                                    <button className="btn-playTrailer"><i className="fa fa-play mr-2 playtrailer" /><span style={{fontSize: "1rem"}}>Xem trailer</span>
                                         <div className="btn__overlay" />
                                     </button>
                                 </div>
@@ -139,7 +135,7 @@ const Home = () => {
             </section>
             <section style={{ position: 'relative', marginTop: 50 }} className="newIn container py-5">
                 {/* LIST PHIM HOT */}
-                <h2 className="content__after">Phim Hot</h2>
+                <h2 className="content__after" style={{fontSize: "1.5rem"}}>Phim hot</h2>
                 <div className="container__input">
                     <input name='search' value={search} onChange={e => setSearch(e.target.value)} placeholder=" Tìm kiếm phim ..." type="text" />
                     <button onClick={handleSearch} className="btn__edit-search">
@@ -153,7 +149,7 @@ const Home = () => {
                             movies.map(value => (
                                 <div key={value.name} className="col-6 col-md-3 list__film">
                                     <div className="newIn__img">
-                                        <img className="img-fluid" src={value.poster} />
+                                        <img style={{maxWidth:'100%', maxHeight:'100%'}} src={value.poster} />
                                         <div className="newIn__overlay" />
                                         <div className="newIn__play text-white">
                                             <span className="format-description">{value.description}</span>
@@ -174,7 +170,7 @@ const Home = () => {
             </section>
             {/* Phim Hom Nay */}
             <section style={{ position: 'relative' }} className="newIn container ">
-                <h2 className="content__after">Phim Hôm Nay</h2>
+                <h2 className="content__after" style={{fontSize: "1.5rem"}}>Phim hôm nay</h2>
                 <div className="newIn__content">
                     <Carousel
                         swipeable={false}
@@ -196,7 +192,9 @@ const Home = () => {
                             moviesCurrent.map(value => (
                                 <div key={value.name} className="col-6 col-md-10">
                                     <div className="newIn__img">
-                                        <img className="img-fluid" src={value.poster} />
+                                        {/* className="img-fluid" */}
+                                        {/* style={{maxWidth:'100%', maxHeight:'100%'}} */}
+                                        <img className="img-fluid"  src={value.poster} />
                                         <div className="newIn__overlay" />
                                         <div className="newIn__play text-white">
                                             <span className="format-description">{value.description}</span>
@@ -241,7 +239,7 @@ const Home = () => {
                                 Chow,
                                 người có
                                 đã trốn khỏi nhà tù và đang lẩn trốn.</p>
-                            <a href="">Thông Tin Thêm <i className="fa fa-angle-right" /></a>
+                            <a href="">Thông tin thêm <i className="fa fa-angle-right" /></a>
                         </div>
                         <div className="col-12 col-md-6 col-lg-6">
                             <div className="comingSoon__trailer">

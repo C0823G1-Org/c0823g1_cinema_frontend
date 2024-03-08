@@ -69,7 +69,7 @@ const Search = () => {
                     </button>
                 </div>
                 {movies.length === 0 && <p className='message_error'>{messageError}</p>}
-                {!messageError && (
+                {(
                     <div className="newIn__content">
                         <div className="row text-center">
                             {movies.map(value => (

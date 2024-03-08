@@ -10,23 +10,36 @@ import {Sidebar} from "../Sidebar/Sidebar";
 
 export default function MovieList() {
     const navigate = useNavigate();
+    useEffect(() => {
+        const roleUser = sessionStorage.getItem("roleUser");
+        if (roleUser !== "ROLE_ADMIN") {
+            navigate(`/login`);
+        }
+    }, []);
     const [movies, setMovies] = useState([]);
     const [nameSearch, setNameSearch] = useState('');
     const [totalPages, setTotalPages] = useState(0);
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [currentPage, setCurrentPage] = useState(0);
-    useEffect(() => {
-        const fetchApi = async (page, name, publisher, startDate, endDate) => {
-            try {
-                const result = await fillAllMovie(page, name, publisher, startDate, endDate);
-                setMovies(result.content);
-                setTotalPages(result.totalPages);
-            } catch (e) {
-                console.log(e);
-            }
+    const [accessToken, setAccessToken] = useState("");
+    const fetchApi = async (page, name, publisher, startDate, endDate,token) => {
+        try {
+
+            console.log(accessToken);
+
+            const result = await fillAllMovie(page, name, publisher, startDate, endDate, token);
+            setMovies(result.content);
+            setTotalPages(result.totalPages);
+        } catch (e) {
+            console.log(e);
         }
-        fetchApi(0, nameSearch, nameSearch, startDate, endDate);
+    }
+
+    useEffect(() => {
+        const token = sessionStorage.getItem("accessToken");
+        setAccessToken(token);
+        fetchApi(0, nameSearch, nameSearch, startDate, endDate, token);
     }, []);
     const handleNameSearch = (value) => {
         if (value.length > 100) {
@@ -52,8 +65,18 @@ export default function MovieList() {
                     text: "Ngày kết thúc không được nhỏ hơn ngày bắt đầu",
                     icon: "warning"
                 });
+            }else if(new Date(startDate)<new Date("2001-01-01")){
+                MySwal.fire({
+                    text: "Ngày bắt đầu không được nhỏ hơn 01-01-2001",
+                    icon: "warning"
+                });
+            }else if(new Date(endDate)>new Date("2100-01-01")){
+                MySwal.fire({
+                    text: "Ngày kết thúc không được lớn hơn 01-01-2100",
+                    icon: "warning"
+                });
             } else {
-                let res = await fillAllMovie(0, nameSearch, nameSearch, startDate, endDate)
+                let res = await fillAllMovie(0, nameSearch, nameSearch, startDate, endDate, accessToken)
                 setMovies(res.content);
                 setTotalPages(res.totalPages);
                 setCurrentPage(0);
@@ -66,7 +89,7 @@ export default function MovieList() {
         try {
             const pageNumber = event.selected;
             setCurrentPage(pageNumber);
-            const result = await fillAllMovie(pageNumber, nameSearch, nameSearch, startDate, endDate);
+            const result = await fillAllMovie(pageNumber, nameSearch, nameSearch, startDate, endDate, accessToken);
             setMovies(result.content);
             setTotalPages(result.totalPages);
         } catch (error) {
@@ -85,13 +108,13 @@ export default function MovieList() {
             cancelButtonText: "Hủy bỏ"
         }).then(async (result) => {
             if (result.isConfirmed) {
-                await deleteMovie(movie);
+                await deleteMovie(movie, accessToken);
                 MySwal.fire(
                     "Xóa thành công!",
                     `${movie.name} đã được xóa.`,
                     "success"
                 );
-                const result = await fillAllMovie(currentPage, nameSearch, nameSearch, startDate, endDate);
+                const result = await fillAllMovie(currentPage, nameSearch, nameSearch, startDate, endDate, accessToken);
                 setMovies(result.content);
                 setTotalPages(result.totalPages);
             }
@@ -112,7 +135,7 @@ export default function MovieList() {
                         <div className="table-title_movie">
                             <div className="row">
                                 {/* Col 9 */}
-                                <div className="col-12 col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                                <div className="col-12 col-sm-9 col-md-9 col-lg-9 col-xl-9"  style={{height: "5.2rem"}}>
                                     <form className="form-group my-2 my-lg-0 p-0 m-0 ">
                                         <h5 style={{color: "white",paddingLeft:"15px"}}>Chọn ngày khởi chiếu</h5>
                                         <div className="d-flex flex-wrap">
@@ -165,13 +188,13 @@ export default function MovieList() {
                             <table className="table_movie table-striped_movie table-hover_movie ">
                                 <thead>
                                 <tr>
-                                    <th>STT</th>
-                                    <th>Phim</th>
-                                    <th>Ngày khởi chiếu</th>
-                                    <th>Hãng phim</th>
-                                    <th>Thời lượng (giờ)</th>
-                                    <th>Phiên bản</th>
-                                    <th>Chức năng</th>
+                                    <th style={{width:"5%"}}>STT</th>
+                                    <th style={{width:"30%"}}>Phim</th>
+                                    <th style={{width:"15%"}}>Ngày khởi chiếu</th>
+                                    <th style={{width:"15%"}}>Hãng phim</th>
+                                    <th style={{width:"15%"}}>Thời lượng (giờ)</th>
+                                    <th style={{width:"10%"}}>Phiên bản</th>
+                                    <th style={{width:"10%"}}>Chức năng</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -179,9 +202,9 @@ export default function MovieList() {
                                     movies.map((movie, index) => (
                                         <tr key={movie.id}>
                                             <td>{index + 1}</td>
-                                            <td>{movie.name}</td>
+                                            <td className="table_movie_ellipsis">{movie.name}</td>
                                             <td>{format(new Date(movie.startDate), 'dd/MM/yyyy')}</td>
-                                            <td>{movie.publisher}</td>
+                                            <td className="table_movie_ellipsis">{movie.publisher}</td>
                                             <td>{formatDuration(movie.duration)}</td>
                                             <td>{movie.versions}</td>
                                             <td>

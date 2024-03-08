@@ -457,6 +457,7 @@ a {
     text-align: center;
     cursor: pointer;
     width: 270px;
+    text-decoration: none;
 }
 
 .btn__edit:hover {
@@ -479,6 +480,7 @@ a {
     text-align: center;
     cursor: pointer;
     width: 100px;
+    text-decoration: none;
 }
 
 .btn__edit-new:hover {
@@ -499,6 +501,7 @@ a {
     font-family: inherit;
     text-align: center;
     cursor: pointer;
+    text-decoration: none;
     width: 75px;
 }
 
@@ -523,6 +526,7 @@ a {
     text-align: center;
     cursor: pointer;
     width: 270px;
+    text-decoration: none;
 }
 
 .btn__add:hover {
@@ -587,11 +591,13 @@ a {
     text-align: center;
     cursor: pointer;
     width: 74px;
+    text-decoration: none;
 }
 
 .btn__add-search:hover {
     background: linear-gradient(90deg, #87BCF5 0%, #3863E2 100%);
     border: 1px solid;
+    text-decoration: none;
 }
 
 .container__input input {

@@ -10,9 +10,13 @@ export async function searchHistoryBooking(id, startDate, endDate, page) {
     return result.data;
 }
 
-export async function getListHistoryBooking(id, startDate, endDate, page) {
+export async function getListHistoryBooking(id, startDate, endDate, page, accessToken) {
     try {
-        const result = await axios.get(`http://localhost:8080/booking/getListBooking/${id}/${startDate}/${endDate}/${page}`)
+        const result = await axios.get(`http://localhost:8080/booking/getListBooking/${id}/${startDate}/${endDate}/${page}`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        })
         return result.data;
     } catch (err) {
         console.log(err)

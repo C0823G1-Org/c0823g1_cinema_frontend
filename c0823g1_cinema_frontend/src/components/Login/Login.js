@@ -234,26 +234,24 @@ export default function Login() {
     //  --------------------------------------------------- Đăng Kí ---------------------------------------------------------------------------
 
 
-    // const [errors,setErrors] = useState()
-
-    const registerAccount = async (values, {setErrors}) => {
-        try {
-            if (values.gender == "male") {
+    const registerAccount = async (values,{setErrors}) => {
+        try{
+            if(values.gender == "male"){
                 values.gender = true;
-            } else {
+            }else{
                 values.gender = false;
             }
             const result = await register(values);
             await SweetAlert(
-                "Đăng Kí Thành Công",
-                `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`,
+                "Đăng kí thành công!",
+                `Xin mời bạn đăng nhập để vào hệ thống!`,
                 "success"
             );
-            navigate("/login")
-        } catch (err) {
+            setStatus(true);
+        }catch(err){
             setErrors(err.data)
             await SweetAlert(
-                "Đăng Kí Thất Bại",
+                "Đăng kí thất bại!",
                 `Vui lòng nhập lại thông tin!`,
                 "error"
             );
@@ -263,19 +261,19 @@ export default function Login() {
     }
 
     const initValues = {
-        accountName: "",
-        fullName: "",
-        password: "",
-        idNumber: "",
-        birthday: "",
-        phoneNumber: "",
-        gender: true,
-        email: "",
-        address: "",
-        verificationCode: "1",
+        accountName : "",
+        fullName : "",
+        password : "" ,
+        idNumber : "" ,
+        birthday : "",
+        phoneNumber : "",
+        gender : true,
+        email : "",
+        address : "",
+        verificationCode : "1",
     }
     const validateObject = {
-        accountName: Yup.string().required("Tài Khoản không được để trống").min(6, "Tài Khoản từ 6 - 20 kí tự").max(20, "Tài Khoản từ 6 - 20 kí tự").matches("^[a-z0-9_-]+$", "Tài Khoản Vui Lòng Nhập Đúng Định Dạng"),
+        accountName : Yup.string().required("Tài Khoản không được để trống").min(6,"Tài Khoản từ 6 - 20 kí tự").max(20,"Tài Khoản từ 6 - 20 kí tự").matches("^[a-z0-9_-]+$","Tài Khoản Vui Lòng Nhập Đúng Định Dạng"),
         fullName: Yup.string()
             .required("Họ Và Tên không được để rỗng")
             .min(6, "Họ và Tên từ 6 - 45 kí tự")
@@ -285,12 +283,13 @@ export default function Login() {
                 "Họ Và Tên vui lòng nhập đúng định dạng"
             ),
 
-        password: Yup.string().required("Mật Khẩu không được để rỗng").min(6, "Mật Khẩu độ dài từ 6-20 kí tự").max(20, "Mật Khẩu độ dài từ 6-20 kí tự"),
-        phoneNumber: Yup.string().required("Số Điện Thoại không được để rỗng").matches("^(0|84)(2(0[3-9]|1[0-6|8|9]|2[0-2|5-9]|3[2-9]|4[0-9]|5[1|2|4-9]|6[0-3|9]|7[0-7]|8[0-9]|9[0-4|6|7|9])|3[2-9]|5[5|6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])([0-9]{7})$", "Số điện thoại vui lòng nhập đúng định dạng"),
+        password : Yup.string().required("Mật Khẩu không được để rỗng").min(6,"Mật Khẩu độ dài từ 6-20 kí tự").max(20,"Mật Khẩu độ dài từ 6-20 kí tự"),
+        phoneNumber : Yup.string().required("Số Điện Thoại không được để rỗng").matches("^(0|84)(2(0[3-9]|1[0-6|8|9]|2[0-2|5-9]|3[2-9]|4[0-9]|5[1|2|4-9]|6[0-3|9]|7[0-7]|8[0-9]|9[0-4|6|7|9])|3[2-9]|5[5|6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])([0-9]{7})$","Số điện thoại vui lòng nhập đúng định dạng"),
         email: Yup.string()
             .required("Email Không được để rỗng")
             .matches(/^[\w\-.]+@([\w\-]+\.)+[\w\-]{2,}$/, "Email vui lòng nhập đúng định dạng"),
         address: Yup.string().required("Địa chỉ không được để rỗng"),
+        birthday : Yup.string().required("Ngày Sinh không được để rỗng")
 
 
     }
@@ -305,75 +304,78 @@ export default function Login() {
                     className={`containerLogin ${status ? "" : "right-panel-active"}`}
                     id="container"  style={{marginTop: "10rem", marginBottom: "2rem"}}
                 >
-                    <Formik initialValues={initValues} validationSchema={Yup.object(validateObject)}
-                            onSubmit={(values, {setErrors}) => registerAccount(values, {setErrors})}>
+                    <Formik initialValues={initValues} validationSchema={Yup.object(validateObject)} onSubmit={(values,{setErrors}) => registerAccount(values,{setErrors})}>
                         {
-                            ({isSubmitting}) => (
+                            ({isSubmitting}) =>(
 
 
                                 <div
                                     className="form-container sign-up-container"
-                                    style={{paddingTop: "3em"}}
+                                    style={{ paddingTop: "3em" }}
                                 >
                                     <Form className="form">
                                         <h1>Đăng Kí</h1>
                                         <span>
-                      Bạn Có Thể Quay Lại Trang Đăng Nhập Sử Dụng Email Và Facebook để
-                      đăng nhập
-                    </span>
-                                        <table style={{width: "100%"}}>
+          Bạn Có Thể Quay Lại Trang Đăng Nhập Sử Dụng Email Và Facebook để
+          đăng nhập
+        </span>
+                                        <table  style={{ width: "100%" }}>
                                             <tbody>
                                             <tr>
-                                                <td style={{width: 90}}>
-                                                    <h6>Tài Khoản </h6>
+                                                <td style={{ width: 90 }}>
+                                                    <h6>Tài Khoản <sup style={{color : "red"}}>*</sup> </h6>
                                                 </td>
                                                 <td>
-                                                    <Field type="text" id="accountName" name="accountName"
-                                                           placeholder="Ex: example123456" className="input"/> <br></br>
-                                                    <ErrorMessage name="accountName" component='span'
-                                                                  className="form-err" style={{color: 'red'}}/>
+                                                    <Field type="text" id="accountName" name="accountName" placeholder="Ex: example123456" className="input" /> <br></br>
+                                                </td>
+                                            </tr>
+                                            <tr><td></td><td className="tr-error">
+                                                <ErrorMessage name="accountName" component='span' className="form-err" style={{ color: 'red' }} />
+                                            </td></tr>
+                                            <tr>
+                                                <td>
+                                                    <h6>Mật Khẩu <sup style={{color : "red"}}>*</sup></h6>
+                                                </td>
+                                                <td>
+                                                    <Field type="password" id="password" name="password" className="input" /> <br></br>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td className="tr-error"> <ErrorMessage name="password" component='span' className="form-err" style={{ color: 'red' }} /></td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <h6>Họ Và Tên <sup style={{color : "red"}}>*</sup></h6>
+                                                </td>
+                                                <td>
+                                                    <Field type="text" id="fullName" name="fullName" placeholder="Ex: Nguyễn Văn A" className="input" /> <br></br>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+
+                                                <td className="tr-error"><ErrorMessage name="fullName" component='span' className="form-err" style={{ color: 'red' }} /></td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <h6>Ngày Sinh <sup style={{color : "red"}}>*</sup></h6>
+                                                </td>
+                                                <td>
+                                                    <Field type="date" id="birthday" name="birthday"  className="input" />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td className="tr-error">
+                                                    <ErrorMessage name="birthday" component='span' className="form-err" style={{ color: 'red' }} />
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    <h6>Mật Khẩu</h6>
+                                                    <h6>Giới Tính <sup style={{color : "red"}}>*</sup></h6>
                                                 </td>
-                                                <td>
-                                                    <Field type="password" id="password" name="password"
-                                                           className="input"/> <br></br>
-                                                    <ErrorMessage name="password" component='span' className="form-err"
-                                                                  style={{color: 'red'}}/>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <h6>Họ Và Tên</h6>
-                                                </td>
-                                                <td>
-                                                    <Field type="text" id="fullName" name="fullName"
-                                                           placeholder="Ex: Nguyễn Văn A" className="input"/> <br></br>
-                                                    <ErrorMessage name="fullName" component='span' className="form-err"
-                                                                  style={{color: 'red'}}/>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <h6>Ngày Sinh</h6>
-                                                </td>
-                                                <td>
-                                                    {/* <input
-            type="date"
-            value={dateOfBirth}
-            onChange={(event)=>handleDateChange(event)}
-        /> */}
-                                                    <Field type="date" id="birthday" name="birthday" className="input"/>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <h6>Giới Tính</h6>
-                                                </td>
-                                                <td>
+                                                <td style={{textAlign : "left"}}>
                                                     <div className="form-check form-check-inline">
                                                         <Field
                                                             className="form-check-input input"
@@ -381,9 +383,10 @@ export default function Login() {
                                                             name="gender"
                                                             id="inlineRadio1"
                                                             value="male"
+                                                            checked
                                                         />
                                                         <label
-                                                            style={{marginBottom: 10}}
+                                                            style={{ marginBottom: 10 }}
                                                             className="form-check-label"
                                                             htmlFor="inlineRadio1"
                                                         >
@@ -399,7 +402,7 @@ export default function Login() {
                                                             value="female"
                                                         />
                                                         <label
-                                                            style={{marginBottom: 10}}
+                                                            style={{ marginBottom: 10 }}
                                                             className="form-check-label"
                                                             htmlFor="inlineRadio2"
                                                         >
@@ -413,50 +416,64 @@ export default function Login() {
                                                     <h6>CMND/CCCD</h6>
                                                 </td>
                                                 <td>
-                                                    <Field className="input" type="text" id="idNumber" name="idNumber"/>
-                                                    <br></br>
-                                                    <ErrorMessage name="idNumber" component='span' className="form-err"
-                                                                  style={{color: 'red'}}/>
+                                                    <Field className="input" type="text" id="idNumber" name="idNumber" /> <br></br>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+
+                                                <td className="tr-error">
+                                                    <ErrorMessage name="idNumber" component='span' className="form-err" style={{ color: 'red' }}  />
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    <h6>Email</h6>
+                                                    <h6>Email <sup style={{color : "red"}}>*</sup></h6>
                                                 </td>
                                                 <td>
-                                                    <Field className="input" type="text" id="email" name="email"
-                                                           placeholder="Ex: example@gmail.com"/> <br></br>
-                                                    <ErrorMessage name="email" component='span' className="form-err"
-                                                                  style={{color: 'red'}}/>
+                                                    <Field className="input" type="text" id="email" name="email" placeholder="Ex: example@gmail.com" /> <br></br>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+
+                                                <td className="tr-error">
+                                                    <ErrorMessage name="email" component='span' className="form-err" style={{ color: 'red' }} />
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    <h6>Địa Chỉ</h6>
+                                                    <h6>Địa Chỉ <sup style={{color : "red"}}>*</sup></h6>
                                                 </td>
                                                 <td>
-                                                    <Field className="input" type="text" id="address" name="address"
-                                                           placeholder="Ex: 295 Nguyễn Tất Thành"/> <br></br>
-                                                    <ErrorMessage name="address" component='span' className="form-err"
-                                                                  style={{color: 'red'}}/>
+                                                    <Field className="input" type="text" id="address" name="address" placeholder="Ex: 295 Nguyễn Tất Thành" /> <br></br>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+
+                                                <td className="tr-error">
+                                                    <ErrorMessage name="address" component='span' className="form-err" style={{ color: 'red' }} />
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    <h6 className="soDienThoaiTable">Số Điện Thoại</h6>
+                                                    <h6 className="soDienThoaiTable" style={{width : "93px"}}>Số Điện Thoại<sup style={{color : "red"}}>*</sup></h6>
                                                 </td>
                                                 <td>
-                                                    <Field className="input" type="text" id="phoneNumber"
-                                                           name="phoneNumber" placeholder="Ex:0387274038"/> <br></br>
-                                                    <ErrorMessage name="phoneNumber" component='span'
-                                                                  className="form-err" style={{color: 'red'}}/>
+                                                    <Field className="input" type="text" id="phoneNumber" name="phoneNumber" placeholder="Ex:0387274038" /> <br></br>
                                                 </td>
                                                 <td>
-                                                    <Field className="input" type="hidden" id="verificationCode"
-                                                           name="verificationCode"/> <br></br>
-                                                    <ErrorMessage name="verificationCode" component='span'
-                                                                  className="form-err" style={{color: 'red'}}/>
+                                                    <Field className="input" type="hidden" id="verificationCode" name="verificationCode"/> <br></br>
+                                                    <ErrorMessage name="verificationCode" component='span' className="form-err" style={{ color: 'red' }} />
                                                 </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+
+                                                </td>
+
+                                                <td className="tr-error">  <ErrorMessage name="phoneNumber" component='span' className="form-err" style={{ color: 'red' }} /></td>
                                             </tr>
                                             </tbody>
                                         </table>
@@ -491,7 +508,7 @@ export default function Login() {
                                 <span style={{color: "red", fontSize: "1em"}}>{error}</span>
                             </div>
                             {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-                            <a href="#" onClick={handleShow}>
+                            <a style={{textDecoration: "none", color: "black"}} href="#" onClick={handleShow}>
                                 Quên Mật Khẩu?
                             </a>
                             {isSubmitLogin ? <button type="button" className="button">Đăng Nhập</button> :
@@ -526,24 +543,24 @@ export default function Login() {
                     <div className="overlay-container">
                         <div className="overlay">
                             <div className="overlay-panel overlay-left">
-                                <h1>Chào Bạn !</h1>
-                                <p>Hãy Điền Thông Tin Cá Nhân Đầy Đủ Để Đăng Kí Tài Khoản Nhé</p>
+                                <h1>Chào bạn !</h1>
+                                <p>Hãy điền đầy đủ thông tin cá nhân để đăng kí tài khoản nhé !</p>
                                 <button
                                     className="ghost button"
                                     id="signIn"
                                     onClick={handleGetLogin}
                                 >
-                                    Đăng Nhập
+                                    Đăng nhập
                                 </button>
                             </div>
                             <div className="overlay-panel overlay-right">
-                                <h1>Chào Bạn !</h1>
+                                <h1>Chào bạn !</h1>
                                 <p>
-                                    Hãy Tham Gia Cùng Chúng Tôi Và Đón Xem Những Bộ Phim Bom Tấn Nhé
+                                    Hãy tham gia cùng chúng tôi và đón xem những bộ phim bom tấn nhé !
                                 </p>
-                                {isSubmitLogin ? <button className="ghost button" id="signUp">Đăng Kí</button> :
+                                {isSubmitLogin ? <button className="ghost button" id="signUp">Đăng kí</button> :
                                     <button className="ghost button" id="signUp" onClick={handleGetRegister}>Đăng
-                                        Kí</button>}
+                                        kí</button>}
                             </div>
                         </div>
                     </div>
@@ -553,6 +570,7 @@ export default function Login() {
                     onHide={handleClose}
                     backdrop="static"
                     keyboard={false}
+                    style={{marginTop: "10rem"}}
                 >
                     <Modal.Header>
                         <Modal.Title>Tìm tài khoản của bạn</Modal.Title>
@@ -599,6 +617,8 @@ export default function Login() {
                     onHide={handleClose1}
                     backdrop="static"
                     keyboard={false}
+                    className="Modal"
+                    style={{marginTop: "10rem"}}
                 >
                     <Modal.Header>
                         <Modal.Title>Xác nhận mật khẩu</Modal.Title>
