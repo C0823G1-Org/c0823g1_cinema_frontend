@@ -38,6 +38,7 @@ export default function BookingSeat() {
         fetchData();
 
     }, []);
+    console.log(selected)
     const handleBack = () => {
         if(data.backId ===1){
             navigate(`/home/detail/${data.movieId}`)
@@ -123,13 +124,15 @@ export default function BookingSeat() {
 
         for (let i = 1; i <= totalSeat; i++) {
             const isCoupleSeat = i > totalSeat - 10;
+            const isOccupied = tickets.some((ticket) => ticket === i);
+            const shouldAddCoupleClass = isCoupleSeat && !isOccupied && i > totalSeat - 10;
             rowSeats.push(
                 <div
                     className={classNames({
                         seat: true,
-                        occupied: tickets.some((ticket) => ticket === i),
+                        occupied: isOccupied,
                         selected: selected.includes(i),
-                        couple: isCoupleSeat
+                        couple: shouldAddCoupleClass
                     })}
                     onClick={(e) => handleClick(e, i)}
                     key={i}
