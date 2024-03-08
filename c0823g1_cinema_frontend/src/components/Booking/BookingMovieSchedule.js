@@ -238,6 +238,7 @@ export default function BookingMovieSchedule() {
                                                     <button style={{width: '100px', marginLeft: "210px"}} className="btn__booking"
                                                             disabled={selectedDate === null} onClick={handleSubmit}>Đặt vé
                                                     </button>
+                                                    <br/>
                                                 </div>
                                             </div>
                                         </div>
@@ -251,7 +252,9 @@ export default function BookingMovieSchedule() {
                     </div>
                 </div>
             </div>
-<Footer/>
+            <div style={{marginTop: "10px"}}>
+                <Footer/>
+            </div>
         </>
     )
 }

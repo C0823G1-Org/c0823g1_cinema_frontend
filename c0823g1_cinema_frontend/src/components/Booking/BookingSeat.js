@@ -257,15 +257,15 @@ export default function BookingSeat() {
                                         Tổng
                                         cộng</strong><strong
                                         className="inline-block font-bold text-primary " style={{fontSize: "large"}}>&nbsp;{formatNumberWithThousandSeparator(schedule.movie.ticketPrice * selected.length)}</strong> VNĐ
-                                    </div>
-                                    <div
-                                        className="xl:flex mt-5 px-5 hidden d-flex justify-content-between align-items-center col-span-3">
+                                        <div style={{marginTop: "10px"}}>
 
                                             <button style={{width: '100px'}} className="btn__back" onClick={handleBack}>Quay lại</button>
 
-                                            <button style={{width: '100px'}} className="btn__booking"
+                                            <button style={{width: '100px',  marginLeft: "210px"}} className="btn__booking"
                                                     disabled={selected.length === 0} onClick={()=>handleSubmit()}>Đặt vé
                                             </button>
+                                        </div>
+                                        <br/>
                                     </div>
                                 </div>
                             </div>
@@ -273,7 +273,9 @@ export default function BookingSeat() {
                     </div>
                 </div>
             </div>
-            <Footer/>
+            <div style={{marginTop: "10px"}}>
+                <Footer/>
+            </div>
         </>
     )
 }
