@@ -6,10 +6,10 @@ const listBooking = async (page) => {
      return(await  result).data
 }
 const exportFile = async (id) => {
-    const rs = axios.get(`http://localhost:8080/booking/exportPDF`,{params:{
+    const rs = await axios.get(`http://localhost:8080/booking/exportPDF`,{params:{
             idBooking: id
         }});
-    return(await  rs).data
+    return rs.data
 
 }
 const searchWithoutParam = async (page) => {

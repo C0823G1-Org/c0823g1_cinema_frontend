@@ -4,6 +4,7 @@ import {EmployeeService} from "../../service/EmployeeService";
 import SweetAlert from "sweetalert";
 import Footer from "../Home/Footer";
 import Header from "../Home/Header";
+import {useState} from "react";
 
 
 
@@ -12,35 +13,19 @@ export  default function ExportDetail(){
     const location = useLocation();
     const data = location.state.listBooking;
 
-    const downloadFile = (file) => {
-        // const element = document.createElement('a');
-        // element.setAttribute('href', file);
-        // element.setAttribute('download', '');
-        // element.style.display = 'none';
-        // document.body.appendChild(element);
-        // element.click();
-        // document.body.removeChild(element);
-        const pdfUrl = file;
-        const link = document.createElement("a");
-        link.href = pdfUrl;
-        link.download = "ticket"; // specify the filename
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
 const handleExportFile = async(id) => {
     const rs = await EmployeeService.exportFile(id);
-   // downloadFile(`D:\\filePdf\\ticket${id}.pdf`)
-    downloadFile(rs.data)
     navigate("/employee/ticketList");
-
     if (rs.flag === "OK"){
+        const a = document.createElement("a");
+        a.href = "data:application/pdf;base64," + rs.base64;
+        a.download = ""
+        a.click()
         navigate("/employee/ticketList");
-        await SweetAlert("Vé  được in thành công","", "success")
+         SweetAlert("Vé  được in thành công","", "success")
     } else {
         navigate("/employee/ticketList");
         await SweetAlert("Vé đã có người in hoặc không tồn tại!","", "error");
-
     }
 }
     return(
