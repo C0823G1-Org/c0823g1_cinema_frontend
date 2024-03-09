@@ -91,7 +91,6 @@ export default function UserInformation() {
 
 
     const [account1, setAccount1] = useState();
-    const [account2,setAccount2] = useState();
 
     useEffect(() => {
         const getAccountById = async () => {
