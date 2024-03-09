@@ -26,16 +26,25 @@ export default function TicketList() {
     const [currentPage, setCurrentPage] = useState(0);
 
     const handleChangeValue =   (e) => {
-        if (e.target.value.length > 100) {
+        const specialCharsRegex = /[!@#$%^&*()~+-]/;
+        if (specialCharsRegex.test(e.target.value)) {
+            MySwal.fire({
+                text: "Không được nhập các ký tự đặt biệt",
+                icon: "warning"
+            });
+            setSearch(search)
+        } else if (e.target.value.length > 100){
             MySwal.fire({
                 text: "Không được nhập quá 100 ký tự",
                 icon: "warning"
             });
             setSearch("")
-        } else {
+        }
+        else {
             setSearch(e.target.value);
         }
     }
+
     const handleChangeDate =  (e) => {
         setSearchDate(e.target.value);
     }
