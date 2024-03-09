@@ -64,6 +64,7 @@ export const getDate = async (movieId) =>{
     }
 }
 export const selectTicket = async (ticket) => {
+    console.log("aaa",ticket)
     try {
 
         let result = await axios.post("http://localhost:8080/booking/confirm", ticket)
