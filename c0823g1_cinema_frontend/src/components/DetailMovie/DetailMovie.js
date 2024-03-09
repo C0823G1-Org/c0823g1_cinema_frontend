@@ -20,7 +20,8 @@ export default function DetailMovie() {
     const [selectedDateTime, setSelectedDateTime] = useState({
         movieId: id,
         date: null,
-        scheduleTimeId: null
+        scheduleTimeId: null,
+        backId: 1
     });
     const navigate = useNavigate();
     const showtimeSectionRef = useRef(null); // Tham chiếu đến phần tử lịch chiếu
