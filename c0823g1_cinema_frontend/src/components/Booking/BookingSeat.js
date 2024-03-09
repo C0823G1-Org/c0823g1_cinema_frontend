@@ -1,7 +1,7 @@
 import "../Booking/BookingSeat.css"
-import {useLocation, useNavigate} from "react-router-dom";
-import {useEffect, useState} from "react";
-import {getSchedule, getSeat} from "../../service/BookingService";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getSchedule, getSeat } from "../../service/BookingService";
 import classNames from 'classnames';
 import Figure from 'react-bootstrap/Figure';
 import Footer from "../Home/Footer";
@@ -9,7 +9,7 @@ import HeaderTemplateAdmin from "../Home/HeaderTemplateAdmin";
 
 export default function BookingSeat() {
     const navigate = useNavigate();
-    const [role,setRole] = useState("");
+    const [role, setRole] = useState("");
     useEffect(() => {
         const roleUser = sessionStorage.getItem("roleUser");
         if (roleUser === null) {
@@ -26,7 +26,7 @@ export default function BookingSeat() {
     const location = useLocation()
     const data = location.state.myResult;
 
-    const [userId,setUserId] = useState(0);
+    const [userId, setUserId] = useState(0);
 
     useEffect(() => {
         const id = sessionStorage.getItem("userId");
@@ -52,9 +52,9 @@ export default function BookingSeat() {
 
     }, []);
     const handleBack = () => {
-        if(data.backId ===1){
+        if (data.backId === 1) {
             navigate(`/home/detail/${data.movieId}`)
-        }else if(data.backId ===2){
+        } else if (data.backId === 2) {
             navigate("/booking")
         }
 
@@ -74,6 +74,10 @@ export default function BookingSeat() {
         setResult(newResult);
 
         try {
+            // Example: await someAsyncFunction();
+            // You can perform API calls, data fetching, etc.
+            // Once the asynchronous operations are done, navigate
+            // navigate("/booking/checkout", { state: { myResult: newResult } });
             navigate("/booking/checkout", { state: { myResult: newResult } });
         } catch (error) {
             console.error("Error during asynchronous operations:", error);
@@ -82,8 +86,8 @@ export default function BookingSeat() {
     console.log(result)
     const handleClick = (e, seatNumber) => {
         if ((e.target.classList.contains('seat')
-                || e.target.classList.contains('vip')
-                || e.target.classList.contains('couple'))
+            || e.target.classList.contains('vip')
+            || e.target.classList.contains('couple'))
             && !e.target.classList.contains('occupied')) {
             const isCoupleSeat = e.target.classList.contains('couple');
             if (isCoupleSeat) {
@@ -173,7 +177,7 @@ export default function BookingSeat() {
             );
         }
 
-        return <div style={{marginTop: "3rem"}}>{seats}</div>;
+        return <div style={{ marginTop: "3rem" }}>{seats}</div>;
     };
     if (!schedule) return "loading"
     console.log(schedule)
@@ -200,43 +204,43 @@ export default function BookingSeat() {
 
         <>
             <HeaderTemplateAdmin />
-            <div style={{marginTop: "20vh"}}>
-                <div  className="row m-0">
+            <div style={{ marginTop: "20vh" }}>
+                <div className="row m-0">
                     <div className=" map1 col-8 p-0 mx-0">
-                        <ul className="showcase" style={{backgroundColor: 'white'}}>
+                        <ul className="showcase" style={{ backgroundColor: 'white' }}>
                             <li>
                                 <div className="seat"></div>
-                                <small style={{color: 'black'}}>Ghế trống</small>
+                                <small style={{ color: 'black' }}>Ghế trống</small>
                             </li>
                             <li>
                                 <div className="seat selected"></div>
-                                <small style={{color: 'black'}}>Ghế đang chọn</small>
+                                <small style={{ color: 'black' }}>Ghế đang chọn</small>
                             </li>
                             <li>
                                 <div className=" occupied"></div>
-                                <small style={{color: 'black'}}>Ghế đã có người đặt</small>
+                                <small style={{ color: 'black' }}>Ghế đã có người đặt</small>
                             </li>
                             <li>
                                 <div className=" couple"></div>
-                                <small style={{color: 'black'}}>Ghế đôi</small>
+                                <small style={{ color: 'black' }}>Ghế đôi</small>
                             </li>
                         </ul>
                         <div className="containerBS" id="container1">
-                            <div className=" screen" style={{fontSize: '200%', paddingTop: '10px'}}> MÀN HÌNH</div>
+                            <div className=" screen" style={{ fontSize: '200%', paddingTop: '10px' }}> MÀN HÌNH</div>
 
                             {
                                 renderSeats()
                             }
                         </div>
                     </div>
-                    <div className=" col-4 p-0 mx-0" style={{boxShadow: '10px 10px 20px black'}}>
+                    <div className=" col-4 p-0 mx-0" style={{ boxShadow: '10px 10px 20px black' }}>
                         <div className="col-span-1 xl:pl-4 xl:order-none order-first">
                             <div className="booking__summary md:mb-4">
                                 <div className="bg-white px-4 grid grid-cols-3 xl:gap-2 items-center"
-                                     style={{paddingRight: '0 !important'}}>
+                                    style={{ paddingRight: '0 !important' }}>
                                     <div
                                         className="row-span-2 md:row-span-1 xl:row-span-2 block md:hidden xl:block d-flex justify-content-center"
-                                        style={{marginTop: '7%'}}>
+                                        style={{ marginTop: '7%' }}>
 
                                         <Figure>
                                             <Figure.Image
@@ -250,14 +254,14 @@ export default function BookingSeat() {
                                     <div className="flex-1 col-span-2 md:col-span-1 row-span-1 xl:col-span-2"><h3
                                         className="text-sm xl:text-base font-bold xl:mb-0 d-flex justify-content-center mt-2 text-align-center">
                                         {schedule.movie.name}</h3>
-                                        <p className="text-sm inline-block">{schedule.hall.id ===1 ||schedule.hall.id ===2?"2D Phụ đề":"3D Phụ đề"}</p>
-                                        <hr className="my-0"/>
+                                        <p className="text-sm inline-block">{schedule.hall.id === 1 || schedule.hall.id === 2 ? "2D Phụ đề" : "3D Phụ đề"}</p>
+                                        <hr className="my-0" />
                                     </div>
                                     <div className="col-span-2 md:col-span-1 xl:col-span-3">
                                         <div>
                                             <div className="xl:mt-0  xl:text-base">
                                                 <strong>Suất: </strong>
-                                                <strong>{formatTime(schedule.scheduleTime.scheduleTime)}</strong><strong> - </strong><strong>{formatDate(schedule.date)}</strong><br/>
+                                                <strong>{formatTime(schedule.scheduleTime.scheduleTime)}</strong><strong> - </strong><strong>{formatDate(schedule.date)}</strong><br />
                                                 <strong>Phòng: {schedule.hall.name}</strong>
                                             </div>
                                         </div>
@@ -266,19 +270,19 @@ export default function BookingSeat() {
                                     </div>
                                     <div className="xl:flex hidden justify-between col-span-3"><strong
                                         className="text-base"> Bạn đã chọn <span
-                                        className="inline-block font-bold text-primary "
-                                        style={{fontSize: "large"}}>&nbsp;{selected.length}</span> vé.
+                                            className="inline-block font-bold text-primary "
+                                            style={{ fontSize: "large" }}>&nbsp;{selected.length}</span> vé.
                                         Tổng
                                         cộng</strong><strong
-                                        className="inline-block font-bold text-primary " style={{fontSize: "large"}}>&nbsp;{formatNumberWithThousandSeparator(schedule.movie.ticketPrice * selected.length)}</strong> VNĐ
+                                            className="inline-block font-bold text-primary " style={{ fontSize: "large" }}>&nbsp;{formatNumberWithThousandSeparator(schedule.movie.ticketPrice * selected.length)}</strong> VNĐ
                                     </div>
                                     <div
                                         className="xl:flex mt-5 px-5 hidden d-flex justify-content-between align-items-center col-span-3">
 
-                                        <button style={{width: '100px'}} className="btn__back" onClick={handleBack}>Quay lại</button>
+                                        <button style={{ width: '100px' }} className="btn__back" onClick={handleBack}>Quay lại</button>
 
-                                        <button style={{width: '100px'}} className="btn__booking"
-                                                disabled={selected.length === 0} onClick={()=>handleSubmit()}>Đặt vé
+                                        <button style={{ width: '100px' }} className="btn__booking"
+                                            disabled={selected.length === 0} onClick={() => handleSubmit()}>Đặt vé
                                         </button>
                                     </div>
                                 </div>
@@ -287,8 +291,8 @@ export default function BookingSeat() {
                     </div>
                 </div>
             </div>
-            <div style={{marginTop: "1.5rem"}}>
-                <Footer/>
+            <div style={{ marginTop: "1.5rem" }}>
+                <Footer />
             </div>
 
         </>
