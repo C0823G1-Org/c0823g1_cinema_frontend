@@ -23,6 +23,7 @@ export default function Checkout() {
 
         }
     }, []);
+    const [num, setNum] =useState(0);
     const location = useLocation()
     const [dataA, setDataA] = useState()
     const [resl, setResl] = useState();
@@ -71,10 +72,16 @@ export default function Checkout() {
             });
             setTotalAmount(ta)
         }).catch((err) => {
-            sessionStorage.setItem("errTicket","errTicket");
-            navigate(`/home/detail/${resl.movieId}`)
+            console.log(err)
+           setNum(num+1);
         })
     }, [resl])
+    useEffect(() => {
+        if (num === 2) {
+            sessionStorage.setItem("errTicket","errTicket");
+            navigate(`/home/detail/${location.state.myResult.movieId}`)
+        }
+    },[num])
     useEffect(() => {
         console.log(exchangeRates);
         const fetchExchangeRates = async () => {
@@ -137,7 +144,6 @@ https://v6.exchangerate-api.com/v6/21e06263576c496fe2175f9d/latest/USD
             }
             setCheckOut(true);
         } catch (err){
-
             await SweetAlert("Không thể thanh toán!", `Các vé bạn chọn có thể đã hết thời hạn thanh toán hoặc bạn đã thanh toán trước đó! Xin vui lòng kiểm tra lịch sử đặt vé!`, "error")
             navigate('/user/information')
         }
