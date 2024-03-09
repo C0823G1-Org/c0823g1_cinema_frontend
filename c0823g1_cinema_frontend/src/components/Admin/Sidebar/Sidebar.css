@@ -73,8 +73,8 @@
 }
 .sidebar .nav-links li i{
     height: 50px;
-    min-width: 78px;
-    text-align: center;
+    min-width: 45px;
+    text-align: left;
     line-height: 50px;
     color: #fff;
     font-size: 20px;
@@ -209,7 +209,7 @@
 }
 .home-section{
     position: relative;
-    background: #E4E9F7;
+    background: #F5F5F5;
     height: 100vh;
     left: 260px;
     width: calc(100% - 260px);

@@ -7,24 +7,36 @@ export const register = async (account) => {
 
     }
 }
-export const findAccount = async (id) => {
+export const findAccount = async (id, accessToken) => {
     try {
-        const result = await axios.get(`http://localhost:8080/account/detailUser/${id}`);
+        const result = await axios.get(`http://localhost:8080/account/detailUser/${id}`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        });
         return result.data
     } catch (error) {
         console.log(error);
     }
 }
-export const changeInfoUser = async (account) => {
+export const changeInfoUser = async (account, accessToken) => {
     try {
-        return await axios.patch(`http://localhost:8080/account/changeInfoUser/${account.id}`,account)
+        return await axios.patch(`http://localhost:8080/account/changeInfoUser/${account.id}`,account,{
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        })
     } catch (error) {
         throw error.response
     }
 }
-export const changePasswordUser = async (account) => {
+export const changePasswordUser = async (account, accessToken) => {
     try {
-        return await axios.patch(`http://localhost:8080/account/changePassword`,account)
+        return await axios.patch(`http://localhost:8080/account/changePassword`,account,{
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        })
     } catch (error) {
         throw error.response
     }

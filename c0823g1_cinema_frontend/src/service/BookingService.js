@@ -10,33 +10,24 @@ export async function searchHistoryBooking(id, startDate, endDate, page) {
     return result.data;
 }
 
-export async function getListHistoryBooking(id, startDate, endDate, page) {
+export async function getListHistoryBooking(id, startDate, endDate, page, accessToken) {
     try {
-        const result = await axios.get(`http://localhost:8080/booking/getListBooking/${id}/${startDate}/${endDate}/${page}`)
+        const result = await axios.get(`http://localhost:8080/booking/getListBooking/${id}/${startDate}/${endDate}/${page}`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        })
         return result.data;
     } catch (err) {
         console.log(err)
     }
 }
-
-export const selectTicket = async (ticket) => {
+export const getSeat = async (scheduleId) =>{
     try {
-
-        let result = await axios.post("http://localhost:8080/booking/confirm", ticket)
-        return result.data;
-    } catch (error) {
-        console.log(error)
-        return error;
-    }
-}
-
-export const handleSuccess = async (checkout) => {
-    console.log(checkout)
-    try {
-        let result = await axios.post("http://localhost:8080/booking/success", checkout)
-        return result.data
-    } catch (error) {
-        return error;
+        const response = await axios.get(`http://localhost:8080/api-ticket/ticket?scheduleId=${scheduleId}`);
+        return response.data;
+    } catch (e) {
+        console.log(e)
     }
 }
 export const handleFail = async (checkout) => {
@@ -48,16 +39,7 @@ export const handleFail = async (checkout) => {
         return error;
     }
 }
-
-export const getSeat = async (scheduleId) => {
-    try {
-        const response = await axios.get(`http://localhost:8080/api-ticket/ticket?scheduleId=${scheduleId}`);
-        return response.data;
-    } catch (e) {
-        console.log(e)
-    }
-}
-export const getMovie = async (movieId) => {
+export const getMovie = async (movieId) =>{
     try {
         const response = await axios.get(`http://localhost:8080/movie/find/${movieId}`);
         return response.data;
@@ -65,7 +47,7 @@ export const getMovie = async (movieId) => {
         console.log(e)
     }
 }
-export const getSchedule = async (movieId, date, scheduleTimeId) => {
+export const getSchedule = async (movieId,date,scheduleTimeId) =>{
     try {
         const response = await axios.get(`http://localhost:8080/schedule/schedule?movieId=${movieId}&date=${encodeURIComponent(date)}&scheduleTimeId=${scheduleTimeId}`);
         return response.data;
@@ -73,7 +55,7 @@ export const getSchedule = async (movieId, date, scheduleTimeId) => {
         console.log(e)
     }
 }
-export const getDate = async (movieId) => {
+export const getDate = async (movieId) =>{
     try {
         const response = await axios.get(`http://localhost:8080/schedule/date?movieId=${movieId}`);
         return response.data;
@@ -81,7 +63,17 @@ export const getDate = async (movieId) => {
         console.log(e)
     }
 }
-export const getScheduleTime = async (movieId, date) => {
+export const selectTicket = async (ticket) => {
+    try {
+
+        let result = await axios.post("http://localhost:8080/booking/confirm", ticket)
+        return result.data;
+    } catch (error) {
+        console.log(error)
+        return error;
+    }
+}
+export const getScheduleTime = async (movieId,date) =>{
     try {
         const response = await axios.get(`http://localhost:8080/schedule/time?movieId=${movieId}&date=${encodeURIComponent(date)}`);
         return response.data;
@@ -89,11 +81,20 @@ export const getScheduleTime = async (movieId, date) => {
         console.log(e)
     }
 }
-export const getScheduleByMovieId = async (movieId) => {
+export const getScheduleByMovieId = async (movieId) =>{
     try {
         const response = await axios.get(`http://localhost:8080/schedule/movie?movieId=${movieId}`);
         return response.data;
     } catch (e) {
         console.log(e)
+    }
+}
+export const handleSuccess = async (checkout) => {
+    console.log(checkout)
+    try {
+        let result = await axios.post("http://localhost:8080/booking/success", checkout)
+        return result.data
+    } catch (error) {
+        return error;
     }
 }

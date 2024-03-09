@@ -12,7 +12,7 @@
     align-items: center;
     flex-direction: column;
     font-family: 'Montserrat', sans-serif;
-    height: 100vh;
+    height: 130vh;
 }
 
 h1 {
@@ -326,4 +326,47 @@ footer a {
 @keyframes pulse {
     0% , 60% , 100%{ transform:  scale(1) }
     80% { transform:  scale(1.2)}
+}
+
+.btn__edit {
+    background: linear-gradient(90deg, #F2B06D 0%, #EA841D 100%);
+    border-radius: 2px;
+    border: none;
+    outline: none;
+    padding: 8px 12px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 400;
+    font-family: inherit;
+    text-align: center;
+    cursor: pointer;
+    width: 270px;
+    text-decoration: none;
+}
+
+.btn__edit:hover {
+    background: linear-gradient(90deg, #E0BA61 0%, #E48E25 100%);
+    text-decoration: none;
+}
+
+/* Button add */
+.btn__add {
+    background: linear-gradient(90deg, #649FDE 0%, #2B4DB5 100%);
+    border-radius: 2px;
+    border: none;
+    outline: none;
+    padding: 8px 12px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 400;
+    font-family: inherit;
+    text-align: center;
+    cursor: pointer;
+    width: 270px;
+    text-decoration: none;
+}
+
+.btn__add:hover {
+    background: linear-gradient(90deg, #87BCF5 0%, #3863E2 100%);
+    text-decoration: none;
 }

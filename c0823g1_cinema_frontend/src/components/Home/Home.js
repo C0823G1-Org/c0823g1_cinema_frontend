@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react'
 import '../Home/Home.css'
 import { getAllMovieCurrent, getAllMovieHot, searchName } from '../../service/MovieService'
 import Footer from '../Home/Footer'
-import {Link, useNavigate} from 'react-router-dom'
+import { Form, Link, useNavigate } from 'react-router-dom'
 import HeaderTemplateAdmin from './HeaderTemplateAdmin'
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import Spinner from 'react-bootstrap/Spinner';
+import MySwal from "sweetalert2";
+import { NumberSchema } from 'yup'
 
 
 
@@ -17,7 +19,6 @@ const Home = () => {
     const [search, setSearch] = useState("")
     const [page, setPage] = useState("0");
     const native = useNavigate();
-    const [message,setMessage] = useState("Không có kết quả tìm kiếm !");
 
     const responsive = {
         desktop: {
@@ -55,8 +56,29 @@ const Home = () => {
         }
     }, [listMovie]);
 
-    const handleSearch = () => {
-        searchName(search, page).then(res => {
+    const onhandleSearch = (e) => {
+        const check = /[!@#$%^&*()~+-_]/
+        if(check.test(e.target.value) ){
+            MySwal.fire({
+                text: "Không được nhập quá  ký tự đặt biệt",
+                icon: "warning"
+            }); 
+            setSearch("")
+        } else if(e.target.value.length > 100) {
+            MySwal.fire({
+                text: "Không được nhập quá 100 ký tự",
+                icon: "warning"
+            }); 
+            setSearch("")
+        }
+        else {
+            setSearch(e.target.value)
+        }
+    }
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+         searchName(search, page).then(res => {
             console.log(res)
             setListMovie(res)
         }
@@ -140,32 +162,29 @@ const Home = () => {
             <section style={{ position: 'relative', marginTop: 50 }} className="newIn container py-5">
                 {/* LIST PHIM HOT */}
                 <h2 className="content__after">Phim Hot</h2>
-                <div className="container__input">
-                    <input name='search' value={search} onChange={e => setSearch(e.target.value)} placeholder=" Tìm kiếm phim ..." type="text" />
-                    <button onClick={handleSearch} className="btn__edit-search">
-                        Tìm
-                        <i style={{ marginLeft: '4px' }} className="fas fa-search" />
-                    </button>
-                </div>
+                <form onSubmit={handleSearch} className="tesster" >
+                    <input name='search' value={search} onChange={onhandleSearch} placeholder=" Tìm kiếm phim ..." type="text" className="input_tesst" />
+                    <button type="submit"  className="new_btnn"><i className="fas fa-search" /></button>
+                </form>
+                {/* </div> */}
                 <div className="newIn__content">
                     <div className="row text-center">
                         {
                             movies.map(value => (
                                 <div key={value.name} className="col-6 col-md-3 list__film">
                                     <div className="newIn__img">
-                                        <img className="img-fluid" src={value.poster} />
+                                        <img style={{ maxWidth: '100%', maxHeight: '100%' }} src={value.poster} />
                                         <div className="newIn__overlay" />
                                         <div className="newIn__play text-white">
                                             <span className="format-description">{value.description}</span>
                                             <div className="container__button-position">
-                                                <Link style={{ margin: '0px 10px' }} className="btn__edit" to={`/home/detail/${value.movieId}`}>Chi tiết</Link>
-                                                <a style={{ margin: '0px 10px' }} className="btn__add" href="../template/TuanNM_detailcnm.html">Đặt vé</a>
+                                                <Link style={{fontSize:'18px'}} className="btn__add-book" to={`/home/detail/${value.movieId}`}>ĐẶT VÉ</Link>
                                             </div>
                                         </div>
                                     </div>
-                                    <a className="container-title" href="*">
+                                    <Link to={`/home/detail/${value.movieId}`} className="container-title" >
                                         <h3 className="title__name-film">{value.name}</h3>
-                                    </a>
+                                    </Link>
                                 </div>
                             ))
                         }
@@ -196,19 +215,20 @@ const Home = () => {
                             moviesCurrent.map(value => (
                                 <div key={value.name} className="col-6 col-md-10">
                                     <div className="newIn__img">
+                                        {/* className="img-fluid" */}
+                                        {/* style={{maxWidth:'100%', maxHeight:'100%'}} */}
                                         <img className="img-fluid" src={value.poster} />
                                         <div className="newIn__overlay" />
                                         <div className="newIn__play text-white">
                                             <span className="format-description">{value.description}</span>
                                             <div className="container__button-position">
-                                                <Link style={{ margin: '0px 10px' }}  className="btn__edit" to={`/home/detail/${value.movieId}`}>Chi tiết</Link>
-                                                <a style={{ margin: '0px 10px' }} className="btn__add" href="../template/TuanNM_detailcnm.html">Đặt vé</a>
+                                            <Link style={{fontSize:'18px'}} className="btn__add-book" to={`/home/detail/${value.movieId}`}>ĐẶT VÉ</Link>
                                             </div>
                                         </div>
                                     </div>
-                                    <a className="container-title" href="*">
+                                    <Link to={`/home/detail/${value.movieId}`} className="container-title" >
                                         <h3 className="title__name-film">{value.name}</h3>
-                                    </a>
+                                    </Link>
                                 </div>
                             ))
                         }
