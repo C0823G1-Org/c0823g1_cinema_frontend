@@ -10,7 +10,7 @@ import {LoginLogoutService} from "../../service/LoginLogoutService";
 import {auth, provider} from "../config/config";
 import {signInWithPopup} from "firebase/auth";
 import SweetAlert from "sweetalert";
-import {Button, Modal} from "react-bootstrap";
+import {Modal} from "react-bootstrap";
 import {ColorRing} from "react-loader-spinner";
 import {register} from "../../service/AccountService";
 import * as Yup from 'yup';
@@ -78,6 +78,11 @@ export default function Login() {
                     sessionStorage.setItem("userId", req.data.iAccountDTO.id);
                     sessionStorage.setItem("userPhoto", req.data.iAccountDTO.profilePicture);
                     sessionStorage.setItem("isLogin","isLogin");
+                    try{
+                        LoginLogoutService.resetTicket();
+                    } catch (err){
+                        console.log(err);
+                    }
                     if (isBooking){
                         navigate(`/home/detail/${movieId}`);
                     } else {
@@ -111,6 +116,11 @@ export default function Login() {
             sessionStorage.setItem("userId", req1.data.iAccountDTO.id);
             sessionStorage.setItem("userPhoto", req1.data.iAccountDTO.profilePicture);
             sessionStorage.setItem("isLogin","isLogin");
+            try{
+                LoginLogoutService.resetTicket();
+            } catch (err){
+                console.log(err);
+            }
             if (isBooking){
                 navigate(`/home/detail/${movieId}`);
             } else {
@@ -138,6 +148,11 @@ export default function Login() {
             sessionStorage.setItem("userId", res.data.iAccountDTO.id);
             sessionStorage.setItem("userPhoto", res.data.iAccountDTO.profilePicture);
             sessionStorage.setItem("isLogin","isLogin");
+            try{
+                LoginLogoutService.resetTicket();
+            } catch (err){
+                console.log(err);
+            }
             if (isBooking){
                 navigate(`/home/detail/${movieId}`);
             } else {

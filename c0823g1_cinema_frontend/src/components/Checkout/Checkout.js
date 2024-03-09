@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import * as bookingService from "../../service/BookingService"
 import { Paypal } from "./Paypal";
 import CountdownClock from "./CountdownClock";
-import Header from "../Home/Header";
 import Footer from "../Home/Footer";
 import axios from 'axios';
 import HeaderTemplateAdmin from "../Home/HeaderTemplateAdmin";
@@ -25,6 +24,15 @@ export default function Checkout() {
     const [price, setPrice] = useState()
     const [totalAmount, setTotalAmount] = useState()
     const [exchangeRates, setExchangeRates] = useState(null);
+
+    useEffect(() => {
+        if (location.state.myResult) {
+            setResl(location.state.myResult)
+            console.log(resl);
+
+        }
+
+    }, [location])
 
     useEffect(() => {
         let getdata = async (result) => {
@@ -196,9 +204,9 @@ https://www.galaxycine.vn/
                     </div>
                 </div>
             </div>
-           <div style={{marginTop: "2rem"}}>
-               <Footer />
-           </div>
+            <div style={{marginTop: "2rem"}}>
+                <Footer />
+            </div>
         </>
     )
 }
