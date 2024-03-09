@@ -7,9 +7,10 @@ import CountdownClock from "./CountdownClock";
 import Footer from "../Home/Footer";
 import axios from 'axios';
 import swal from 'sweetalert';
-import { BrowserRouter as Router, Route, useHistory } from 'react-router-dom';
 
 import HeaderTemplateAdmin from "../Home/HeaderTemplateAdmin";
+import {LoginLogoutService} from "../../service/LoginLogoutService";
+import SweetAlert from "sweetalert";
 
 export default function Checkout() {
     document.title = "Xác Nhận & Thanh Toán"
@@ -70,6 +71,8 @@ export default function Checkout() {
             });
             setTotalAmount(ta)
         }).catch((err) => {
+            sessionStorage.setItem("errTicket","errTicket");
+            navigate(`/home/detail/${resl.movieId}`)
         })
     }, [resl])
     useEffect(() => {
@@ -109,30 +112,35 @@ https://v6.exchangerate-api.com/v6/21e06263576c496fe2175f9d/latest/USD
 
 
     const handleCheck = async () => {
-        let res = await bookingService.checkExist({
-            "totalAmount": dataA.sum,
-            "accountId": dataA.accountId,
-            "scheduleId": dataA.scheduleId,
-            "seat": dataA.seat,
-            "bookingId": dataA.bookingId,
-            "seatNumber": dataA.seatNumber
-        })
-        if (res.response && res.response.status === 400) {
-            console.log(res);
-            navigate(`/booking/seat`, { state: { myResult: { "movieId": resl.movieId, "date": resl.date, "scheduleTimeId": resl.scheduleTimeId, "backId": resl.backId } } })
-            swal({
-                title: "loi",
-                text: "Ghe da co nguoi dat!",
-                type: "error",
-                icon: "error",
-                button: {
-                    text: "OK",
-                },
-            });
+        try{
+            await LoginLogoutService.resetTicket();
+            let res = await bookingService.checkExist({
+                "totalAmount": dataA.sum,
+                "accountId": dataA.accountId,
+                "scheduleId": dataA.scheduleId,
+                "seat": dataA.seat,
+                "bookingId": dataA.bookingId,
+                "seatNumber": dataA.seatNumber
+            })
+            if (res.response && res.response.status === 400) {
+                console.log(res);
+                navigate(`/booking/seat`, { state: { myResult: { "movieId": resl.movieId, "date": resl.date, "scheduleTimeId": resl.scheduleTimeId, "backId": resl.backId } } })
+                swal({
+                    title: "loi",
+                    text: "Ghe da co nguoi dat!",
+                    type: "error",
+                    icon: "error",
+                    button: {
+                        text: "OK",
+                    },
+                });
+            }
+            setCheckOut(true);
+        } catch (err){
+
+            await SweetAlert("Không thể thanh toán!", `Các vé bạn chọn có thể đã hết thời hạn thanh toán hoặc bạn đã thanh toán trước đó! Xin vui lòng kiểm tra lịch sử đặt vé!`, "error")
+            navigate('/user/information')
         }
-        setCheckOut(true);
-
-
     }
 
 
@@ -223,7 +231,7 @@ https://www.galaxycine.vn/
                                     </tr>
                                     <tr>
                                         <td className="tdTable">
-                                            <button className="btn btn__delete" onClick={() => handleBack()}>Quay lại</button>
+                                            <button className="btn__edit" onClick={() => handleBack()}>Quay lại</button>
                                         </td>
 
                                         <td className="tdTable">
@@ -242,7 +250,7 @@ https://www.galaxycine.vn/
                                                     }
                                                 />
                                             ) : (
-                                                <button className="btn btn__edit"
+                                                <button className="btn__add"
 
                                                     onClick={() => {
                                                         handleCheck();

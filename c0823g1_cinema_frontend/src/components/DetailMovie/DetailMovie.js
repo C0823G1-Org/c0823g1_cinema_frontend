@@ -31,6 +31,11 @@ export default function DetailMovie() {
             SweetAlert("Đăng nhập thành công!", `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`, "success")
         }
         sessionStorage.removeItem("isLogin");
+        const errTicket = sessionStorage.getItem("errTicket");
+        if (errTicket !== null){
+            SweetAlert("Xin lỗi!", `Những vé bạn chọn đã có khách hàng khác nhanh tay hơn xin bạn chọn lại từ đầu! Xin cám ơn!`, "error")
+        }
+        sessionStorage.removeItem("errTicket");
     })
 
     useEffect(() => {

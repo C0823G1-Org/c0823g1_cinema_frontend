@@ -646,7 +646,7 @@ export default function UserInformation() {
                                                                 </td>
                                                                 <td>{formatDate(booking.dateBooking)}</td>
                                                                 <td>{formatNumber(booking.price)}</td>
-                                                                <td>{formatNumber(booking.price % 3)}</td>
+                                                                <td>{formatNumber(booking.price / 100 * 3)}</td>
                                                             </tr>
                                                         ))}
                                                         </tbody>
