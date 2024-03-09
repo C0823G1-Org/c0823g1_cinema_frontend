@@ -24,6 +24,7 @@ import ExportDetail from "./components/Employee/ExportDetail";
 import Search from './components/Home/Search';
 import HeaderTemplateAdmin from './components/Home/HeaderTemplateAdmin';
 import BookingMovieSchedule from "./components/Booking/BookingMovieSchedule";
+import {NotFound} from "./components/NotFound/NotFound";
 
 function App() {
     return (
@@ -52,6 +53,7 @@ function App() {
                 <Route path={"/employee/exportDetail"} element={<ExportDetail/>}></Route>
                 <Route path={"/user/information"} element={<UserInformation/>}></Route>
                 <Route path={"/user/history"} element={<HistoryBooking/>}></Route>
+                <Route path="*" element={<NotFound />} />
             </Routes>
         </>
     );

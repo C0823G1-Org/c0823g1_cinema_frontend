@@ -47,6 +47,7 @@ export default function MovieList() {
                 text: "Không được nhập quá 100 ký tự",
                 icon: "warning"
             });
+            setNameSearch('');
         } else {
             setNameSearch(value);
         }
@@ -108,15 +109,35 @@ export default function MovieList() {
             cancelButtonText: "Hủy bỏ"
         }).then(async (result) => {
             if (result.isConfirmed) {
-                await deleteMovie(movie, accessToken);
-                MySwal.fire(
-                    "Xóa thành công!",
-                    `${movie.name} đã được xóa.`,
-                    "success"
-                );
-                const result = await fillAllMovie(currentPage, nameSearch, nameSearch, startDate, endDate, accessToken);
-                setMovies(result.content);
-                setTotalPages(result.totalPages);
+                if (movies.length === 1){
+                    await deleteMovie(movie, accessToken);
+                    MySwal.fire(
+                        "Xóa thành công!",
+                        `${movie.name} đã được xóa.`,
+                        "success"
+                    );
+                    if(currentPage>0) {
+                        const result = await fillAllMovie(currentPage - 1, nameSearch, nameSearch, startDate, endDate, accessToken);
+                        setMovies(result.content);
+                        setTotalPages(result.totalPages);
+                        setCurrentPage(currentPage - 1);
+                    }else{
+                        const result = await fillAllMovie(0, nameSearch, nameSearch, startDate, endDate, accessToken);
+                        setMovies(result.content);
+                        setTotalPages(result.totalPages);
+                        setCurrentPage(0);
+                    }
+                }else {
+                    await deleteMovie(movie, accessToken);
+                    MySwal.fire(
+                        "Xóa thành công!",
+                        `${movie.name} đã được xóa.`,
+                        "success"
+                    );
+                    const result = await fillAllMovie(currentPage, nameSearch, nameSearch, startDate, endDate, accessToken);
+                    setMovies(result.content);
+                    setTotalPages(result.totalPages);
+                }
             }
         });
     }
@@ -145,6 +166,7 @@ export default function MovieList() {
                                                     <input id="startDate" className="form-control mr-sm-2 w-100 mb-2" type="date"
                                                            onChange={(event => handleStartDate(event.target.value))}
                                                            name="startDate"
+                                                           max={endDate}
                                                     />
                                                 </div>
                                             </div>
@@ -162,11 +184,12 @@ export default function MovieList() {
                                                        placeholder="Nhập tên phim, hãng phim"
                                                        name="name"
                                                        aria-label="Search"
+                                                       value={nameSearch || ''}
                                                        onChange={(event => handleNameSearch(event.target.value))}
                                                        id="name"/>
                                             </div>
                                             <div className="col-2">
-                                                <button className="btn F my-sm-0 btn__search_movie w-100" type="button"
+                                                <button style={{paddingTop:"13px"}} className="btn F my-sm-0 btn__search_movie w-100" type="button"
                                                         onClick={() => submitSearch()}
                                                 >Tìm kiếm
                                                 </button>
@@ -225,30 +248,33 @@ export default function MovieList() {
                                 </tr>)}
                                 </tbody>
                             </table>
-                            <div className="clearfix">
-                                <div style={{float: "right"}} className="page">
-                                    <ReactPaginate
-                                        forcePage = {currentPage}
-                                        breakLabel="..."
-                                        nextLabel="Trang Sau"
-                                        onPageChange={handlePageClick}
-                                        pageRangeDisplayed={2}
-                                        marginPagesDisplayed={2}
-                                        pageCount={totalPages}
-                                        previousLabel="Trang Trước"
-                                        pageClassName="page-item"
-                                        pageLinkClassName="page-link"
-                                        previousClassName="page-item"
-                                        previousLinkClassName="page-link"
-                                        nextClassName="page-item"
-                                        nextLinkClassName="page-link"
-                                        breakClassName="page-item"
-                                        breakLinkClassName="page-link"
-                                        containerClassName="pagination"
-                                        activeClassName="active"
-                                    />
+                            {movies ?(
+                                <div className="clearfix">
+                                    <div style={{float: "right"}} className="page">
+                                        <ReactPaginate
+                                            forcePage = {currentPage}
+                                            breakLabel="..."
+                                            nextLabel="Trang Sau"
+                                            onPageChange={handlePageClick}
+                                            pageRangeDisplayed={2}
+                                            marginPagesDisplayed={2}
+                                            pageCount={totalPages}
+                                            previousLabel="Trang Trước"
+                                            pageClassName="page-item"
+                                            pageLinkClassName="page-link"
+                                            previousClassName="page-item"
+                                            previousLinkClassName="page-link"
+                                            nextClassName="page-item"
+                                            nextLinkClassName="page-link"
+                                            breakClassName="page-item"
+                                            breakLinkClassName="page-link"
+                                            containerClassName="pagination"
+                                            activeClassName="active"
+                                        />
+                                    </div>
                                 </div>
-                            </div>
+                            ):<div></div>}
+
                         </div>
                     </div>
                 </div>

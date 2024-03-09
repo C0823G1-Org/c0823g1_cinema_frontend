@@ -6,6 +6,7 @@ import {Link, useNavigate} from "react-router-dom";
 import SweetAlert from "sweetalert";
 import {Sidebar} from "../Admin/Sidebar/Sidebar";
 import {format} from "date-fns";
+import MySwal from "sweetalert2";
 export default function TicketList() {
     const navigate = useNavigate();
     const [token,setToken] = useState("");
@@ -24,8 +25,16 @@ export default function TicketList() {
     const [searchPage, setSearchPage] = useState(false)
     const [currentPage, setCurrentPage] = useState(0);
 
-    const handleChangeValue =  (e) => {
-        setSearch(e.target.value);
+    const handleChangeValue =   (e) => {
+        if (e.target.value.length > 100) {
+            MySwal.fire({
+                text: "Không được nhập quá 100 ký tự",
+                icon: "warning"
+            });
+            setSearch("")
+        } else {
+            setSearch(e.target.value);
+        }
     }
     const handleChangeDate =  (e) => {
         setSearchDate(e.target.value);
@@ -62,10 +71,10 @@ export default function TicketList() {
             setListBooking(result.data.content);
             setTotalPages(result.data.totalPages);
             setSearchPage(true);
-        } else {
+        }
+        else {
             console.log(result.flag)
-            await SweetAlert("Thông tin khách hàng không tồn tại!", "", "error")
-            setListBooking(result.data.content);
+            setListBooking([]);
             setTotalPages(result.data.totalPages);
         }
         setCurrentPage(0)
@@ -117,7 +126,9 @@ export default function TicketList() {
         fetchData(currentPage, accessToken)
         console.log("Current Page:", currentPage);
     }, []);
-
+    const formatPhoneNumber = (phoneNumber) => {
+        return phoneNumber.replace(/(\d{4})(\d{3})(\d{3})/, '$1 $2 $3');
+    };
     return (
         <>
             <Sidebar />
@@ -143,11 +154,12 @@ export default function TicketList() {
                                                         <input className="form-control mr-sm-2 w-100 mb-2" type="search"  placeholder="Thông tin khách hàng"
                                                                onChange={handleChangeValue}
                                                                aria-label="Search"
+                                                               value={search}
                                                         />
                                                     </div>
                                                 </div>
                                                 <div className="col-2">
-                                                    <button className="btn F my-sm-0 btn__search_movie w-100" type="button"
+                                                    <button style={{paddingTop:"13px"}} className="btn F my-sm-0 btn__search_movie w-100" type="button"
                                                             onClick={handleSearch}
                                                     >Tìm kiếm
                                                     </button>
@@ -162,28 +174,26 @@ export default function TicketList() {
                             <table className="table_movie table-striped_movie table-hover_movie ">
                                 <thead>
                                 <tr>
-                                    <th>STT</th>
-                                    <th>Mã đặt vé</th>
-                                    <th>Họ tên</th>
-                                    <th>CMND</th>
-                                    <th>Số điện thoại</th>
-                                    <th>Ngày đặt</th>
-                                    <th>Phim</th>
-                                    <th>Chức năng</th>
+                                    <th style={{width:"5%"}}>STT</th>
+                                    <th style={{width:"10%"}}>Mã đặt vé</th>
+                                    <th style={{width:"20%"}}>Họ tên</th>
+                                    <th style={{width:"10%"}}>CMND</th>
+                                    <th style={{width:"10%"}}>Số điện thoại</th>
+                                    <th style={{width:"10%"}}>Ngày đặt</th>
+                                    <th style={{width:"25%"}}>Phim</th>
+                                    <th style={{width:"10%"}}>Chức năng</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {
-
-                                    listBooking.map((item,index) => (
+                                { listBooking.length !== 0 ? ( listBooking.map((item,index) => (
                                         <tr key={item.bookingCode}>
                                             <td>{index + 1}</td>
-                                            <td>DV {item.bookingCode}</td>
+                                            <td>DV-{item.bookingCode}</td>
                                             <td>{item.nameCustomer}</td>
                                             <td>{item.idNumber}</td>
-                                            <td>{item.phoneNumber}</td>
+                                            <td>{item.phoneNumber ? formatPhoneNumber(item.phoneNumber) : ""}</td>
                                             <td>{format(new Date(item.dateBooking), 'dd/MM/yyyy')}</td>
-                                            <td>{item.nameMovieFilm}</td>
+                                            <td className="table_movie_ellipsis">{item.nameMovieFilm}</td>
 
                                             <td>
                                                 <Link onClick={() => handleDetailExport(`${item.bookingCode}`)} className="edit" to={"#"}><i
@@ -196,18 +206,20 @@ export default function TicketList() {
                                             </td>
                                         </tr>
                                     ))
-
+                                ) : (<tr>
+                                    <td colSpan="7" className="text-danger h5">Không tìm thấy dữ liệu</td>
+                                </tr>)
 
                                 }
                                 </tbody>
                             </table>
-                            <div className="clearfix">
+                            { listBooking.length !== 0 ?  <div className="clearfix">
                                 <div style={{float: "right"}} className="page">
                                     <ReactPaginate
                                         breakLabel="..."
                                         nextLabel="Trang sau"
                                         onPageChange={handlePageClick}
-                                        forcePage={currentPage}
+
                                         pageRangeDisplayed={2}
                                         marginPagesDisplayed={2}
                                         pageCount={totalPages}
@@ -225,7 +237,7 @@ export default function TicketList() {
                                         initialPage={currentPage}
                                     />
                                 </div>
-                            </div>
+                            </div> : ""}
                         </div>
                     </div>
                 </div>

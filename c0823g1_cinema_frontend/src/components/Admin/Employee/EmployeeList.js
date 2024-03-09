@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import MySwal from "sweetalert2";
 import ReactPaginate from "react-paginate";
 import { Sidebar } from "../Sidebar/Sidebar";
+import {fillAllMovie} from "../../../service/MovieService";
 
 export default function EmployeeList() {
   const navigate = useNavigate();
@@ -71,17 +72,40 @@ export default function EmployeeList() {
       cancelButtonText: "Hủy bỏ",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        await service.deleteEmployee(employee, accessToken);
-        MySwal.fire(
-          "Xóa thành công!",
-          `${employee.fullName} đã được xóa.`,
-          "success"
-        );
-        const result = await service.getAllEmployee(currentPage, searchName, accessToken);
-        setEmployeeList(result.content);
-        setTotalPages(result.totalPages);
+        if (employeeList.length === 1){
+          await service.deleteEmployee(employee, accessToken);
+          MySwal.fire(
+              "Xóa thành công!",
+              `${employee.fullName} đã được xóa.`,
+              "success"
+          );
+          if(currentPage>0) {
+            const result = await service.getAllEmployee(currentPage-1, searchName, accessToken);
+            setEmployeeList(result.content);
+            setTotalPages(result.totalPages);
+            setCurrentPage(currentPage-1);
+          }else{
+            const result = await service.getAllEmployee(0, searchName, accessToken);
+            setEmployeeList(result.content);
+            setTotalPages(result.totalPages);
+            setCurrentPage(0);
+          }
+        }else {
+          await service.deleteEmployee(employee, accessToken);
+          MySwal.fire(
+              "Xóa thành công!",
+              `${employee.fullName} đã được xóa.`,
+              "success"
+          );
+          const result = await service.getAllEmployee(currentPage, searchName, accessToken);
+          setEmployeeList(result.content);
+          setTotalPages(result.totalPages);
+        }
       }
     });
+  };
+  const formatPhoneNumber = (phoneNumber) => {
+    return phoneNumber.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3');
   };
   return (
     <>
@@ -99,14 +123,14 @@ export default function EmployeeList() {
                     <div className="d-flex flex-wrap">
                       <div className="col-3">
                         <div className="d-flex">
-                          <input id="startDate" className="form-control mr-sm-2 w-100 mb-2" type="text"
+                          <input id="startDate" className="form-control mr-sm-2 w-100 mb-2" type="text" placeholder={"Tên nhân viên"}
                                  onChange={(event => handleSearchName(event.target.value))}
                                  name="startDate"
                           />
                         </div>
                       </div>
                       <div className="col-2">
-                        <button className="btn F my-sm-0 btn__search_movie w-100" type="button"
+                        <button style={{paddingTop:"13px"}} className="btn F my-sm-0 btn__search_movie w-100" type="button"
                                 onClick={() => submitSearch()}
                         >Tìm kiếm
                         </button>
@@ -128,14 +152,14 @@ export default function EmployeeList() {
               <table className="table_movie table-striped_movie table-hover_movie ">
                 <thead>
                 <tr>
-                  <th>STT</th>
-                  <th>Mã nhân viên</th>
-                  <th>Tên nhân viên</th>
-                  <th>Số CCCD</th>
-                  <th>Email</th>
-                  <th>Số điện thoại</th>
-                  <th>Địa chỉ</th>
-                  <th>Chức năng</th>
+                  <th style={{width:"5%"}}>STT</th>
+                  <th style={{width:"10%"}}>Mã nhân viên</th>
+                  <th style={{width:"15%"}}>Tên nhân viên</th>
+                  <th style={{width:"10%"}}>Số CCCD</th>
+                  <th style={{width:"20%"}}>Email</th>
+                  <th style={{width:"10%"}}>Số điện thoại</th>
+                  <th style={{width:"20%"}}>Địa chỉ</th>
+                  <th style={{width:"10%"}}>Chức năng</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -143,11 +167,11 @@ export default function EmployeeList() {
                     employeeList.map((employee, index) => (
                         <tr key={employee.id}>
                           <td>{index + 1}</td>
-                          <td>TV-{employee.memberCode}</td>
+                          <td>NV-{employee.memberCode}</td>
                           <td>{employee.fullName}</td>
                           <td>{employee.idNumber}</td>
                           <td>{employee.email}</td>
-                          <td>{employee.phoneNumber}</td>
+                          <td>{formatPhoneNumber(employee.phoneNumber)}</td>
                           <td>{employee.address}</td>
                           <td>
                             <Link to={`/employee/edit/${employee.id}`} className="edit"><i
@@ -171,30 +195,32 @@ export default function EmployeeList() {
                 )}
                 </tbody>
               </table>
-              <div className="clearfix">
-                <div style={{float: "right"}} className="page">
-                  <ReactPaginate
-                      forcePage={currentPage}
-                      breakLabel="..."
-                      nextLabel="Trang Sau"
-                      onPageChange={handlePageClick}
-                      pageRangeDisplayed={2}
-                      marginPagesDisplayed={2}
-                      pageCount={totalPages}
-                      previousLabel="Trang Trước"
-                      pageClassName="page-item"
-                      pageLinkClassName="page-link"
-                      previousClassName="page-item"
-                      previousLinkClassName="page-link"
-                      nextClassName="page-item"
-                      nextLinkClassName="page-link"
-                      breakClassName="page-item"
-                      breakLinkClassName="page-link"
-                      containerClassName="pagination"
-                      activeClassName="active"
-                  />
-                </div>
-              </div>
+              {employeeList ? (
+                  <div className="clearfix">
+                    <div style={{float: "right"}} className="page">
+                      <ReactPaginate
+                          forcePage={currentPage}
+                          breakLabel="..."
+                          nextLabel="Trang Sau"
+                          onPageChange={handlePageClick}
+                          pageRangeDisplayed={2}
+                          marginPagesDisplayed={2}
+                          pageCount={totalPages}
+                          previousLabel="Trang Trước"
+                          pageClassName="page-item"
+                          pageLinkClassName="page-link"
+                          previousClassName="page-item"
+                          previousLinkClassName="page-link"
+                          nextClassName="page-item"
+                          nextLinkClassName="page-link"
+                          breakClassName="page-item"
+                          breakLinkClassName="page-link"
+                          containerClassName="pagination"
+                          activeClassName="active"
+                      />
+                    </div>
+                  </div>
+              ):(<div></div>)}
             </div>
           </div>
         </div>

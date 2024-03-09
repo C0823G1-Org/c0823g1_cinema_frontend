@@ -6,6 +6,7 @@ import {getScheduleByMovieId} from "../../service/BookingService";
 import '../Home/Footer.css'
 import Footer from "../Home/Footer";
 import HeaderTemplateAdmin from "../Home/HeaderTemplateAdmin";
+import SweetAlert from "sweetalert";
 
 export default function DetailMovie() {
     const [movie, setMovie] = useState([]);
@@ -14,6 +15,8 @@ export default function DetailMovie() {
     const [actor, setActor] = useState([]);
     const dateToday = new Date().toISOString().slice(0, 10);
     const {id} = useParams();
+    const [token,setToken] = useState("");
+    const [role, setRole] = useState("");
     const [selectedDateTime, setSelectedDateTime] = useState({
         movieId: id,
         date: null,
@@ -21,22 +24,35 @@ export default function DetailMovie() {
     });
     const navigate = useNavigate();
     const showtimeSectionRef = useRef(null); // Tham chiếu đến phần tử lịch chiếu
-    const handleScrollToSchedule = () => {
-        showtimeSectionRef.current.scrollIntoView({behavior: 'smooth'});
-    };
+
+    useEffect(()=>{
+        const isLogin = sessionStorage.getItem("isLogin");
+        if (isLogin !== null){
+            SweetAlert("Đăng nhập thành công!", `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`, "success")
+        }
+        sessionStorage.removeItem("isLogin");
+    })
 
     useEffect(() => {
+        const accessToken = sessionStorage.getItem("accessToken");
+        const roleUser = sessionStorage.getItem("roleUser");
+        setToken(accessToken);
+        setRole(roleUser);
         const fetchData = async () => {
-            const movie1 = await findByIdMovie(id);
-            const movie2 = await findByIdMovieHasGenre(id);
-            const dataResult = await getScheduleByMovieId(id)
-            setSchedule(dataResult)
-            setMovie(movie1);
-            setTypeMovie(movie2);
-            console.log(schedule)
-            const listActor = movie1.actor.split(',');
-            setActor(listActor);
-            document.title = movie1.name;
+            try {
+                const movie1 = await findByIdMovie(id);
+                const movie2 = await findByIdMovieHasGenre(id);
+                const dataResult = await getScheduleByMovieId(id)
+                setSchedule(dataResult)
+                setMovie(movie1);
+                setTypeMovie(movie2);
+                console.log(schedule)
+                const listActor = movie1.actor.split(',');
+                setActor(listActor);
+                document.title = movie1.name;
+            } catch (err) {
+                navigate(`/home`);
+            }
         };
         fetchData();
     }, []);
@@ -55,11 +71,13 @@ export default function DetailMovie() {
             <button
                 key={scheduleTimeId}
                 className={`active1 ${isDisabled ? "disabled" : ""}`}
-                onClick={() => {handleClickScheduleTime(currentDate, scheduleTimeId);}}
+                onClick={() => handleClickScheduleTime(currentDate, scheduleTimeId)}
+                disabled={isDisabled}
             >
                 {`${formattedHours}h${formattedMinutes}`}
             </button>
         );
+
     };
     const formatDuration = (durationInMinutes) => {
         const hours = Math.floor(durationInMinutes / 60);
@@ -75,12 +93,18 @@ export default function DetailMovie() {
         return `${day}/${month}/${year}`;
     };
     const handleClickScheduleTime = (date, scheduleTimeId) => {
-        setSelectedDateTime(prevState => ({
-            ...prevState,
-            date,
-            scheduleTimeId
-        }));
-        console.log(selectedDateTime);
+        if (role === null) {
+            sessionStorage.setItem("booking", "booking");
+            sessionStorage.setItem("movieId", id);
+            navigate(`/login`)
+        } else {
+
+            setSelectedDateTime(prevState => ({
+                ...prevState,
+                date,
+                scheduleTimeId
+            }));
+            console.log(selectedDateTime);}
     };
     useEffect(() => {
         console.log(selectedDateTime);
@@ -209,15 +233,15 @@ export default function DetailMovie() {
                     <Footer/>
                 </div>
             }{schedule.length === 1 &&
-            <div style={{marginTop: "86vh"}}>
+            <div style={{marginTop: "90vh"}}>
                 <Footer/>
             </div>
         }{schedule.length === 2 &&
-            <div style={{marginTop: "93vh"}}>
+            <div style={{marginTop: "100vh"}}>
                 <Footer/>
             </div>
         }{schedule.length === 3 &&
-            <div style={{marginTop: "103vh"}}>
+            <div style={{marginTop: "110vh"}}>
                 <Footer/>
             </div>
         }

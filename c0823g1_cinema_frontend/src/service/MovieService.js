@@ -44,7 +44,7 @@ export const fillAllMovie = async (page, name, publisher, startDate, endDate, ac
 }
 export const deleteMovie = async (movie, accessToken) => {
     try{
-        const result = await axios.patch(`http://localhost:8080/movie/delete/${movie.id}`, {
+        const result = await axios.delete(`http://localhost:8080/movie/delete/${movie.id}`, {
             headers: {
                 Authorization: `Bearer ${accessToken}`
             }

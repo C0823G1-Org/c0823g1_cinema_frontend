@@ -18,10 +18,36 @@ import {useNavigate} from "react-router-dom";
 
 export default function UserInformation() {
     const navigate = useNavigate();
+    const [forgetPassword,setForgetPassword] = useState(false);
+    const [isSocial, setIsSocial] = useState(false);
+    const [role,setRole] = useState("");
+    const [member,setMember] = useState("Admin-");
     useEffect(() => {
         const roleUser = sessionStorage.getItem("roleUser");
+        setRole(roleUser);
+        if (roleUser === "ROLE_CUSTOMER"){
+            setMember("TV-");
+        }
+        if (roleUser === "ROLE_EMPLOYEE"){
+            setMember("NV-");
+        }
         if (roleUser === null) {
             navigate(`/login`);
+        }
+        const forgetPassword = sessionStorage.getItem("forgetPassword");
+        if (forgetPassword !== null){
+            setForgetPassword(true);
+            SweetAlert(
+                "Bạn đã lấy lại mật khẩu thành công!",
+                `Hãy cập nhật mật khẩu để đảm bảo an toàn bảo mật bạn nhé!`,
+                "success"
+            );
+            sessionStorage.removeItem("forgetPassword");
+        }
+        const accessTokenFB = sessionStorage.getItem("accessTokenFB");
+        const accessTokenGG = sessionStorage.getItem("accessTokenGG");
+        if (accessTokenFB !== null || accessTokenGG !== null){
+            setIsSocial(true);
         }
     }, []);
     const [accessToken, setAccessToken] = useState("");
@@ -153,6 +179,7 @@ export default function UserInformation() {
                 "error"
             );
         }
+
     };
     const validateObject2 = {
         currentPassword: Yup.string().required(
@@ -238,13 +265,13 @@ export default function UserInformation() {
                                         >
                                             <i className="far fa-address-card" /> Thông tin tài khoản
                                         </a>
-                                        <a
+                                        {isSocial ? "" :  <a
                                             className="list-group-item list-group-item-action"
                                             data-toggle="list"
                                             href="#account-change-password"
                                         >
                                             <i className="fas fa-exchange-alt" /> Đổi mật khẩu
-                                        </a>
+                                        </a>}
                                         <a
                                             className="list-group-item list-group-item-action"
                                             data-toggle="list"
@@ -277,7 +304,7 @@ export default function UserInformation() {
                                                         verificationCode: account1.verificationCode,
                                                         point: account1.point,
                                                         role: account1.role,
-                                                        memberCode: "TV-" + account1.memberCode,
+                                                        memberCode: member + account1.memberCode
                                                     }}
                                                     validationSchema={Yup.object(validateObject)}
                                                     onSubmit={(values, { setErrors }) => {
@@ -310,30 +337,44 @@ export default function UserInformation() {
 
                                                             /></div>
                                                                 <div className="form-group">
-                                                            <label className="form-label">
-                                                                Tên đăng nhập
-                                                            </label>
-                                                            <Field
-                                                                type="text"
-                                                                className="form-control"
-                                                                disabled
-                                                                name="accountName"
-                                                            /></div>
+                                                                    {isSocial ? "" : <><label className="form-label">
+                                                                        Tên đăng nhập
+                                                                    </label>
+                                                                    <Field
+                                                                        type="text"
+                                                                        className="form-control"
+                                                                        disabled
+                                                                        name="accountName"
+                                                                    /></>}</div>
                                                         </div>
-                                                        <div className="form-group">
-                                                            <label className="form-label">Email</label>
-                                                            <Field
-                                                                type="text"
-                                                                name="email"
-                                                                className="form-control mb-1"
-                                                            />
-                                                            <ErrorMessage
-                                                                name="email"
-                                                                component="span"
-                                                                className="form-err"
-                                                                style={{ color: "red" }}
-                                                            />
-                                                        </div>
+                                                            {isSocial ?  <div className="form-group">
+                                                                    <label className="form-label">Email</label>
+                                                                    <Field
+                                                                        type="text"
+                                                                        name="email"
+                                                                        className="form-control mb-1"
+                                                                        disabled
+                                                                    />
+                                                                    <ErrorMessage
+                                                                        name="email"
+                                                                        component="span"
+                                                                        className="form-err"
+                                                                        style={{ color: "red" }}
+                                                                    />
+                                                                </div> : <div className="form-group">
+                                                                <label className="form-label">Email</label>
+                                                                <Field
+                                                                    type="text"
+                                                                    name="email"
+                                                                    className="form-control mb-1"
+                                                                />
+                                                                <ErrorMessage
+                                                                    name="email"
+                                                                    component="span"
+                                                                    className="form-err"
+                                                                    style={{ color: "red" }}
+                                                                />
+                                                            </div>}
                                                         <div className="form-group">
                                                             <label className="form-label">Ngày sinh</label>
                                                             <Field
@@ -403,12 +444,14 @@ export default function UserInformation() {
                                                             />
                                                         </div>
                                                         <div className="text-right mt-3">
-                                                            <button type="submit" className="btn btnAdd">
-                                                                Lưu
+                                                            <button type="button" style={{width: "5rem"}} className="btn__add" onClick={() => {
+                                                                navigate("/user/information");
+                                                            }}>
+                                                                Huỷ
                                                             </button>
                                                             &nbsp;
-                                                            <button type="button" className="btn btnSearch">
-                                                                Huỷ
+                                                            <button type="submit" style={{width: "5rem"}} className="btn__edit">
+                                                                Lưu
                                                             </button>
                                                         </div>
                                                     </Form>
@@ -437,7 +480,7 @@ export default function UserInformation() {
                                                             </label>
                                                             <Field type="hidden" name="id" />
                                                             <Field
-                                                                type="text"
+                                                                type="password"
                                                                 name="currentPassword"
                                                                 className="form-control"
                                                             />
@@ -451,7 +494,7 @@ export default function UserInformation() {
                                                         <div className="form-group">
                                                             <label className="form-label">Mật khẩu mới</label>
                                                             <Field
-                                                                type="text"
+                                                                type="password"
                                                                 name="newPassword"
                                                                 className="form-control"
                                                             />
@@ -467,7 +510,7 @@ export default function UserInformation() {
                                                                 Xác nhận mật khẩu mới
                                                             </label>
                                                             <Field
-                                                                type="text"
+                                                                type="password"
                                                                 name="confirmationPassword"
                                                                 className="form-control"
                                                             />
@@ -478,13 +521,12 @@ export default function UserInformation() {
                                                                 style={{ color: "red" }}
                                                             />
                                                         </div>
-                                                        <div style={{marginLeft: "67%" , marginTop: "35%"}}>
-
-                                                            <button type="submit" className="btn btnAdd" style={{marginRight: "0.5rem"}}>
-                                                                Lưu
-                                                            </button>
-                                                            <button type="button" className="btn btnSearch">
+                                                        <div style={{marginLeft: "80%" , marginTop: "35%"}}>
+                                                            <button type="button" style={{marginRight: "0.5rem",width: "5rem"}} className="btn__add">
                                                                 Huỷ
+                                                            </button>
+                                                            <button type="submit" className="btn__edit" style={{marginRight: "0.5rem",width: "5rem"}}>
+                                                                Lưu
                                                             </button>
                                                         </div>
 
@@ -551,7 +593,7 @@ export default function UserInformation() {
                                                                         </td>
                                                                         <td style={{paddingLeft: "30px"}}>
                                                                             <button
-                                                                                className="btn btnSearch my-2 my-sm-0"
+                                                                                className="btn__add" style={{width: "6rem"}}
 
                                                                                 type="submit"
                                                                             >

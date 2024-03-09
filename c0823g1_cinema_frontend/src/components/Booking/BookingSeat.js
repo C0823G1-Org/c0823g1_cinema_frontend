@@ -8,16 +8,29 @@ import Footer from "../Home/Footer";
 import HeaderTemplateAdmin from "../Home/HeaderTemplateAdmin";
 
 export default function BookingSeat() {
+    const navigate = useNavigate();
+    const [role,setRole] = useState("");
+    useEffect(() => {
+        const roleUser = sessionStorage.getItem("roleUser");
+        if (roleUser === null) {
+            navigate(`/login`);
+        } else {
+            setRole(roleUser);
+        }
+    }, []);
     const [tickets, setTickets] = useState([])
     const [totalSeat, setTotalSeat] = useState(0)
     const [selected, setSelected] = useState([])
     const [schedule, setSchedule] = useState(null)
     const [result, setResult] = useState({})
-    const navigate = useNavigate();
     const location = useLocation()
     const data = location.state.myResult;
 
+    const [userId,setUserId] = useState(0);
+
     useEffect(() => {
+        const id = sessionStorage.getItem("userId");
+        setUserId(id);
         const fetchData = async () => {
             try {
                 const scheduleResult = await getSchedule(data.movieId, data.date, data.scheduleTimeId);
@@ -51,7 +64,7 @@ export default function BookingSeat() {
         const newResult = {
             "seatList": selected,
             "scheduleId": schedule.id,
-            "accountId": 1,
+            "accountId": userId,
             "backId": data.backId,
             "movieId": data.movieId,
             "date": data.date,
@@ -123,13 +136,15 @@ export default function BookingSeat() {
 
         for (let i = 1; i <= totalSeat; i++) {
             const isCoupleSeat = i > totalSeat - 10;
+            const isOccupied = tickets.some((ticket) => ticket === i);
+            const shouldAddCoupleClass = isCoupleSeat && !isOccupied && i > totalSeat - 10;
             rowSeats.push(
                 <div
                     className={classNames({
                         seat: true,
-                        occupied: tickets.some((ticket) => ticket === i),
+                        occupied: isOccupied,
                         selected: selected.includes(i),
-                        couple: isCoupleSeat
+                        couple: shouldAddCoupleClass
                     })}
                     onClick={(e) => handleClick(e, i)}
                     key={i}
@@ -158,7 +173,7 @@ export default function BookingSeat() {
             );
         }
 
-        return seats;
+        return <div style={{marginTop: "3rem"}}>{seats}</div>;
     };
     if (!schedule) return "loading"
     console.log(schedule)
@@ -208,8 +223,7 @@ export default function BookingSeat() {
                         </ul>
                         <div className="containerBS" id="container1">
                             <div className=" screen" style={{fontSize: '200%', paddingTop: '10px'}}> MÀN HÌNH</div>
-                            <div><svg style={{width:'5%'}} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M502.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224 192 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l210.7 0-73.4 73.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l128-128zM160 96c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 32C43 32 0 75 0 128L0 384c0 53 43 96 96 96l64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-64 0c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l64 0z"/></svg>
-                                <span style={{fontSize:'150%',marginTop:'100%'}}>Lối vào</span></div>
+
                             {
                                 renderSeats()
                             }
@@ -273,7 +287,10 @@ export default function BookingSeat() {
                     </div>
                 </div>
             </div>
-            <Footer/>
+            <div style={{marginTop: "1.5rem"}}>
+                <Footer/>
+            </div>
+
         </>
     )
 }
