@@ -159,7 +159,7 @@ export default function TicketList() {
                                                     </div>
                                                 </div>
                                                 <div className="col-2">
-                                                    <button className="btn F my-sm-0 btn__search_movie w-100" type="button"
+                                                    <button style={{paddingTop:"13px"}} className="btn F my-sm-0 btn__search_movie w-100" type="button"
                                                             onClick={handleSearch}
                                                     >Tìm kiếm
                                                     </button>

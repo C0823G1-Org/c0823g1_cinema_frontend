@@ -116,10 +116,17 @@ export default function MovieList() {
                         `${movie.name} đã được xóa.`,
                         "success"
                     );
-                    const result = await fillAllMovie(currentPage-1, nameSearch, nameSearch, startDate, endDate, accessToken);
-                    setMovies(result.content);
-                    setTotalPages(result.totalPages);
-                    setCurrentPage(currentPage-1);
+                    if(currentPage>0) {
+                        const result = await fillAllMovie(currentPage - 1, nameSearch, nameSearch, startDate, endDate, accessToken);
+                        setMovies(result.content);
+                        setTotalPages(result.totalPages);
+                        setCurrentPage(currentPage - 1);
+                    }else{
+                        const result = await fillAllMovie(0, nameSearch, nameSearch, startDate, endDate, accessToken);
+                        setMovies(result.content);
+                        setTotalPages(result.totalPages);
+                        setCurrentPage(0);
+                    }
                 }else {
                     await deleteMovie(movie, accessToken);
                     MySwal.fire(
@@ -159,6 +166,7 @@ export default function MovieList() {
                                                     <input id="startDate" className="form-control mr-sm-2 w-100 mb-2" type="date"
                                                            onChange={(event => handleStartDate(event.target.value))}
                                                            name="startDate"
+                                                           max={endDate}
                                                     />
                                                 </div>
                                             </div>
@@ -181,7 +189,7 @@ export default function MovieList() {
                                                        id="name"/>
                                             </div>
                                             <div className="col-2">
-                                                <button className="btn F my-sm-0 btn__search_movie w-100" type="button"
+                                                <button style={{paddingTop:"13px"}} className="btn F my-sm-0 btn__search_movie w-100" type="button"
                                                         onClick={() => submitSearch()}
                                                 >Tìm kiếm
                                                 </button>

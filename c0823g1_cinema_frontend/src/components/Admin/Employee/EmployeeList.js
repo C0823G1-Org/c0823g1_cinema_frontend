@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import MySwal from "sweetalert2";
 import ReactPaginate from "react-paginate";
 import { Sidebar } from "../Sidebar/Sidebar";
+import {fillAllMovie} from "../../../service/MovieService";
 
 export default function EmployeeList() {
   const navigate = useNavigate();
@@ -78,10 +79,17 @@ export default function EmployeeList() {
               `${employee.fullName} đã được xóa.`,
               "success"
           );
-          const result = await service.getAllEmployee(currentPage-1, searchName, accessToken);
-          setEmployeeList(result.content);
-          setTotalPages(result.totalPages);
-          setCurrentPage(currentPage-1);
+          if(currentPage>0) {
+            const result = await service.getAllEmployee(currentPage-1, searchName, accessToken);
+            setEmployeeList(result.content);
+            setTotalPages(result.totalPages);
+            setCurrentPage(currentPage-1);
+          }else{
+            const result = await service.getAllEmployee(0, searchName, accessToken);
+            setEmployeeList(result.content);
+            setTotalPages(result.totalPages);
+            setCurrentPage(0);
+          }
         }else {
           await service.deleteEmployee(employee, accessToken);
           MySwal.fire(
@@ -122,7 +130,7 @@ export default function EmployeeList() {
                         </div>
                       </div>
                       <div className="col-2">
-                        <button className="btn F my-sm-0 btn__search_movie w-100" type="button"
+                        <button style={{paddingTop:"13px"}} className="btn F my-sm-0 btn__search_movie w-100" type="button"
                                 onClick={() => submitSearch()}
                         >Tìm kiếm
                         </button>
