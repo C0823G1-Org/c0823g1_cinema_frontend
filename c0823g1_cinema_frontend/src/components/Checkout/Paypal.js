@@ -20,9 +20,9 @@ export function Paypal(props) {
                 },
 
                 onApprove: async (data, actions) => {
-
                     await bookingService.handleSuccess(dataTicket);
-                    navigate("/user/history")
+                    navigate("/user/information")
+
                     swal({
                         title: "Thông báo",
                         text: "Bạn đã thanh toán thành công!",
@@ -40,10 +40,10 @@ export function Paypal(props) {
                 onError: async (err) => {
                     let result = await bookingService.handleFail(dataTicket)
                     console.log(err);
-                    navigate(`/home/detail/${result}`)
+                    navigate("/user/information")
                     swal({
                         title: "Thông báo",
-                        text: "That bai!",
+                        text: "Thanh toán không thành công!",
                         type: "error",
                         icon: "error",
                         button: {

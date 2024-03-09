@@ -107,3 +107,12 @@ export const getScheduleByMovieId = async (movieId) => {
         console.log(e)
     }
 }
+
+export const checkExist = async (info) => {
+    try {
+        const response = await axios.post(`http://localhost:8080/booking/checkexist`, info);
+        return response;
+    } catch (e) {
+        return e;
+    }
+}

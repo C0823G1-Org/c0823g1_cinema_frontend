@@ -8,9 +8,10 @@ import Header from "../Home/Header";
 import Footer from "../Home/Footer";
 import axios from 'axios';
 import swal from 'sweetalert';
+
 import { BrowserRouter as Router, Route, useHistory } from 'react-router-dom';
 
-export default function Checkout() {
+export default function Test() {
     document.title = "Xác Nhận & Thanh Toán"
     const navigate = useNavigate()
     const location = useLocation()
@@ -29,6 +30,11 @@ export default function Checkout() {
         }
 
     }, [location])
+
+    const userJSON = JSON.stringify(resl);
+
+    // Lưu chuỗi JSON vào Local Storage
+    localStorage.setItem('user', userJSON);
 
     useEffect(() => {
         let getdata = async (result) => {
@@ -56,6 +62,7 @@ export default function Checkout() {
                 currency: 'VND'
             });
             setPrice(prc)
+
 
             const ta = data.sum.toLocaleString('vi-VN', {
                 style: 'currency',
@@ -93,15 +100,32 @@ export default function Checkout() {
     const vnd = exchangeRates;
     console.log(vnd)
 
-    window.onload = function () {
-        // Retrieve user name
-        var user = localStorage.getItem('user');
-        if (user !== "undefined" && user !== "null") {
-            setResl(JSON.parse(user))
+
+
+
+
+
+
+
+    const handleBack = async () => {
+        let back = async () => {
+            await bookingService.handleFail({
+                "totalAmount": dataA.sum,
+                "accountId": dataA.accountId,
+                "scheduleId": dataA.scheduleId,
+                "seat": dataA.seat,
+                "bookingId": dataA.bookingId,
+                "seatNumber": dataA.seatNumber
+            });
         }
-        setResl(resl)
-        console.log(resl);
+
+        await back()
+
+        navigate(`/booking/seat`, { state: { myResult: { "movieId": resl.movieId, "date": resl.date, "scheduleTimeId": resl.scheduleTimeId, "backId": resl.backId } } })
     }
+
+
+
 
 
     const handleCheck = async () => {
@@ -131,18 +155,6 @@ export default function Checkout() {
 
     }
 
-
-
-    const handleBack = async () => {
-        let movieId = await bookingService.handleFail({
-            "totalAmount": dataA.sum,
-            "accountId": dataA.accountId,
-            "scheduleId": dataA.scheduleId,
-            "seat": dataA.seat,
-            "bookingId": dataA.bookingId
-        });
-        navigate(`/booking/seat`, { state: { myResult: { "movieId": resl.movieId, "date": resl.date, "scheduleTimeId": resl.scheduleTimeId, "backId": resl.backId } } })
-    }
 
 
 
@@ -216,7 +228,7 @@ export default function Checkout() {
                                                 "accountId": dataA.accountId,
                                                 "scheduleId": dataA.scheduleId,
                                                 "seat": dataA.seat,
-                                                "bookingId": dataA.bookingId
+                                                "bookingId": dataA.bookingId,
                                             }} /> : null}
 
                                         </th>
@@ -235,17 +247,18 @@ export default function Checkout() {
                                                         "scheduleId": dataA.scheduleId,
                                                         "seat": dataA.seat,
                                                         "bookingId": dataA.bookingId,
-                                                        "seatNumber": dataA.seatNumber,
-                                                        "vnd": { vnd }
+                                                        "vnd": { vnd },
+                                                        "seatNumber": dataA.seatNumber
+
                                                     }
 
                                                     }
                                                 />
                                             ) : (
                                                 <button className="btn btn__edit"
-                                                    onClick={() => {
-                                                        handleCheck();
-                                                    }}
+                                                    onClick={
+                                                        () => handleCheck()
+                                                    }
                                                 >
                                                     Xác nhận
                                                 </button>

@@ -63,6 +63,7 @@ export default function BookingSeat() {
             // Example: await someAsyncFunction();
             // You can perform API calls, data fetching, etc.
             // Once the asynchronous operations are done, navigate
+            // navigate("/booking/checkout", { state: { myResult: newResult } });
             navigate("/booking/checkout", { state: { myResult: newResult } });
         } catch (error) {
             console.error("Error during asynchronous operations:", error);
