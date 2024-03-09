@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react'
 import '../Home/Home.css'
 import { getAllMovieCurrent, getAllMovieHot, searchName } from '../../service/MovieService'
 import Footer from '../Home/Footer'
-import {  Link, useNavigate } from 'react-router-dom'
+import { Form, Link, useNavigate } from 'react-router-dom'
 import HeaderTemplateAdmin from './HeaderTemplateAdmin'
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import Spinner from 'react-bootstrap/Spinner';
-import SweetAlert from "sweetalert";
+import MySwal from "sweetalert2";
+import { NumberSchema } from 'yup'
 
 
 
@@ -36,17 +37,9 @@ const Home = () => {
             slidesToSlide: 1 // optional, default to 1.
         }
     }
-    useEffect(()=>{
-        const isLogin = sessionStorage.getItem("isLogin");
-        if (isLogin !== null){
-            SweetAlert("Đăng nhập thành công!", `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`, "success")
-        }
-        sessionStorage.removeItem("isLogin");
-    })
 
 
     useEffect(() => {
-
         getAllMovieHot().then(res => {
             setMovies(res)
         })
@@ -63,13 +56,32 @@ const Home = () => {
         }
     }, [listMovie]);
 
-    const handleSearch = () => {
-        // eslint-disable-next-line no-restricted-globals
-        event.preventDefault();
-        searchName(search, page).then(res => {
-                console.log(res)
-                setListMovie(res)
-            }
+    const onhandleSearch = (e) => {
+        const check = /[!@#$%^&*()~+-_]/
+        if(check.test(e.target.value) ){
+            MySwal.fire({
+                text: "Không được nhập quá  ký tự đặt biệt",
+                icon: "warning"
+            }); 
+            setSearch("")
+        } else if(e.target.value.length > 100) {
+            MySwal.fire({
+                text: "Không được nhập quá 100 ký tự",
+                icon: "warning"
+            }); 
+            setSearch("")
+        }
+        else {
+            setSearch(e.target.value)
+        }
+    }
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+         searchName(search, page).then(res => {
+            console.log(res)
+            setListMovie(res)
+        }
         )
     }
 
@@ -96,14 +108,15 @@ const Home = () => {
                         <div className="carousel-item active hero1">
                             <div className="carousel-item__overlay" />
                             <div className="container carousel-caption d-md-block">
-                                <p>Hành động, thám hiểu, tình cảm</p>
+                                <p>Hành Động, Thám Hiểu, Tình Cảm</p>
                                 <h2 className="display-4">End of the World: Part I</h2>
                                 <p>Rõ ràng là một quy trình động, theo sau sự biến đổi của thói quen của người đọc. Điều đáng
                                     ngạc nhiên là chúng ta chú ý rằng chữ Gothic, mà chúng ta hiện nay cho là ít quan trọng
                                 </p>
                                 <div className="carousel-item__trailer mt-4">
                                     <span className="d-inline-block mr-2 text-white rounded-circle text-center">CO8</span>
-                                    <button className="btn-playTrailer"><i className="fa fa-play mr-2 playtrailer" /><span style={{fontSize: "1rem"}}>Xem trailer</span>
+                                    <button className="btn-playTrailer"><i className="fa fa-play mr-2 playtrailer" /><span>XEM
+                                        TRAILER</span>
                                         <div className="btn__overlay" />
                                     </button>
                                 </div>
@@ -112,14 +125,15 @@ const Home = () => {
                         <div className="carousel-item hero2">
                             <div className="carousel-item__overlay" />
                             <div className="container carousel-caption d-md-block">
-                                <p>Hành động, thám hiểm, tình cảm</p>
+                                <p>Hành Động, Thám Hiểu, Tình Cảm</p>
                                 <h2 className="display-4">End of the World: Part II</h2>
                                 <p>Rõ ràng là một quy trình động, theo sau sự biến đổi của thói quen của người đọc. Điều đáng
                                     ngạc nhiên là chúng ta chú ý rằng chữ Gothic, mà chúng ta hiện nay cho là ít quan trọng
                                 </p>
                                 <div className="carousel-item__trailer mt-4">
                                     <span className="d-inline-block mr-2 text-white rounded-circle text-center">C08</span>
-                                    <button className="btn-playTrailer"><i className="fa fa-play mr-2 playtrailer" /><span style={{fontSize: "1rem"}}>Xem trailer</span>
+                                    <button className="btn-playTrailer"><i className="fa fa-play mr-2 playtrailer" /><span>XEM
+                                        TRAILER</span>
                                         <div className="btn__overlay" />
                                     </button>
                                 </div>
@@ -128,14 +142,15 @@ const Home = () => {
                         <div className="carousel-item hero3">
                             <div className="carousel-item__overlay" />
                             <div className="container carousel-caption d-md-block">
-                                <p>Hành động, thám hiểm, tình cảm</p>
+                                <p>Hành Động, Thám Hiểu, Tình Cảm</p>
                                 <h2 className="display-4">End of the World: Part III</h2>
                                 <p>Rõ ràng là một quy trình động, theo sau sự biến đổi của thói quen của người đọc. Điều đáng
                                     ngạc nhiên là chúng ta chú ý rằng chữ Gothic, mà chúng ta hiện nay cho là ít quan trọng
                                 </p>
                                 <div className="carousel-item__trailer mt-4">
                                     <span className="d-inline-block mr-2 text-white rounded-circle text-center">C08</span>
-                                    <button className="btn-playTrailer"><i className="fa fa-play mr-2 playtrailer" /><span style={{fontSize: "1rem"}}>Xem trailer</span>
+                                    <button className="btn-playTrailer"><i className="fa fa-play mr-2 playtrailer" /><span>XEM
+                                        TRAILER</span>
                                         <div className="btn__overlay" />
                                     </button>
                                 </div>
@@ -146,15 +161,9 @@ const Home = () => {
             </section>
             <section style={{ position: 'relative', marginTop: 50 }} className="newIn container py-5">
                 {/* LIST PHIM HOT */}
-                <h2 className="content__after">Phim hot</h2>
-                {/* <div className="container__input"> */}
-                {/* <input name='search' value={search} onChange={e => setSearch(e.target.value)} placeholder=" Tìm kiếm phim ..." type="text" />
-                    <button onClick={handleSearch} className="btn__edit-search">
-                        Tìm
-                        <i style={{ marginLeft: '4px' }} className="fas fa-search" />
-                    </button> */}
-                <form onSubmit={handleSearch} className="tesster">
-                    <input  style={{border: "0.1rem solid black"}} name='search' value={search} onChange={e => setSearch(e.target.value)} placeholder=" Tìm kiếm phim ..." type="text" className="input_tesst" />
+                <h2 className="content__after">Phim Hot</h2>
+                <form onSubmit={handleSearch} className="tesster" >
+                    <input name='search' value={search} onChange={onhandleSearch} placeholder=" Tìm kiếm phim ..." type="text" className="input_tesst" />
                     <button type="submit"  className="new_btnn"><i className="fas fa-search" /></button>
                 </form>
                 {/* </div> */}
@@ -169,21 +178,22 @@ const Home = () => {
                                         <div className="newIn__play text-white">
                                             <span className="format-description">{value.description}</span>
                                             <div className="container__button-position">
-                                                <Link style={{ margin: '0px 10px' }} className="btn__add" to={`/home/detail/${value.movieId}`}>Đặt vé</Link>
+                                                <Link style={{fontSize:'18px'}} className="btn__add-book" to={`/home/detail/${value.movieId}`}>ĐẶT VÉ</Link>
                                             </div>
                                         </div>
                                     </div>
-                                    <a className="container-title" href="*">
+                                    <Link to={`/home/detail/${value.movieId}`} className="container-title" >
                                         <h3 className="title__name-film">{value.name}</h3>
-                                    </a>
+                                    </Link>
                                 </div>
                             ))
                         }
                     </div>
                 </div>
             </section>
+            {/* Phim Hom Nay */}
             <section style={{ position: 'relative' }} className="newIn container ">
-                <h2 className="content__after" style={{fontSize: "1.5rem"}}>Phim hôm nay</h2>
+                <h2 className="content__after">Phim Hôm Nay</h2>
                 <div className="newIn__content">
                     <Carousel
                         swipeable={false}
@@ -207,18 +217,18 @@ const Home = () => {
                                     <div className="newIn__img">
                                         {/* className="img-fluid" */}
                                         {/* style={{maxWidth:'100%', maxHeight:'100%'}} */}
-                                        <img className="img-fluid"  src={value.poster} />
+                                        <img className="img-fluid" src={value.poster} />
                                         <div className="newIn__overlay" />
                                         <div className="newIn__play text-white">
                                             <span className="format-description">{value.description}</span>
                                             <div className="container__button-position">
-                                                <Link style={{ margin: '0px 10px' }}  className="btn__add" to={`/home/detail/${value.movieId}`}>Đặt vé</Link>
+                                            <Link style={{fontSize:'18px'}} className="btn__add-book" to={`/home/detail/${value.movieId}`}>ĐẶT VÉ</Link>
                                             </div>
                                         </div>
                                     </div>
-                                    <a className="container-title" href="*" style={{textAlign: "center"}}>
+                                    <Link to={`/home/detail/${value.movieId}`} className="container-title" >
                                         <h3 className="title__name-film">{value.name}</h3>
-                                    </a>
+                                    </Link>
                                 </div>
                             ))
                         }
@@ -230,7 +240,7 @@ const Home = () => {
                 <div className="comingSoon__bg" />
                 <div className="comingSoon__content container">
                     <h2 className="content__after position-relative py-4">
-                        Sắp ra mắt</h2>
+                        SẮP RA MẮT</h2>
                     <div className="row d-flex align-items-center py-5">
                         <div className="col-12 col-md-6 col-lg-6 coming__detail">
                             <p>
@@ -251,7 +261,7 @@ const Home = () => {
                                 Chow,
                                 người có
                                 đã trốn khỏi nhà tù và đang lẩn trốn.</p>
-                            <a href="" style={{textDecoration: "none"}}>Thông tin thêm <i className="fa fa-angle-right" /></a>
+                            <a href="">Thông Tin Thêm <i className="fa fa-angle-right" /></a>
                         </div>
                         <div className="col-12 col-md-6 col-lg-6">
                             <div className="comingSoon__trailer">
