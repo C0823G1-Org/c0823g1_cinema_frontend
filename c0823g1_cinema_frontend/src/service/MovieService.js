@@ -84,3 +84,12 @@ export const deleteMovie = async (movie) => {
         console.log(err)
     }
 }
+
+export async function getMovieInfoById(id) {
+    try {
+        const result = await axios.get(`http://localhost:8080/movie/info/${id}`)
+        return result.data
+    } catch (e) {
+        return false
+    }
+}

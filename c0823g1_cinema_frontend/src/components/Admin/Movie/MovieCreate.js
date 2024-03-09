@@ -26,6 +26,7 @@ export default function MovieCreate() {
 
     const posterFileSizeLimit = 5242880
     const initialValue = {
+        poster: "",
         name: "",
         actor: "",
         publisher: "",
@@ -41,6 +42,7 @@ export default function MovieCreate() {
     }
 
     const validationObject = {
+        poster: Yup.mixed().required("Phải có poster"),
         name: Yup.string().required("Tên không được để trống").min(2, "Tên phim ít nhất 2 ký tự").max(255, "Tên phim tối đa 255 ký tự"),
         actor: Yup.string().required("Tên diễn viên không được để trống").min(2, "Tên diễn viên ít nhất 2 ký tự").max(255, "Tên phim tối đa 255 ký tự"),
         publisher: Yup.string().required("Tên nhà sản xuất không được để trống").min(2, "Tên nhà sản xuất ít nhất 2 ký tự").max(255, "Tên nhà sản xuất tối đa 255 ký tự"),
@@ -199,7 +201,6 @@ export default function MovieCreate() {
         uploadBytes(imageRefLocal, imageUpload).then(() => {
             getDownloadURL(imageRefLocal).then((url) => {
                 setImageDownloaded(url)
-                // document.getElementById("inputPoster").value = url
             })
         })
     }
@@ -216,15 +217,15 @@ export default function MovieCreate() {
         );
         let file = event.target.files[0]
         console.log(file)
-        // if (file.size > posterFileSizeLimit) {
-        //     Swal.fire({
-        //         icon: "error",
-        //         title: "Dung lượng quá lớn",
-        //         text: "File ảnh không được quá 5MB"
-        //     });
-        //     event.target.value = ""
-        //     return
-        // }
+        if (file.size > posterFileSizeLimit) {
+            Swal.fire({
+                icon: "error",
+                title: "Dung lượng quá lớn",
+                text: "File ảnh không được quá 5MB"
+            });
+            event.target.value = ""
+            return
+        }
         reader.readAsDataURL(file)
 
     }
@@ -248,7 +249,7 @@ export default function MovieCreate() {
                             <div className="container body_movie bg-white">
                                 <h1 style={{paddingTop: "20px"}}>Thêm mới phim</h1>
                                 <Formik initialValues={initialValue}
-                                    // validationSchema={Yup.object(validationObject)}
+                                        validationSchema={Yup.object(validationObject)}
                                         onSubmit={async (data) => {
                                             Swal.fire({
                                                 title: "Phim đang được lưu!",
@@ -345,6 +346,11 @@ export default function MovieCreate() {
                                                                             className="custom-file-label"
                                                                             htmlFor="inputPoster">Chọn ảnh</label>
                                                                     </div>
+                                                                    <ErrorMessage name="poster" component='p'
+                                                                                  className="form-err"
+                                                                                  style={{
+                                                                                      color: 'red'
+                                                                                  }}/>
                                                                 </div>
                                                             </div>
                                                             {imageUpload == null ? null :
@@ -352,7 +358,7 @@ export default function MovieCreate() {
                                                                     <div className="col-3">
                                                                     </div>
                                                                     <div className="col">
-                                                                        <img style={{maxWidth:"300px"}}
+                                                                        <img style={{maxWidth: "300px"}}
                                                                              src={imageUpload}
                                                                              alt=""/>
                                                                     </div>

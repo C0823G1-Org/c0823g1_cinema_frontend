@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react'
 import {Link, useNavigate, useParams} from "react-router-dom";
 import {
-    findByIdMovie,
+    createMovie,
     getAllCountries,
-    getAllMovieAttributes,
+    getAllMovieAttributes, getMovieInfoById,
     getScheduleByHallId
 } from "../../../service/MovieService";
 import {Sidebar} from "../Sidebar/Sidebar";
@@ -12,12 +12,11 @@ import * as Yup from "yup";
 import {getDownloadURL, ref, uploadBytes} from "firebase/storage";
 import {storage} from "../../config/config";
 import {v4} from "uuid";
-import {getScheduleByMovieId} from "../../../service/BookingService";
 import Swal from 'sweetalert2'
+import {ThreeCircles} from "react-loader-spinner";
 
 const MovieEdit = () => {
-    const editingMovieId = useParams().id
-    const [movie, setMovie] = useState({})
+    const params = useParams();
     const navigate = useNavigate();
     const curDate = new Date()
     const sevenLoop = [0, 1, 2, 3, 4, 5, 6]
@@ -30,24 +29,27 @@ const MovieEdit = () => {
     const [newSchedule, setNewSchedule] = useState([])
     const [imageUpload, setImageUpload] = useState(null)
     const [imageDownloaded, setImageDownloaded] = useState(null)
-    const posterFileSizeLimit = 5242880
+    const [editingMovie, setEditingMovie] = useState({})
 
+    const posterFileSizeLimit = 5242880
     const initialValue = {
-        name: "",
-        actor: "",
-        publisher: "",
-        director: "",
-        country: "",
-        startDate: "",
-        duration: "",
-        version: "",
-        trailer: "",
-        genre: "",
-        description: "",
-        ticketPrice: "",
+        poster: editingMovie.poster,
+        name: editingMovie.name,
+        actor: editingMovie.actor,
+        publisher: editingMovie.publisher,
+        director: editingMovie.director,
+        country: editingMovie.country,
+        startDate: editingMovie.startDate,
+        duration: editingMovie.duration,
+        version: editingMovie.versionsString,
+        trailer: editingMovie.trailer,
+        genre: editingMovie.genresString,
+        description: editingMovie.description,
+        ticketPrice: editingMovie.ticketPrice,
     }
 
     const validationObject = {
+        poster: Yup.mixed().required("Phải có poster"),
         name: Yup.string().required("Tên không được để trống").min(2, "Tên phim ít nhất 2 ký tự").max(255, "Tên phim tối đa 255 ký tự"),
         actor: Yup.string().required("Tên diễn viên không được để trống").min(2, "Tên diễn viên ít nhất 2 ký tự").max(255, "Tên phim tối đa 255 ký tự"),
         publisher: Yup.string().required("Tên nhà sản xuất không được để trống").min(2, "Tên nhà sản xuất ít nhất 2 ký tự").max(255, "Tên nhà sản xuất tối đa 255 ký tự"),
@@ -65,28 +67,33 @@ const MovieEdit = () => {
     useEffect(() => {
         updateScheduleTable();
         setIsTableUpdating(false)
-        console.log("Suất chiếu lưu")
-        console.log(newSchedule)
     }, [schedulesList])
 
     useEffect(() => {
         async function fetchApi() {
-            const attributes = await getAllMovieAttributes()
-            const countriesData = await getAllCountries()
-            if (attributes === false) {
-                return
+            try {
+                const attributes = await getAllMovieAttributes()
+                const countriesData = await getAllCountries()
+                const movieData = await getMovieInfoById(params.id)
+                if (!attributes || !movieData) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "API lỗi",
+                        text: "Lỗi khi lấy thông tin phim"
+                    });
+                    return
+                }
+                setMovieAtt(attributes)
+                setCountries(countriesData)
+                setEditingMovie(movieData)
+                setIsLoading(false);
+            } catch (e) {
+                console.log(e)
             }
-            setMovieAtt(attributes)
-            setCountries(countriesData)
-            setIsLoading(false)
-
-            const movieData = await findByIdMovie(editingMovieId)
-            setMovie(movieData)
-
-            const movieScheduleData = await getScheduleByMovieId(movie.id)
         }
 
-        fetchApi()
+        fetchApi().then(() => {
+        })
     }, []);
 
     function tdOnClickHandler(event) {
@@ -101,11 +108,8 @@ const MovieEdit = () => {
         let checkbox = cell.children[0]
         checkbox.checked = !checkbox.checked
         if (checkbox.checked) {
-            cell.children[1].innerText = movie.name
-            cell.children[1].style.color = "white"
             cell.style.backgroundColor = "lightblue"
         } else {
-            cell.children[1].innerText = ""
             cell.style.backgroundColor = "white"
         }
         updateNewSchedule(checkbox.value)
@@ -118,6 +122,7 @@ const MovieEdit = () => {
         let valueArray = scheduleValue.split(",")
         let idTempValue = scheduleValue + "," + hallId
         let newScheduleDTO = {
+            "idFind": scheduleValue,
             "idTemp": idTempValue,
             "date": valueArray[0],
             "scheduleTime": valueArray[1],
@@ -150,7 +155,6 @@ const MovieEdit = () => {
             }
             const scheduleData = await getScheduleByHallId(id)
             setSchedulesList(scheduleData)
-            console.log(movie)
         } catch (e) {
             console.log(e)
         }
@@ -179,19 +183,26 @@ const MovieEdit = () => {
 
     function updateScheduleTable() {
         resetScheduleTable()
+        if (schedulesList.length === 0) return
         //update table
         let id
         let label
         let cell
         schedulesList.forEach((scheduleList) => {
-            console.log(scheduleList.movie.id)
-            if (scheduleList.movie.id === movie.id) return
+            console.log(scheduleList)
             id = scheduleList.date + "," + scheduleList.scheduleTime.id
             label = document.getElementById(id + " title")
             label.innerText = scheduleList.movie.name
-            cell = label.parentElement
             label.style.color = "white"
+            cell = label.parentElement
             cell.style.backgroundColor = "grey";
+        })
+        if (newSchedule.length === 0) return
+        newSchedule.forEach((element) => {
+            if (element.hall !== hallId) return
+            cell = document.getElementById(element.idFind).parentElement
+            cell.style.backgroundColor = "lightblue"
+            cell.children[0].checked = true
         })
     }
 
@@ -202,15 +213,48 @@ const MovieEdit = () => {
         uploadBytes(imageRefLocal, imageUpload).then(() => {
             getDownloadURL(imageRefLocal).then((url) => {
                 setImageDownloaded(url)
-                // document.getElementById("inputPoster").value = url
             })
         })
     }
 
+    function previewImage(event) {
+        let reader = new FileReader();
+        reader.addEventListener(
+            "load",
+            () => {
+                // convert image file to base64 string
+                setImageUpload(reader.result);
+            },
+            false,
+        );
+        let file = event.target.files[0]
+        console.log(file)
+        if (file.size > posterFileSizeLimit) {
+            Swal.fire({
+                icon: "error",
+                title: "Dung lượng quá lớn",
+                text: "File ảnh không được quá 5MB"
+            });
+            event.target.value = ""
+            return
+        }
+        reader.readAsDataURL(file)
+
+    }
+
+
     return (
         <>
             {
-                isLoading ? <h2>Loading...</h2> :
+                isLoading ? <ThreeCircles
+                        visible={true}
+                        height="100"
+                        width="100"
+                        color="#4fa94d"
+                        ariaLabel="three-circles-loading"
+                        wrapperStyle={{}}
+                        wrapperClass=""
+                    /> :
                     <>
                         <Sidebar/>
                         <section className="home-section">
@@ -219,12 +263,57 @@ const MovieEdit = () => {
                                 <Formik initialValues={initialValue}
                                         validationSchema={Yup.object(validationObject)}
                                         onSubmit={async (data) => {
+                                            Swal.fire({
+                                                title: "Phim đang được lưu!",
+                                                timerProgressBar: true,
+                                                didOpen: () => {
+                                                    Swal.showLoading();
+                                                }
+                                            })
                                             data.poster = imageDownloaded
                                             let jsonObject = {}
+                                            console.log(jsonObject)
                                             jsonObject.movieDTO = data
                                             jsonObject.scheduleDTO = newSchedule
                                             console.log(jsonObject)
-                                            navigate("/movie")
+                                            try {
+                                                const result = await createMovie(jsonObject);
+                                                Swal.close()
+                                                console.log("Result code: " + result)
+                                                if (result < 400) {
+                                                    let timerInterval;
+                                                    Swal.fire({
+                                                        title: "Phim đã được lưu thành công!",
+                                                        html: "Trở về màn hình danh sách phim sau <b></b>s.",
+                                                        timer: 2000,
+                                                        timerProgressBar: true,
+                                                        didOpen: () => {
+                                                            Swal.showLoading();
+                                                            const timer = Swal.getPopup().querySelector("b");
+                                                            timerInterval = setInterval(() => {
+                                                                timer.textContent = `${Swal.getTimerLeft()}`;
+                                                            }, 100);
+                                                        },
+                                                        willClose: () => {
+                                                            clearInterval(timerInterval);
+                                                            navigate("/movie")
+                                                        }
+                                                    }).then((result) => {
+                                                        /* Read more about handling dismissals below */
+                                                        if (result.dismiss === Swal.DismissReason.timer) {
+                                                            console.log("I was closed by the timer");
+                                                        }
+                                                    });
+                                                } else {
+                                                    Swal.fire({
+                                                        icon: "error",
+                                                        title: "Lỗi...",
+                                                        text: "Lưu phim vào database không thành công...",
+                                                    });
+                                                }
+                                            } catch (e) {
+                                                console.log(e)
+                                            }
                                         }}>
                                     <div className="container-fluid mb-5">
                                         <Form>
@@ -259,19 +348,7 @@ const MovieEdit = () => {
                                                                      style={{marginLeft: "initial"}}>
                                                                     <div className="custom-file col">
                                                                         <input
-                                                                            onChange={(event) => {
-                                                                                let file = event.target.files[0]
-                                                                                if (file.size > posterFileSizeLimit) {
-                                                                                    Swal.fire({
-                                                                                        icon: "error",
-                                                                                        title: "Dung lượng quá lớn",
-                                                                                        text: "File ảnh không được quá 5MB"
-                                                                                    });
-                                                                                    event.target.value = ""
-                                                                                    return
-                                                                                }
-                                                                                setImageUpload(file)
-                                                                            }}
+                                                                            onChange={previewImage}
                                                                             type="file"
                                                                             className="custom-file-input"
                                                                             id="inputPoster"
@@ -282,19 +359,30 @@ const MovieEdit = () => {
                                                                             className="custom-file-label"
                                                                             htmlFor="inputPoster">Chọn ảnh</label>
                                                                     </div>
-                                                                    <div className="col-md-auto">
-                                                                        <button type="button" onClick={uploadImage}
-                                                                                className="btn btn-outline-secondary ">Up
-                                                                            ảnh
-                                                                        </button>
-                                                                    </div>
+                                                                    <ErrorMessage name="poster" component='p'
+                                                                                  className="form-err"
+                                                                                  style={{color: 'red'}}/>
                                                                 </div>
                                                             </div>
-                                                            <div className="row mt-3 d-flex justify-content-center">
-                                                                <img style={{maxWidth: "400px"}}
-                                                                     src={movie.poster}
-                                                                     alt=""/>
-                                                            </div>
+                                                            {imageUpload == null ?
+                                                                <div className="row mt-3 d-flex justify-content-center">
+                                                                    <div className="col-3">
+                                                                    </div>
+                                                                    <div className="col">
+                                                                        <img style={{maxWidth: "300px"}}
+                                                                             src={editingMovie.poster}
+                                                                             alt=""/>
+                                                                    </div>
+                                                                </div> :
+                                                                <div className="row mt-3 d-flex justify-content-center">
+                                                                    <div className="col-3">
+                                                                    </div>
+                                                                    <div className="col">
+                                                                        <img style={{maxWidth: "300px"}}
+                                                                             src={imageUpload}
+                                                                             alt=""/>
+                                                                    </div>
+                                                                </div>}
                                                             <div className="row mt-3">
                                                                 <div className="col-3 d-flex align-items-center">
                                                                     <b>Tên phim</b><span
@@ -302,7 +390,7 @@ const MovieEdit = () => {
                                                                 </div>
                                                                 <div className="col">
                                                                     <Field type="text" className="form-control"
-                                                                           name="name" value={movie.name}/>
+                                                                           name="name"/>
                                                                     <ErrorMessage name="name" component='p'
                                                                                   className="form-err"
                                                                                   style={{color: 'red'}}/>
@@ -316,7 +404,7 @@ const MovieEdit = () => {
                                                                 </div>
                                                                 <div className="col">
                                                                     <Field type="text" className="form-control"
-                                                                           name="actor" value={movie.actor}/>
+                                                                           name="actor"/>
                                                                     <ErrorMessage name="actor" component='p'
                                                                                   className="form-err"
                                                                                   style={{color: 'red'}}/>
@@ -330,7 +418,8 @@ const MovieEdit = () => {
                                                                 </div>
                                                                 <div className="col">
                                                                     <Field type="text" className="form-control"
-                                                                           name="publisher" value={movie.publisher}/>
+                                                                           name="publisher"
+                                                                    />
                                                                     <ErrorMessage name="publisher" component='p'
                                                                                   className="form-err"
                                                                                   style={{color: 'red'}}/>
@@ -344,7 +433,8 @@ const MovieEdit = () => {
                                                                 </div>
                                                                 <div className="col">
                                                                     <Field type="text" className="form-control"
-                                                                           name="director" value={movie.director}/>
+                                                                           name="director"
+                                                                    />
                                                                     <ErrorMessage name="director" component='p'
                                                                                   className="form-err"
                                                                                   style={{color: 'red'}}/>
@@ -358,10 +448,15 @@ const MovieEdit = () => {
                                                                 </div>
                                                                 <div className="col">
                                                                     <Field as="select" className="custom-select"
-                                                                           name="country" value={movie.country}>
+                                                                           name="country">
                                                                         {countries.map((country) => (
-                                                                            <option key={country.name.common}
-                                                                                    value={country.name.common}>{country.name.common}</option>
+                                                                            country
+                                                                                .name.common === editingMovie.country ?
+                                                                                <option key={country.name.common}
+                                                                                        value={country.name.common}
+                                                                                        defaultValue>{country.name.common}</option> :
+                                                                                <option key={country.name.common}
+                                                                                        value={country.name.common}>{country.name.common}</option>
                                                                         ))}
                                                                     </Field>
                                                                 </div>
@@ -374,7 +469,7 @@ const MovieEdit = () => {
                                                                 </div>
                                                                 <div className="col">
                                                                     <Field type="date" className="form-control"
-                                                                           name="startDate" value={movie.startDate}/>
+                                                                           name="startDate" value={editingMovie.date}/>
                                                                     <ErrorMessage name="startDate" component='p'
                                                                                   className="form-err"
                                                                                   style={{color: 'red'}}/>
@@ -388,7 +483,7 @@ const MovieEdit = () => {
                                                                 </div>
                                                                 <div className="col">
                                                                     <Field type="number" className="form-control"
-                                                                           name="duration" value={movie.duration}
+                                                                           name="duration" value={editingMovie.duration}
                                                                            disabled/>
                                                                     <ErrorMessage name="duration" component='p'
                                                                                   className="form-err"
@@ -402,17 +497,20 @@ const MovieEdit = () => {
                                                                 </div>
                                                                 <div className="col">
                                                                     {movieAtt.versions.map((version) => (
-                                                                        <div className="form-check form-check-inline"
-                                                                             key={version.id}>
-                                                                            <Field className="form-check-input"
-                                                                                   id={"version" + version.id}
-                                                                                   type="checkbox"
-                                                                                   name="version"
-                                                                                   value={"" + version.id}/>
-                                                                            <label className="form-check-label"
-                                                                                   htmlFor={"version" + version.id}>{version.name}</label>
-                                                                        </div>
-                                                                    ))}
+                                                                            <div
+                                                                                className="form-check form-check-inline"
+                                                                                key={version.id}>
+                                                                                <Field className="form-check-input"
+                                                                                       id={"version" + version.id}
+                                                                                       type="checkbox"
+                                                                                       name="version"
+                                                                                       value={version.id.toString()}
+                                                                                />
+                                                                                <label className="form-check-label"
+                                                                                       htmlFor={"version" + version.id}>{version.name}</label>
+                                                                            </div>
+                                                                        )
+                                                                    )}
                                                                     <ErrorMessage name="version" component='p'
                                                                                   className="form-err"
                                                                                   style={{color: 'red'}}/>
@@ -426,7 +524,7 @@ const MovieEdit = () => {
                                                                 </div>
                                                                 <div className="col">
                                                                     <Field type="text" className="form-control"
-                                                                           name="trailer" value={movie.trailer}/>
+                                                                           name="trailer" value={editingMovie.trailer}/>
                                                                     <ErrorMessage name="trailer" component='p'
                                                                                   className="form-err"
                                                                                   style={{color: 'red'}}/>
@@ -441,18 +539,19 @@ const MovieEdit = () => {
                                                                 <div className="col row"
                                                                      style={{marginLeft: "initial"}}>
                                                                     {movieAtt.genres.map((genre) => (
-                                                                        <div
-                                                                            className="form-check form-check-inline col-4 col-xl-3"
-                                                                            key={genre.id}>
-                                                                            <Field className="form-check-input"
-                                                                                   id={"genre" + genre.id}
-                                                                                   type="checkbox"
-                                                                                   name="genre"
-                                                                                   value={"" + genre.id}/>
-                                                                            <label className="form-check-label"
-                                                                                   htmlFor={"genre" + genre.id}>{genre.name}</label>
-                                                                        </div>
-                                                                    ))}
+                                                                            <div
+                                                                                className="form-check form-check-inline col-4 col-xl-3"
+                                                                                key={genre.id}>
+                                                                                <Field className="form-check-input"
+                                                                                       id={"genre" + genre.id}
+                                                                                       type="checkbox"
+                                                                                       name="genre"
+                                                                                       value={genre.id.toString()}/>
+                                                                                <label className="form-check-label"
+                                                                                       htmlFor={"genre" + genre.id}>{genre.name}</label>
+                                                                            </div>
+                                                                        )
+                                                                    )}
                                                                     <ErrorMessage name="genre" component='p'
                                                                                   className="form-err"
                                                                                   style={{color: 'red'}}/>
@@ -465,7 +564,7 @@ const MovieEdit = () => {
                                                                 <div className="col">
                                                                     <Field name="description" type="text"
                                                                            className="form-control"
-                                                                           value={movie.description != null ? movie.description : ""}/>
+                                                                    />
                                                                     <ErrorMessage name="description" component='p'
                                                                                   className="form-err"
                                                                                   style={{color: 'red'}}/>
@@ -479,7 +578,7 @@ const MovieEdit = () => {
                                                                 <div className="col">
                                                                     <Field type="number" className="form-control"
                                                                            name="ticketPrice"
-                                                                           value={movie.ticketPrice}/>
+                                                                    />
                                                                     <ErrorMessage name="ticketPrice" component='p'
                                                                                   className="form-err"
                                                                                   style={{color: 'red'}}/>
@@ -510,11 +609,19 @@ const MovieEdit = () => {
                                                     </div>
 
                                                     <div className="row mt-2 d-flex justify-content-center">
-                                                        {isTableUpdating ? <h2>Updating table...</h2> : <></>}
+                                                        {isTableUpdating ? <ThreeCircles
+                                                            visible={true}
+                                                            height="100"
+                                                            width="100"
+                                                            color="#4fa94d"
+                                                            ariaLabel="three-circles-loading"
+                                                            wrapperStyle={{}}
+                                                            wrapperClass=""
+                                                        /> : <></>}
                                                         <table className="table table-bordered" id="scheduleTable">
                                                             <thead>
                                                             <tr>
-                                                                <th></th>
+                                                                <th style={{width: "3%"}}></th>
                                                                 {sevenLoop.map((i) => {
                                                                     let dayResult;
                                                                     let dayIncrease = new Date();
@@ -546,7 +653,8 @@ const MovieEdit = () => {
                                                                             dayResult = "Lỗi"
                                                                     }
                                                                     return (
-                                                                        <th key={i}>{dayResult + ` / Ngày ${curDate.getDate() + i}`}</th>)
+                                                                        <th style={{width: "13%"}}
+                                                                            key={i}>{dayResult + ` / Ngày ${curDate.getDate() + i}`}</th>)
                                                                 })}
                                                             </tr>
                                                             </thead>
@@ -561,7 +669,7 @@ const MovieEdit = () => {
                                                                         return (
                                                                             <td key={i} onClick={tdOnClickHandler}>
                                                                                 <input id={idValue}
-                                                                                       hidden="true"
+                                                                                       hidden={true}
                                                                                        type="checkbox"
                                                                                        name="schedules"
                                                                                        value={idValue}/>
