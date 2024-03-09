@@ -513,25 +513,25 @@ a {
 
 
 /* Button add */
-.btn__add {
+.btn__add-book {
     background: linear-gradient(90deg, #649FDE 0%, #2B4DB5 100%);
-    border-radius: 2px;
+    border-radius: 50px;
     border: none;
     outline: none;
-    padding: 8px 12px;
     color: #fff;
-    font-size: 16px;
-    font-weight: 400;
+    font-weight: bold;
     font-family: inherit;
     text-align: center;
     cursor: pointer;
     width: 270px;
     text-decoration: none;
+    padding: 15px 39px;
 }
 
-.btn__add:hover {
+.btn__add-book:hover {
     background: linear-gradient(90deg, #87BCF5 0%, #3863E2 100%);
     text-decoration: none;
+    color: black;
 }
 
 /* Container button  */
@@ -540,7 +540,7 @@ a {
     position: absolute;
     /* position: relative; */
     width: 100%;
-    bottom: 26px;
+    bottom: 20%;
     /* transform: translateX(56px); */
 }
 
@@ -689,7 +689,7 @@ a {
 }
 
 .list__film {
-    margin-bottom: 40px
+    margin-bottom: 10px
 }
 
 /* Pageable */
@@ -699,8 +699,8 @@ a {
 }
 
 .btn_pageable {
-    background: linear-gradient(90deg, #aca5a5 0%, #62646d 100%);
-    border-radius: 2px;
+    background: linear-gradient(90deg, #a1c2f2 0%, #869bf5 100%);
+    border-radius: 50px;
     border: none;
     outline: none;
     padding: 4px 12px;
@@ -712,6 +712,12 @@ a {
     cursor: pointer;
     width: 54px;
     margin: 0 5px;
+    filter: grayscale(0.5);
+    transition: 0.35s;
+}
+
+.btn_pageable:hover {
+    filter: grayscale(0);
 }
 
 /* Message Error */
@@ -730,13 +736,14 @@ a {
     margin-bottom: 50px;
 }
 
-.react-multiple-carousel__arrow--left  {
+.react-multiple-carousel__arrow--left {
     top: 37%;
-    left: 0;   
-     transform: translateX(-105%);
+    left: 0;
+    transform: translateX(-105%);
 
 }
-.react-multiple-carousel__arrow--right{
+
+.react-multiple-carousel__arrow--right {
     top: 37%;
     transform: translateX(105%);
 }
@@ -748,11 +755,13 @@ a {
     display: flex;
     position: absolute;
     width: 25rem;
-    right: 51%;
+    right: 44%;
     top: 30px;
     transform: translateX(191%);
 }
+
 .tesster input {
+    border: 0.5px solid;
     background-color: #fff;
     border-radius: 100rem;
     font-size: 1rem;
@@ -760,6 +769,7 @@ a {
     height: 3rem;
     width: 50%;
 }
+
 .input_tesst {
     background-color: #fff;
     border: none;
@@ -769,6 +779,7 @@ a {
     outline: none;
     padding: 1.4rem;
 }
+
 .new_btnn {
     position: absolute;
     top: 34%;
