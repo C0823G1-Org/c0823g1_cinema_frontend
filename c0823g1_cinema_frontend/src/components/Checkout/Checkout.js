@@ -4,22 +4,30 @@ import { useEffect, useState } from "react";
 import * as bookingService from "../../service/BookingService"
 import { Paypal } from "./Paypal";
 import CountdownClock from "./CountdownClock";
-import Header from "../Home/Header";
 import Footer from "../Home/Footer";
 import axios from 'axios';
 import swal from 'sweetalert';
 import { BrowserRouter as Router, Route, useHistory } from 'react-router-dom';
 
+import HeaderTemplateAdmin from "../Home/HeaderTemplateAdmin";
+
 export default function Checkout() {
-    document.title = "Xác Nhận & Thanh Toán"
+    document.title = "Xác Nhận & Thanh Toán"
     const navigate = useNavigate()
+    useEffect(() => {
+        const roleUser = sessionStorage.getItem("roleUser");
+        if (roleUser === null) {
+            navigate(`/login`);
+        } else {
+
+        }
+    }, []);
     const location = useLocation()
     const [dataA, setDataA] = useState()
     const [resl, setResl] = useState();
     const [price, setPrice] = useState()
     const [totalAmount, setTotalAmount] = useState()
     const [exchangeRates, setExchangeRates] = useState(null);
-
 
     useEffect(() => {
         if (location.state.myResult) {
@@ -56,42 +64,38 @@ export default function Checkout() {
                 currency: 'VND'
             });
             setPrice(prc)
-
             const ta = data.sum.toLocaleString('vi-VN', {
                 style: 'currency',
                 currency: 'VND'
             });
-
             setTotalAmount(ta)
         }).catch((err) => {
         })
-
     }, [resl])
     useEffect(() => {
         console.log(exchangeRates);
         const fetchExchangeRates = async () => {
             try {
                 const appId = '21e06263576c496fe2175f9d'; // Thay thế bằng App ID của bạn từ Open Exchange Rates
-                const apiUrl = ` https://v6.exchangerate-api.com/v6/21e06263576c496fe2175f9d/latest/USD`;
-
+                const apiUrl = `
+https://v6.exchangerate-api.com/v6/21e06263576c496fe2175f9d/latest/USD
+`;
                 const response = await axios.get(apiUrl);
                 console.log(response)
                 const vndRate = response.data.conversion_rates.VND;
-
                 setExchangeRates(vndRate);
             } catch (error) {
                 console.error('Lỗi khi gửi yêu cầu API:', error);
             }
         };
-
         fetchExchangeRates();
         console.log(exchangeRates)
 
 
     }, []);
-
     const vnd = exchangeRates;
     console.log(vnd)
+
 
     window.onload = function () {
         // Retrieve user name
@@ -144,27 +148,23 @@ export default function Checkout() {
         navigate(`/booking/seat`, { state: { myResult: { "movieId": resl.movieId, "date": resl.date, "scheduleTimeId": resl.scheduleTimeId, "backId": resl.backId } } })
     }
 
-
-
     const [checkout, setCheckOut] = useState(false)
-
     if (!dataA) return null
-
     return (
         <>
-            <Header />
+            <HeaderTemplateAdmin />
             <div className="mt">
-                <h1 className="h1 text-center">Thông Tin Đặt Vé</h1>
+                <h1 className="h1 text-center">Thông Tin Đặt Vé</h1>
                 <div className="container-fluid">
                     <div className="row">
                         <div className="col-2 col-md-2 col-sm-12"></div>
                         <div className="col-12 col-md-3 col-sm-12">
                             <img className="imgMovie" src={dataA.image} alt="Madame Web
-
-                Xem thêm tại: https://www.galaxycine.vn/" />
+                Xem thêm tại:
+https://www.galaxycine.vn/
+" />
                         </div>
                         <div className="col-12 col-md-5 col-sm-12">
-
                             <table className="table tableTicket">
                                 <tbody>
                                     <tr>
@@ -243,27 +243,25 @@ export default function Checkout() {
                                                 />
                                             ) : (
                                                 <button className="btn btn__edit"
+
                                                     onClick={() => {
                                                         handleCheck();
                                                     }}
                                                 >
-                                                    Xác nhận
+                                                    Xác nhận
                                                 </button>
                                             )}
-
-
                                         </td>
                                     </tr>
-
                                 </tbody>
-
                             </table>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <Footer />
+            <div style={{ marginTop: "2rem" }}>
+                <Footer />
+            </div>
         </>
     )
 }

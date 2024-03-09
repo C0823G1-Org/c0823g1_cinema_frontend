@@ -3,11 +3,19 @@ import 'bootstrap/dist/css/bootstrap.css';
 import {Link, useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import "../Home/Home.css"
-import {getAllMovieCurrent} from "../../service/MovieService";
+import { getAllMovieCurrentTo3Day} from "../../service/MovieService";
 import {getDate, getScheduleTime} from "../../service/BookingService";
 import "../Booking/BookingMovieSchedule.css"
 import Footer from "../Home/Footer";
 import Header from "../Home/Header";
+//Format dates
+const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+};
 
 export default function BookingMovieSchedule() {
     const [movies, setMovies] = useState([])
@@ -19,24 +27,43 @@ export default function BookingMovieSchedule() {
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedSchedule, setSelectedSchedule] = useState(null);
     const [activeSchedule, setActiveSchedule] = useState(null);
+    const [status, setStatus] = useState({
+        chonPhim: "0",
+        chonNgay: '1',
+        chonSuat: '1'
+    });
 
+    console.log({selectedMovie})
     const handleMovieSelection = (movie) => {
+        console.log(movie)
         setSelectedMovie(movie);
+        if (selectedMovie) {
+            setStatus({...status, chonNgay: '0', chonSuat: '1'});
+        } else {
+            setStatus({...status, chonNgay: '0'});
+        }
     };
 
     const handleDateSelection = (date) => {
-        console.log(scheduleTime)
         setSelectedDate(date);
+        setStatus({...status, chonSuat: '0'})
     };
 
     const handleScheduleSelection = (schedule) => {
+        const currentTime = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
+        const isCurrentDate = selectedDate && formatDate(selectedDate.dateTime) === formatDate(new Date());
+
+        if (isCurrentDate && schedule.scheduleTime <= currentTime) {
+            return;
+        }
+
         setSelectedSchedule(schedule);
         setActiveSchedule(schedule.id);
     };
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const moviesResult = await getAllMovieCurrent();
+                const moviesResult = await getAllMovieCurrentTo3Day();
                 setMovies(moviesResult)
             } catch (error) {
             }
@@ -49,7 +76,10 @@ export default function BookingMovieSchedule() {
             if (selectedMovie) {
                 try {
                     const datesResult = await getDate(selectedMovie.movieId);
+                    console.log(selectedMovie.movieId)
                     setListDate(datesResult);
+                    setScheduleTime([])
+                    setSelectedSchedule(null)
                 } catch (error) {
                     // Lỗi
                 }
@@ -73,14 +103,10 @@ export default function BookingMovieSchedule() {
 
         fetchScheduleTime();
     }, [selectedDate, selectedMovie]);
-    //Format dates
-    const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        const day = date.getDate().toString().padStart(2, '0');
-        const month = (date.getMonth() + 1).toString().padStart(2, '0');
-        const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
-    };
+
+    const currentTime = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
+    const isCurrentDate = selectedDate && formatDate(selectedDate.dateTime) === formatDate(new Date());
+
     // Format time
     const formatTime = (timeString) => {
         const [hours, minutes] = timeString.split(':');
@@ -92,7 +118,8 @@ export default function BookingMovieSchedule() {
         const newResult = {
             movieId: selectedMovie.movieId,
             date: selectedDate.dateTime,
-            scheduleTimeId: selectedSchedule.id
+            scheduleTimeId: selectedSchedule.id,
+            backId: 2
         };
         setResult(newResult);
     };
@@ -102,15 +129,14 @@ export default function BookingMovieSchedule() {
             navigate("/booking/seat", {state: {myResult: result}});
         }
     }, [result]);
-    console.log(scheduleTime)
     return (
         <>
             <Header/>
-            <div style={{marginTop: "20vh"}}>
+            <div style={{marginTop: "25vh"}}>
                 <div className="row">
                     <div className=" map col-8 p-0 mx-0">
                         <Accordion defaultActiveKey={['0']} alwaysOpen>
-                            <Accordion.Item eventKey="0">
+                            <Accordion.Item eventKey={status.chonPhim}>
                                 <Accordion.Header>Chọn phim</Accordion.Header>
                                 <Accordion.Body>
                                     <div>
@@ -130,7 +156,7 @@ export default function BookingMovieSchedule() {
                                     </div>
                                 </Accordion.Body>
                             </Accordion.Item>
-                            <Accordion.Item eventKey="1">
+                            <Accordion.Item eventKey={status.chonNgay}>
                                 <Accordion.Header>Chọn ngày</Accordion.Header>
                                 <Accordion.Body>
                                     <div>
@@ -149,19 +175,24 @@ export default function BookingMovieSchedule() {
                                     </div>
                                 </Accordion.Body>
                             </Accordion.Item>
-                            <Accordion.Item eventKey="2">
+                            <Accordion.Item eventKey={status.chonSuat}>
                                 <Accordion.Header>Chọn suất</Accordion.Header>
                                 <Accordion.Body>
                                     <div className="d-flex flex-wrap">
-                                        {scheduleTime && scheduleTime.map((time) => (
-                                            <button
-                                                key={time.id}
-                                                className={`movie-item ${activeSchedule === time.id ? 'active' : ''}`}
-                                                onClick={() => handleScheduleSelection(time)}
-                                            >
-                                                <h4>{formatTime(time.scheduleTime)}</h4>
-                                            </button>
-                                        ))}
+                                        {scheduleTime && scheduleTime.length > 0 ? (
+                                            scheduleTime.map((time) => (
+                                                <button
+                                                    key={time.id}
+                                                    className={`movie-item ${activeSchedule === time.id ? 'active' : ''}`}
+                                                    onClick={() => handleScheduleSelection(time)}
+                                                    disabled={isCurrentDate && time.scheduleTime <= currentTime}
+                                                >
+                                                    <h4>{formatTime(time.scheduleTime)}</h4>
+                                                </button>
+                                            ))
+                                        ) : (
+                                            <p></p>
+                                        )}
                                     </div>
                                 </Accordion.Body>
                             </Accordion.Item>
@@ -184,14 +215,13 @@ export default function BookingMovieSchedule() {
                                              data-nimg="1"
                                              className="xl:w-full xl:h-full md:w-[80px] md:h-[120px] w-[90px] h-[110px] rounded object-cover object-cover duration-500 ease-in-out group-hover:opacity-100
                                 scale-100 blur-0 grayscale-0)"
-                                             src={selectedMovie && selectedMovie.poster !== null ? selectedMovie.poster : "https://i.pinimg.com/564x/bc/43/98/bc439871417621836a0eeea768d60944.jpg"}
+                                             src={selectedMovie && selectedMovie.poster !== null ? selectedMovie.poster : "https://motivatevalmorgan.com/wp-content/uploads/2016/06/default-movie.jpg"}
                                              style={{color: 'transparent'}}/>
                                     </div>
                                     <div className="flex-1 col-span-2 md:col-span-1 row-span-1 xl:col-span-2"><h3
                                         className="text-sm xl:text-base font-bold xl:mb-0 d-flex justify-content-center mt-2 text-align-center">
                                         {selectedMovie ? selectedMovie.name : "Phim"}
                                     </h3>
-                                        <p className="text-sm inline-block">2D Phụ Đề</p>
                                         <hr className="my-0"/>
                                     </div>
                                     <div className="col-span-2 md:col-span-1 xl:col-span-3">
@@ -207,7 +237,7 @@ export default function BookingMovieSchedule() {
 
                                     <div
                                         className="xl:flex mt-5 px-5 hidden d-flex justify-content-between align-items-center col-span-3">
-                                        <Link to="/booking">
+                                        <Link to="/home">
                                             <button style={{width: '100px'}} className="btn__back">Quay lại</button>
                                         </Link>
                                         <button style={{width: '100px'}} className="btn__booking"

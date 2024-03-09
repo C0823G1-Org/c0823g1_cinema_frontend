@@ -1,23 +1,36 @@
 import "../Booking/BookingSeat.css"
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getSchedule, getSeat } from "../../service/BookingService";
 import classNames from 'classnames';
 import Figure from 'react-bootstrap/Figure';
-import Header from "../Home/Header";
 import Footer from "../Home/Footer";
+import HeaderTemplateAdmin from "../Home/HeaderTemplateAdmin";
 
 export default function BookingSeat() {
+    const navigate = useNavigate();
+    const [role, setRole] = useState("");
+    useEffect(() => {
+        const roleUser = sessionStorage.getItem("roleUser");
+        if (roleUser === null) {
+            navigate(`/login`);
+        } else {
+            setRole(roleUser);
+        }
+    }, []);
     const [tickets, setTickets] = useState([])
     const [totalSeat, setTotalSeat] = useState(0)
     const [selected, setSelected] = useState([])
     const [schedule, setSchedule] = useState(null)
     const [result, setResult] = useState({})
-    const navigate = useNavigate();
     const location = useLocation()
     const data = location.state.myResult;
 
+    const [userId, setUserId] = useState(0);
+
     useEffect(() => {
+        const id = sessionStorage.getItem("userId");
+        setUserId(id);
         const fetchData = async () => {
             try {
                 const scheduleResult = await getSchedule(data.movieId, data.date, data.scheduleTimeId);
@@ -51,14 +64,15 @@ export default function BookingSeat() {
         const newResult = {
             "seatList": selected,
             "scheduleId": schedule.id,
-            "accountId": 1,
+            "accountId": userId,
             "backId": data.backId,
             "movieId": data.movieId,
             "date": data.date,
             "scheduleTimeId": data.scheduleTimeId
         };
+
         setResult(newResult);
-        // Perform asynchronous operations if needed
+
         try {
             // Example: await someAsyncFunction();
             // You can perform API calls, data fetching, etc.
@@ -67,10 +81,9 @@ export default function BookingSeat() {
             navigate("/booking/checkout", { state: { myResult: newResult } });
         } catch (error) {
             console.error("Error during asynchronous operations:", error);
-            // Handle errors if needed
         }
     };
-
+    console.log(result)
     const handleClick = (e, seatNumber) => {
         if ((e.target.classList.contains('seat')
             || e.target.classList.contains('vip')
@@ -127,13 +140,15 @@ export default function BookingSeat() {
 
         for (let i = 1; i <= totalSeat; i++) {
             const isCoupleSeat = i > totalSeat - 10;
+            const isOccupied = tickets.some((ticket) => ticket === i);
+            const shouldAddCoupleClass = isCoupleSeat && !isOccupied && i > totalSeat - 10;
             rowSeats.push(
                 <div
                     className={classNames({
                         seat: true,
-                        occupied: tickets.some((ticket) => ticket === i),
+                        occupied: isOccupied,
                         selected: selected.includes(i),
-                        couple: isCoupleSeat
+                        couple: shouldAddCoupleClass
                     })}
                     onClick={(e) => handleClick(e, i)}
                     key={i}
@@ -162,9 +177,10 @@ export default function BookingSeat() {
             );
         }
 
-        return seats;
+        return <div style={{ marginTop: "3rem" }}>{seats}</div>;
     };
     if (!schedule) return "loading"
+    console.log(schedule)
     //Format dates
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -187,7 +203,7 @@ export default function BookingSeat() {
     return (
 
         <>
-            <Header />
+            <HeaderTemplateAdmin />
             <div style={{ marginTop: "20vh" }}>
                 <div className="row m-0">
                     <div className=" map1 col-8 p-0 mx-0">
@@ -211,6 +227,7 @@ export default function BookingSeat() {
                         </ul>
                         <div className="containerBS" id="container1">
                             <div className=" screen" style={{ fontSize: '200%', paddingTop: '10px' }}> MÀN HÌNH</div>
+
                             {
                                 renderSeats()
                             }
@@ -274,7 +291,10 @@ export default function BookingSeat() {
                     </div>
                 </div>
             </div>
-            <Footer />
+            <div style={{ marginTop: "1.5rem" }}>
+                <Footer />
+            </div>
+
         </>
     )
 }

@@ -3,11 +3,17 @@
     background: #F5F5F5;
     font-family: 'roboto condensed', sans-serif;
     font-size: 15px;
-    max-width: 90%;
-    margin-right: 5%;
-    margin-left: 5%;
+    max-width: 95%;
+    margin-right: 10%;
+    margin-left: 10%;
+    height: 100%;
 }
-
+.table_movie_ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 50px;
+}
 .table-wrapper_movie {
     background: #fff;
     padding: 20px 25px;
@@ -17,7 +23,6 @@
 }
 
 .table-title_movie {
-    padding-bottom: 15px;
     background: #435d7d;
     color: black;
     padding: 16px 30px;
