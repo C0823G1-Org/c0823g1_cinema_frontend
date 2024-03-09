@@ -21,11 +21,16 @@ const loginEmail = (param) => {
 const logout = (param) => {
     return axios.delete(`https://graph.facebook.com/v10.0/me/permissions?access_token=${param}`);
 }
+const resetTicket = () => {
+    return axios.get(`http://localhost:8080/account/reset-ticket`)
+
+}
 export const LoginLogoutService = {
     loginAccount,
     loginFacebook,
     loginGoogle,
     forgetPassword,
     loginEmail,
-    logout
+    logout,
+    resetTicket
 }
