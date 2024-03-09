@@ -58,3 +58,7 @@ export const getAllMovieCurrentTo3Day = async () => {
     const rest = await axios.get("http://localhost:8080/movie/current1");
     return rest.data;
 }
+export const getTopMovie = async (page,name) => {
+    const temp = await axios.get(`http://localhost:8080/movie/statistics?page=${page}&name=${name}`);
+    return temp.data;
+}
