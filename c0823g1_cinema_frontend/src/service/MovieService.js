@@ -25,9 +25,45 @@ export const getAllMovieCurrent = async () => {
     return rest.data;
 }
 
-export const searchName = async (name,page) => {
+export const searchName = async (name, page) => {
     const rest = await axios.get(`http://localhost:8080/movie/search?name=${name}&page=${page}`);
     return rest.data;
+}
+
+export async function getAllMovieAttributes() {
+    try {
+        const result = await axios.get("http://localhost:8080/movie/attributes")
+        return result.data
+    } catch (e) {
+        console.log(e)
+        return false
+    }
+}
+
+export async function getAllCountries() {
+    try {
+        const result = await axios.get("https://restcountries.com/v3.1/all")
+        return result.data
+    } catch (e) {
+        console.log(e)
+    }
+}
+
+export async function getScheduleByHallId(id) {
+    try {
+        const result = await axios.get("http://localhost:8080/schedule/hall/" + id)
+        return result.data
+    } catch (e) {
+        console.log(e)
+    }
+}
+
+export async function createMovie(data) {
+    try {
+        return await axios.post("http://localhost:8080/movie/create", data)
+    } catch (e) {
+        return e.response
+    }
 }
 
 export const fillAllMovie = async (page, name, publisher, startDate, endDate, accessToken) => {
@@ -43,18 +79,41 @@ export const fillAllMovie = async (page, name, publisher, startDate, endDate, ac
     }
 }
 export const deleteMovie = async (movie, accessToken) => {
-    try{
+    try {
         const result = await axios.delete(`http://localhost:8080/movie/delete/${movie.id}`, {
             headers: {
                 Authorization: `Bearer ${accessToken}`
             }
         });
         return result.data;
-    }catch (err){
+    } catch (err) {
         console.log(err)
     }
 }
+
+export async function getMovieInfoById(id) {
+    try {
+        const result = await axios.get(`http://localhost:8080/movie/info/${id}`)
+        return result.data
+    } catch (e) {
+        return false
+    }
+}
+
+export async function editMovie(data) {
+    try {
+        const result = await axios.patch("http://localhost:8080/movie/edit", data)
+        return result.status
+    } catch (e) {
+        return e.response.status
+    }
+}
+
 export const getAllMovieCurrentTo3Day = async () => {
     const rest = await axios.get("http://localhost:8080/movie/current1");
     return rest.data;
+}
+export const getTopMovie = async (page, name) => {
+    const temp = await axios.get(`http://localhost:8080/movie/statistics?page=${page}&name=${name}`);
+    return temp.data;
 }
