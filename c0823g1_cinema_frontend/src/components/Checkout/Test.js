@@ -102,6 +102,54 @@ export default function Test() {
 
 
 
+    // Add an event listener for the beforeunload event
+    window.addEventListener('beforeunload', function (event) {
+        // Prevent the default behavior of the event
+        event.preventDefault();
+
+        // Retrieve the data from local storage
+        var retrievedJsonString = localStorage.getItem("myStoredData");
+
+        // Check if there is data in local storage
+        if (retrievedJsonString) {
+            // Parse the JSON string back to an object
+            var retrievedObject = JSON.parse(retrievedJsonString);
+
+            // Perform your API call using the retrieved data
+            // Replace the following line with your actual API call logic
+            // For example purposes, a simple console log is used here
+            console.log("Calling API with data:", retrievedObject);
+
+            // Clear the local storage after using the data (optional)
+            localStorage.removeItem("myStoredData");
+        }
+
+        // Set the returnValue to an empty string (for older browsers)
+        event.returnValue = '';
+
+        // You can return a message that will be displayed in some browsers
+        return '';
+    });
+
+    // Additional logic for storing data in local storage (as mentioned in the previous example)
+
+    var storageObject = {
+        "totalAmount": dataA.sum,
+        "accountId": dataA.accountId,
+        "scheduleId": dataA.scheduleId,
+        "seat": dataA.seat,
+        "bookingId": dataA.bookingId,
+        "seatNumber": dataA.seatNumber,
+        "movieId": resl.movieId,
+        "date": resl.date,
+        "scheduleTimeId": resl.scheduleTimeId,
+        "backId": resl.backId
+
+    };
+
+    var jsonString = JSON.stringify(storageObject);
+    localStorage.setItem("myStoredData", jsonString);
+
 
 
 

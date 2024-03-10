@@ -58,6 +58,7 @@ function App() {
                 <Route path={"/user/information"} element={<UserInformation />}></Route>
                 <Route path={"/user/history"} element={<HistoryBooking />}></Route>
                 <Route path="*" element={<NotFound />} />
+
             </Routes>
         </>
     );
