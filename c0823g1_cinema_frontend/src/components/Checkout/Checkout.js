@@ -28,6 +28,8 @@ export default function Checkout() {
     const [price, setPrice] = useState()
     const [totalAmount, setTotalAmount] = useState()
     const [exchangeRates, setExchangeRates] = useState(null);
+    const [dataSave, setDataSave] = useState(null);
+
 
     useEffect(() => {
         if (location.state.myResult) {
@@ -36,11 +38,26 @@ export default function Checkout() {
 
         }
 
+
     }, [location])
+    const userJSON = JSON.stringify(resl);
+
+    // Lưu chuỗi JSON vào Local Storage
+    localStorage.setItem('user', userJSON);
+
+
+
+
+
+
+
 
     useEffect(() => {
+
         let getdata = async (result) => {
+
             return await bookingService.selectTicket(result)
+
         }
         getdata(resl).then((data) => {
             console.log({ data })
@@ -59,6 +76,7 @@ export default function Checkout() {
                 "time": data.time,
                 "bookingId": data.bookingId
             })
+
             const prc = data.price.toLocaleString('vi-VN', {
                 style: 'currency',
                 currency: 'VND'
@@ -69,9 +87,17 @@ export default function Checkout() {
                 currency: 'VND'
             });
             setTotalAmount(ta)
+
+
         }).catch((err) => {
         })
     }, [resl])
+
+
+
+
+
+
     useEffect(() => {
         console.log(exchangeRates);
         const fetchExchangeRates = async () => {
@@ -104,7 +130,14 @@ https://v6.exchangerate-api.com/v6/21e06263576c496fe2175f9d/latest/USD
             setResl(JSON.parse(user))
         }
         setResl(resl)
+        var dataInLocal = localStorage.getItem('dataInLocal');
+
+        if (dataInLocal !== "undefined" && dataInLocal !== "null") {
+            setDataSave(JSON.parse(dataInLocal))
+        }
+        setDataSave(dataInLocal)
         console.log(resl);
+
     }
 
 
@@ -121,8 +154,8 @@ https://v6.exchangerate-api.com/v6/21e06263576c496fe2175f9d/latest/USD
             console.log(res);
             navigate(`/booking/seat`, { state: { myResult: { "movieId": resl.movieId, "date": resl.date, "scheduleTimeId": resl.scheduleTimeId, "backId": resl.backId } } })
             swal({
-                title: "loi",
-                text: "Ghe da co nguoi dat!",
+                title: "Lỗi",
+                text: "Ghế đã có người đặt!",
                 type: "error",
                 icon: "error",
                 button: {
@@ -131,9 +164,31 @@ https://v6.exchangerate-api.com/v6/21e06263576c496fe2175f9d/latest/USD
             });
         }
         setCheckOut(true);
-
-
     }
+
+    window.addEventListener('popstate', async function (event) {
+        let data = this.localStorage.getItem("user")
+        console.log(data)
+        if (data) {
+            let dataSend = JSON.parse(data)
+            await bookingService.removeTicketAndBooking(dataSend)
+        }
+        else {
+            navigate("/")
+        }
+    })
+
+    window.addEventListener('beforeunload', async function (event) {
+        let data = this.localStorage.getItem("user")
+        console.log(data)
+        if (data) {
+            let dataSend = JSON.parse(data)
+            await bookingService.removeTicketAndBooking(dataSend)
+        }
+        else {
+            navigate("/")
+        }
+    });
 
 
 

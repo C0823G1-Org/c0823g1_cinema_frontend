@@ -110,3 +110,13 @@ export const handleSuccess = async (checkout) => {
     }
 }
 
+export const removeTicketAndBooking = async (checkout) => {
+    console.log(checkout)
+    try {
+        let result = await axios.post("http://localhost:8080/booking/back", checkout)
+        return result.data
+    } catch (error) {
+        return error;
+    }
+}
+
