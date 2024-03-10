@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {createMovie, getAllCountries, getAllMovieAttributes, getScheduleByHallId} from "../../../service/MovieService";
 import {ErrorMessage, Field, Form, Formik} from "formik";
 import {Link, useNavigate} from "react-router-dom";
@@ -12,19 +12,14 @@ import {ThreeCircles} from "react-loader-spinner";
 
 export default function MovieCreate() {
     const navigate = useNavigate();
-    const curDate = new Date()
-    const sevenLoop = [0, 1, 2, 3, 4, 5, 6]
     const [movieAtt, setMovieAtt] = useState({})
     const [countries, setCountries] = useState([])
     const [isLoading, setIsLoading] = useState(true)
-    const [schedulesList, setSchedulesList] = useState([])
-    const [isTableUpdating, setIsTableUpdating] = useState(false)
-    const [hallId, setHallId] = useState(-1)
-    const [newSchedule, setNewSchedule] = useState([])
     const [imagePreview, setImagePreview] = useState(null)
     const [imageUpload, setImageUpload] = useState(null)
     const [imageDownloaded, setImageDownloaded] = useState(null)
     const [submitData, setSubmitData] = useState({})
+    const [toSchedule, setToSchedule] = useState(false)
 
     const posterFileSizeLimit = 5242880
     const initialValue = {
@@ -47,7 +42,7 @@ export default function MovieCreate() {
         actor: Yup.string().required("Tên diễn viên không được để trống").min(2, "Tên diễn viên ít nhất 2 ký tự").max(255, "Tên phim tối đa 255 ký tự"),
         publisher: Yup.string().required("Tên nhà sản xuất không được để trống").min(2, "Tên nhà sản xuất ít nhất 2 ký tự").max(255, "Tên nhà sản xuất tối đa 255 ký tự"),
         director: Yup.string().required("Tên đạo diễn không được để trống").min(2, "Tên đạo diễn ít nhất 2 ký tự").max(255, "Tên đạo diễn tối đa 255 ký tự"),
-        country: null,
+        country: Yup.string().required("Vui lòng chọn quốc gia"),
         startDate: Yup.date().required("Ngày khởi chiếu không được để trống"),
         duration: Yup.number().required("Thời lượng phim không được để trống"),
         version: Yup.array().required("Vui lòng chọn ít nhất một phiên bản"),
@@ -60,17 +55,14 @@ export default function MovieCreate() {
         async function continueSubmit() {
             if (imageDownloaded == null) return
             submitData.poster = imageDownloaded
-            console.log(imageDownloaded)
-            console.log(submitData.poster)
             let jsonObject = {}
-            jsonObject.movieDTO = submitData
-            jsonObject.scheduleDTO = newSchedule
+            jsonObject = submitData
             console.log(jsonObject)
             try {
                 const result = await createMovie(jsonObject);
                 Swal.close()
-                console.log("Result code: " + result)
-                if (result < 400) {
+                console.log(result)
+                if (result.status < 400) {
                     let timerInterval;
                     Swal.fire({
                         title: "Phim đã được lưu thành công!",
@@ -86,7 +78,14 @@ export default function MovieCreate() {
                         },
                         willClose: () => {
                             clearInterval(timerInterval);
-                            navigate("/movie")
+                            if (toSchedule) {
+                                console.log(result.data)
+                                navigate(`/movie/edit/${result.data}/schedule`)
+                            } else {
+                                console.log("Failed")
+                                navigate("/movie")
+                            }
+
                         }
                     }).then((result) => {
                         /* Read more about handling dismissals below */
@@ -110,12 +109,6 @@ export default function MovieCreate() {
     }, [imageDownloaded]);
 
     useEffect(() => {
-        updateScheduleTable();
-        setIsTableUpdating(false)
-        console.log(newSchedule)
-    }, [schedulesList])
-
-    useEffect(() => {
         async function fetchApi() {
             try {
                 const attributes = await getAllMovieAttributes()
@@ -135,116 +128,6 @@ export default function MovieCreate() {
             console.log("Done update movie attributes")
         })
     }, []);
-
-    function tdOnClickHandler(event) {
-        if (hallId < 0) {
-            return;
-        }
-        let cell = event.target
-        if (cell.style.backgroundColor == "grey" || cell.nodeName === "P") {
-            console.log("DISABLE!")
-            return
-        }
-        let checkbox = cell.children[0]
-        checkbox.checked = !checkbox.checked
-        if (checkbox.checked) {
-            cell.style.backgroundColor = "lightblue"
-        } else {
-            cell.style.backgroundColor = "white"
-        }
-        updateNewSchedule(checkbox.value)
-    }
-
-    function updateNewSchedule(scheduleValue) {
-        if (hallId < 0) {
-            return
-        }
-        let valueArray = scheduleValue.split(",")
-        let idTempValue = scheduleValue + "," + hallId
-        let newScheduleDTO = {
-            "idFind": scheduleValue,
-            "idTemp": idTempValue,
-            "date": valueArray[0],
-            "scheduleTime": valueArray[1],
-            "hall": hallId
-        }
-        if (newSchedule.length === 0) {
-            setNewSchedule((prevState) => [newScheduleDTO, ...prevState])
-            return
-        }
-
-        const found = newSchedule.findIndex((element) => element.idTemp === idTempValue)
-        console.log("length: " + newSchedule.length)
-        if (found < 0) {
-            setNewSchedule((prevState) => [newScheduleDTO, ...prevState])
-        } else {
-            console.log("index to remove: " + found)
-            newSchedule.splice(found, 1)
-        }
-    }
-
-    async function hallOnChangeHandler(event) {
-        try {
-            setIsTableUpdating(true)
-            let id = event.target.value
-            setHallId(id)
-            if (id < 0) {
-                resetScheduleTable()
-                setIsTableUpdating(false)
-                return
-            }
-            const scheduleData = await getScheduleByHallId(id)
-            setSchedulesList(scheduleData)
-            console.log(imageDownloaded)
-        } catch (e) {
-            console.log(e)
-        }
-    }
-
-    function resetScheduleTable() {
-        let table = document.getElementById("scheduleTable")
-        if (table == null) {
-            return;
-        }
-        for (let row of table.rows) {
-            if (row === table.rows[0]) {
-                continue
-            }
-            for (let cell of row.cells) {
-                if (cell === row.cells[0]) {
-                    continue
-                }
-                cell.children[0].checked = false
-                cell.children[1].innerText = ""
-                cell.children[1].style.color = "black"
-                cell.style.backgroundColor = "white"
-            }
-        }
-    }
-
-    function updateScheduleTable() {
-        resetScheduleTable()
-        if (schedulesList.length === 0) return
-        //update table
-        let id
-        let p
-        let cell
-        schedulesList.forEach((scheduleList) => {
-            id = scheduleList.date + "," + scheduleList.scheduleTime.id
-            p = document.getElementById(id + " title")
-            p.innerText = scheduleList.movie.name
-            p.style.color = "white"
-            cell = p.parentElement
-            cell.style.backgroundColor = "grey";
-        })
-        if (newSchedule.length === 0) return
-        newSchedule.forEach((element) => {
-            if (element.hall !== hallId) return
-            cell = document.getElementById(element.idFind).parentElement
-            cell.style.backgroundColor = "lightblue"
-            cell.children[0].checked = true
-        })
-    }
 
     function uploadImage() {
         if (imageUpload === null) return
@@ -282,6 +165,7 @@ export default function MovieCreate() {
 
     return (
         <>
+            <Sidebar/>
             {
                 isLoading ? <ThreeCircles
                         visible={true}
@@ -293,7 +177,6 @@ export default function MovieCreate() {
                         wrapperClass=""
                     /> :
                     <>
-                        <Sidebar/>
                         <section className="home-section">
                             <div className="container body_movie bg-white">
                                 <h1 style={{paddingTop: "20px"}}>Thêm mới phim</h1>
@@ -320,13 +203,6 @@ export default function MovieCreate() {
                                                        role="tab"
                                                        aria-controls="home"
                                                        aria-selected="true">Thông tin phim</a>
-                                                </li>
-                                                <li className="nav-item">
-                                                    <a className="nav-link" id="schedule-tab" data-toggle="tab"
-                                                       href="#schedule"
-                                                       role="tab"
-                                                       aria-controls="profile"
-                                                       aria-selected="false">Suất chiếu</a>
                                                 </li>
                                             </ul>
                                             <div className="tab-content" id="myTabContent">
@@ -436,6 +312,9 @@ export default function MovieCreate() {
                                                                                     value={country.name.common}>{country.name.common}</option>
                                                                         ))}
                                                                     </Field>
+                                                                    <ErrorMessage name="country" component='p'
+                                                                                  className="form-err"
+                                                                                  style={{color: 'red'}}/>
                                                                 </div>
                                                             </div>
 
@@ -557,107 +436,20 @@ export default function MovieCreate() {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div className="tab-pane fade" id="schedule" role="tabpanel"
-                                                     aria-labelledby="schedule-tab">
-                                                    <div>
-                                                        <h2>
-                                                            <b>Tháng {curDate.getMonth() + 1}</b> {curDate.getFullYear()}
-                                                        </h2>
-                                                        <div className="input-group mb-3">
-                                                            <Field as="select" className="custom-select" name="hall"
-                                                                   onChange={hallOnChangeHandler}>
-                                                                <option defaultValue value="-1">Chọn sảnh chiếu
-                                                                    phim...
-                                                                </option>
-                                                                {movieAtt.halls.map((hall) => (
-                                                                    <option key={hall.id} value={"" + hall.id}>
-                                                                        {hall.name}
-                                                                    </option>
-                                                                ))}
-                                                            </Field>
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="row mt-2 d-flex justify-content-center">
-                                                        {isTableUpdating ? <ThreeCircles
-                                                            visible={true}
-                                                            height="100"
-                                                            width="100"
-                                                            color="#4fa94d"
-                                                            ariaLabel="three-circles-loading"
-                                                            wrapperStyle={{}}
-                                                            wrapperClass=""
-                                                        /> : <></>}
-                                                        <table className="table table-bordered" id="scheduleTable">
-                                                            <thead>
-                                                            <tr>
-                                                                <th style={{width: "3%"}}></th>
-                                                                {sevenLoop.map((i) => {
-                                                                    let dayResult;
-                                                                    let dayIncrease = new Date();
-                                                                    dayIncrease.setDate(curDate.getDate() + i)
-                                                                    let dayNumber = dayIncrease.getDay();
-                                                                    switch (dayNumber) {
-                                                                        case 0:
-                                                                            dayResult = "Chủ Nhật";
-                                                                            break;
-                                                                        case 1:
-                                                                            dayResult = "Thứ Hai";
-                                                                            break;
-                                                                        case 2:
-                                                                            dayResult = "Thứ Ba";
-                                                                            break;
-                                                                        case 3:
-                                                                            dayResult = "Thứ Tư";
-                                                                            break;
-                                                                        case 4:
-                                                                            dayResult = "Thứ Năm";
-                                                                            break;
-                                                                        case 5:
-                                                                            dayResult = "Thứ Sáu";
-                                                                            break;
-                                                                        case 6:
-                                                                            dayResult = "Thứ Bảy";
-                                                                            break;
-                                                                        default:
-                                                                            dayResult = "Lỗi"
-                                                                    }
-                                                                    return (
-                                                                        <th style={{width: "13%"}}
-                                                                            key={i}>{dayResult + ` / Ngày ${curDate.getDate() + i}`}</th>)
-                                                                })}
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            {movieAtt.scheduleTimes.map((scheduleTime) => (
-                                                                <tr key={scheduleTime.id}>
-                                                                    <td>{scheduleTime.scheduleTime}</td>
-                                                                    {sevenLoop.map((i) => {
-                                                                        let dayIncrease = new Date();
-                                                                        dayIncrease.setDate(curDate.getDate() + i)
-                                                                        let idValue = dayIncrease.getFullYear() + "-" + ("0" + (dayIncrease.getMonth() + 1)).slice(-2) + "-" + ("0" + dayIncrease.getDate()).slice(-2) + "," + scheduleTime.id
-                                                                        return (
-                                                                            <td key={i} onClick={tdOnClickHandler}>
-                                                                                <input id={idValue}
-                                                                                       hidden={true}
-                                                                                       type="checkbox"
-                                                                                       name="schedules"
-                                                                                       value={idValue}/>
-                                                                                <p id={idValue + " title"}></p>
-                                                                            </td>
-                                                                        )
-                                                                    })}
-                                                                </tr>
-                                                            ))}
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                                <div className="row mt-3 d-flex justify-content-center">
+                                                <div className="d-flex justify-content-center mt-3">
                                                     <div>
                                                         <button type="submit" className="btn__add mr-2">
                                                             Lưu lại
                                                         </button>
+                                                    </div>
+                                                    <div>
+                                                        <button onClick={() => {
+                                                            setToSchedule(true)
+                                                        }} type="submit" className="btn__add mr-2">
+                                                            Lưu lại và thêm suất chiếu
+                                                        </button>
+                                                    </div>
+                                                    <div>
                                                         <Link to="/movie">
                                                             <button type="button" className="btn__back">Quay lại
                                                             </button>

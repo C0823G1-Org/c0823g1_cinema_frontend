@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import {Link, useNavigate, useParams} from "react-router-dom";
 import {
-    createMovie, editMovie,
-    getAllCountries,
+    editMovie, getAllCountries,
     getAllMovieAttributes, getMovieInfoById,
     getScheduleByHallId
 } from "../../../service/MovieService";
@@ -15,8 +14,10 @@ import {v4} from "uuid";
 import Swal from 'sweetalert2'
 import {ThreeCircles} from "react-loader-spinner";
 import {getScheduleByMovieId} from "../../../service/BookingService";
+import css from "./css/movie.module.css"
+import {getjQuery} from "bootstrap/js/src/util";
 
-const MovieEdit = () => {
+function MovieEdit({scheduleTab}) {
     const params = useParams();
     const navigate = useNavigate();
     const curDate = new Date()
@@ -78,7 +79,7 @@ const MovieEdit = () => {
             jsonObject.scheduleDTO = newSchedule
             console.log(jsonObject)
             try {
-                const result = await createMovie(jsonObject);
+                const result = await editMovie(jsonObject);
                 Swal.close()
                 console.log("Result code: " + result)
                 if (result < 400) {
@@ -119,7 +120,14 @@ const MovieEdit = () => {
 
         continueSubmit()
     }, [imageDownloaded]);
+    useEffect(() => {
+        function clickScheduleTab() {
+            if (isLoading || !scheduleTab) return
+            document.getElementById("schedule-tab").click()
+        }
 
+        clickScheduleTab()
+    }, [isLoading]);
     useEffect(() => {
         updateScheduleTable();
         setIsTableUpdating(false)
@@ -348,7 +356,7 @@ const MovieEdit = () => {
 
 
     return (
-        <>
+        <><Sidebar/>
             {
                 isLoading ? <ThreeCircles
                         visible={true}
@@ -360,10 +368,9 @@ const MovieEdit = () => {
                         wrapperClass=""
                     /> :
                     <>
-                        <Sidebar/>
                         <section className="home-section">
                             <div className="container body_movie bg-white">
-                                <h1 style={{paddingTop: "20px"}}>Chỉnh sửa phim</h1>
+                                <h1 style={{paddingTop: "20px"}}>Chỉnh sửa phim {editingMovie.name}</h1>
                                 <Formik initialValues={initialValue}
                                         validationSchema={Yup.object(validationObject)}
                                         onSubmit={async (data) => {
@@ -746,11 +753,13 @@ const MovieEdit = () => {
                                                         </table>
                                                     </div>
                                                 </div>
-                                                <div className="row mt-3 d-flex justify-content-center">
+                                                <div className="d-flex justify-content-center mt-3">
                                                     <div>
                                                         <button type="submit" className="btn__add mr-2">
                                                             Lưu lại
                                                         </button>
+                                                    </div>
+                                                    <div>
                                                         <Link to="/movie">
                                                             <button type="button" className="btn__back">Quay lại
                                                             </button>
