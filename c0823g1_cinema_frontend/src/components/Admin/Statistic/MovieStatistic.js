@@ -1,9 +1,10 @@
 import {useEffect, useState} from "react"
 import MovieStatisticChart from "./MovieStatisticChart"
-import {fillAllMovie, getTopMovie} from "../../../service/MovieService"
+import {getTopMovie} from "../../../service/MovieService"
 import ReactPaginate from "react-paginate";
 import {Sidebar} from "../Sidebar/Sidebar";
 import MySwal from "sweetalert2";
+import "../Movie/MovieList.css"
 
 export default function MovieStatistic() {
     const [movies, setMovies] = useState([])
@@ -76,10 +77,10 @@ export default function MovieStatistic() {
                                        value={nameSearch || ''}
                                        onChange={(event => handleNameSearch(event.target.value))}
                                 />
-                                <button className="btn btn-outline-success" type="submit"
+                                <button className="F my-sm-0 btn__search_movie" type="submit"
                                         onClick={(event) => {
                                             event.preventDefault();
-                                            submitSearch();}}>
+                                            submitSearch();}} style={{color: "white", width: "6rem"}}>
                                     Tìm kiếm
                                 </button>
                             </form>
@@ -93,15 +94,15 @@ export default function MovieStatistic() {
                             <table className="table table-sm">
                                 <thead>
                                 <tr>
-                                    <th style={{width:"60%"}}>Tên phim</th>
-                                    <th style={{width:"20%"}}>Tổng số vé</th>
-                                    <th style={{width:"20%"}}>Doanh thu</th>
+                                    <th style={{width:"50%"}}>Tên phim</th>
+                                    <th style={{width:"25%"}}>Tổng số vé</th>
+                                    <th style={{width:"25%"}}>Doanh thu</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 {movies ?(movies.map(movie => (
                                     <tr>
-                                        <td>{movie.movie_name}</td>
+                                        <td className="table_movie_ellipsis">{movie.movie_name}</td>
                                         <td>{movie.sold_ticket}</td>
                                         <td>{formatCurrency(movie.revenue)}</td>
                                     </tr>

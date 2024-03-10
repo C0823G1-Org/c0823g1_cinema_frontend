@@ -9,7 +9,15 @@ export async function searchHistoryBooking(id, startDate, endDate, page) {
     const result = await axios.get(`http://localhost:8080/booking/searchMovieBooking/${id}/${startDate}/${endDate}/${page}`)
     return result.data;
 }
-
+export const removeTicketAndBooking = async (checkout) => {
+    console.log(checkout)
+    try {
+        let result = await axios.post("http://localhost:8080/booking/back", checkout)
+        return result.data
+    } catch (error) {
+        return error;
+    }
+}
 export async function getListHistoryBooking(id, startDate, endDate, page, accessToken) {
     try {
         const result = await axios.get(`http://localhost:8080/booking/getListBooking/${id}/${startDate}/${endDate}/${page}`, {

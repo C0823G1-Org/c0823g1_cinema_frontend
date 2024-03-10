@@ -8,6 +8,8 @@ import {getDate, getScheduleTime} from "../../service/BookingService";
 import "../Booking/BookingMovieSchedule.css"
 import Footer from "../Home/Footer";
 import Header from "../Home/Header";
+import SweetAlert from "sweetalert";
+import HeaderTemplateAdmin from "../Home/HeaderTemplateAdmin";
 //Format dates
 const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -18,10 +20,22 @@ const formatDate = (dateString) => {
 };
 
 export default function BookingMovieSchedule() {
+    const navigate = useNavigate();
+    useEffect(() => {
+        const roleUser = sessionStorage.getItem("roleUser");
+        if (roleUser === null) {
+            sessionStorage.setItem("buttonTicket","buttonTicket");
+            navigate(`/login`);
+        }
+        const isLogin = sessionStorage.getItem("isLogin");
+        if (isLogin !== null){
+            SweetAlert("Đăng nhập thành công!", `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`, "success")
+        }
+        sessionStorage.removeItem("isLogin");
+    }, []);
     const [movies, setMovies] = useState([])
     const [listDate, setListDate] = useState([])
     const [scheduleTime, setScheduleTime] = useState([])
-    const navigate = useNavigate();
     const [result, setResult] = useState({})
     const [selectedMovie, setSelectedMovie] = useState(null);
     const [selectedDate, setSelectedDate] = useState(null);
@@ -64,6 +78,7 @@ export default function BookingMovieSchedule() {
         const fetchData = async () => {
             try {
                 const moviesResult = await getAllMovieCurrentTo3Day();
+                console.log(moviesResult)
                 setMovies(moviesResult)
             } catch (error) {
             }
@@ -131,7 +146,7 @@ export default function BookingMovieSchedule() {
     }, [result]);
     return (
         <>
-            <Header/>
+            <HeaderTemplateAdmin />
             <div style={{marginTop: "25vh"}}>
                 <div className="row">
                     <div className=" map col-8 p-0 mx-0">
@@ -238,9 +253,9 @@ export default function BookingMovieSchedule() {
                                     <div
                                         className="xl:flex mt-5 px-5 hidden d-flex justify-content-between align-items-center col-span-3">
                                         <Link to="/home">
-                                            <button style={{width: '100px'}} className="btn__back">Quay lại</button>
+                                            <button style={{width: '100px'}} className="btn__edit">Quay lại</button>
                                         </Link>
-                                        <button style={{width: '100px'}} className="btn__booking"
+                                        <button style={{width: '100px'}} className="btn__add"
                                                 disabled={selectedDate === null} onClick={handleSubmit}>Đặt vé
                                         </button>
                                     </div>

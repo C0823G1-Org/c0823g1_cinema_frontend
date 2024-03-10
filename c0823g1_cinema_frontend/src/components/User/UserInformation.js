@@ -14,9 +14,11 @@ import * as Yup from "yup";
 import ReactPaginate from "react-paginate";
 import Footer from "../Home/Footer";
 import HeaderTemplateAdmin from "../Home/HeaderTemplateAdmin";
-import {useNavigate} from "react-router-dom";
+import { useNavigate} from "react-router-dom";
+import {UseBackButtonRedirect} from "../UseBackButtonRedirect";
 
 export default function UserInformation() {
+    UseBackButtonRedirect('/home');
     const navigate = useNavigate();
     const [forgetPassword,setForgetPassword] = useState(false);
     const [isSocial, setIsSocial] = useState(false);

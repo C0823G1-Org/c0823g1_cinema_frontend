@@ -9,8 +9,6 @@ import axios from 'axios';
 import swal from 'sweetalert';
 
 import HeaderTemplateAdmin from "../Home/HeaderTemplateAdmin";
-import {LoginLogoutService} from "../../service/LoginLogoutService";
-import SweetAlert from "sweetalert";
 
 export default function Checkout() {
     document.title = "Xác Nhận & Thanh Toán"
@@ -23,13 +21,14 @@ export default function Checkout() {
 
         }
     }, []);
-    const [num, setNum] =useState(0);
     const location = useLocation()
     const [dataA, setDataA] = useState()
     const [resl, setResl] = useState();
     const [price, setPrice] = useState()
     const [totalAmount, setTotalAmount] = useState()
     const [exchangeRates, setExchangeRates] = useState(null);
+    const [dataSave, setDataSave] = useState(null);
+
 
     useEffect(() => {
         if (location.state.myResult) {
@@ -38,11 +37,26 @@ export default function Checkout() {
 
         }
 
+
     }, [location])
+    const userJSON = JSON.stringify(resl);
+
+    // Lưu chuỗi JSON vào Local Storage
+    localStorage.setItem('user', userJSON);
+
+
+
+
+
+
+
 
     useEffect(() => {
+
         let getdata = async (result) => {
+
             return await bookingService.selectTicket(result)
+
         }
         getdata(resl).then((data) => {
             console.log({ data })
@@ -61,6 +75,7 @@ export default function Checkout() {
                 "time": data.time,
                 "bookingId": data.bookingId
             })
+
             const prc = data.price.toLocaleString('vi-VN', {
                 style: 'currency',
                 currency: 'VND'
@@ -71,17 +86,17 @@ export default function Checkout() {
                 currency: 'VND'
             });
             setTotalAmount(ta)
+
+
         }).catch((err) => {
-            console.log(err)
-           setNum(num+1);
         })
     }, [resl])
-    useEffect(() => {
-        if (num === 2) {
-            sessionStorage.setItem("errTicket","errTicket");
-            navigate(`/home/detail/${location.state.myResult.movieId}`)
-        }
-    },[num])
+
+
+
+
+
+
     useEffect(() => {
         console.log(exchangeRates);
         const fetchExchangeRates = async () => {
@@ -114,40 +129,65 @@ https://v6.exchangerate-api.com/v6/21e06263576c496fe2175f9d/latest/USD
             setResl(JSON.parse(user))
         }
         setResl(resl)
+        var dataInLocal = localStorage.getItem('dataInLocal');
+
+        if (dataInLocal !== "undefined" && dataInLocal !== "null") {
+            setDataSave(JSON.parse(dataInLocal))
+        }
+        setDataSave(dataInLocal)
         console.log(resl);
+
     }
 
 
     const handleCheck = async () => {
-        try{
-            await LoginLogoutService.resetTicket();
-            let res = await bookingService.checkExist({
-                "totalAmount": dataA.sum,
-                "accountId": dataA.accountId,
-                "scheduleId": dataA.scheduleId,
-                "seat": dataA.seat,
-                "bookingId": dataA.bookingId,
-                "seatNumber": dataA.seatNumber
-            })
-            if (res.response && res.response.status === 400) {
-                console.log(res);
-                navigate(`/booking/seat`, { state: { myResult: { "movieId": resl.movieId, "date": resl.date, "scheduleTimeId": resl.scheduleTimeId, "backId": resl.backId } } })
-                swal({
-                    title: "loi",
-                    text: "Ghe da co nguoi dat!",
-                    type: "error",
-                    icon: "error",
-                    button: {
-                        text: "OK",
-                    },
-                });
-            }
-            setCheckOut(true);
-        } catch (err){
-            await SweetAlert("Không thể thanh toán!", `Các vé bạn chọn có thể đã hết thời hạn thanh toán hoặc bạn đã thanh toán trước đó! Xin vui lòng kiểm tra lịch sử đặt vé!`, "error")
-            navigate('/user/information')
+        let res = await bookingService.checkExist({
+            "totalAmount": dataA.sum,
+            "accountId": dataA.accountId,
+            "scheduleId": dataA.scheduleId,
+            "seat": dataA.seat,
+            "bookingId": dataA.bookingId,
+            "seatNumber": dataA.seatNumber
+        })
+        if (res.response && res.response.status === 400) {
+            console.log(res);
+            navigate(`/booking/seat`, { state: { myResult: { "movieId": resl.movieId, "date": resl.date, "scheduleTimeId": resl.scheduleTimeId, "backId": resl.backId } } })
+            swal({
+                title: "Lỗi",
+                text: "Ghế đã có người đặt!",
+                type: "error",
+                icon: "error",
+                button: {
+                    text: "OK",
+                },
+            });
         }
+        setCheckOut(true);
     }
+
+    window.addEventListener('popstate', async function (event) {
+        let data = this.localStorage.getItem("user")
+        console.log(data)
+        if (data) {
+            let dataSend = JSON.parse(data)
+            await bookingService.removeTicketAndBooking(dataSend)
+        }
+        else {
+            navigate("/")
+        }
+    })
+
+    window.addEventListener('beforeunload', async function (event) {
+        let data = this.localStorage.getItem("user")
+        console.log(data)
+        if (data) {
+            let dataSend = JSON.parse(data)
+            await bookingService.removeTicketAndBooking(dataSend)
+        }
+        else {
+            navigate("/")
+        }
+    });
 
 
 
@@ -179,94 +219,94 @@ https://www.galaxycine.vn/
 " />
                         </div>
                         <div className="col-12 col-md-5 col-sm-12">
-                            <table className="table tableTicket">
+                            <table className="table">
                                 <tbody>
-                                    <tr>
-                                        <th colSpan="2" className="thTable">
-                                            <h4 style={{ fontWeight: "bold" }}>{dataA.movieName}</h4>
-                                        </th>
-                                    </tr>
-                                    <tr>
-                                        <th className="thTable">Phòng chiếu</th>
-                                        <td className="tdTable">{dataA.screen}</td>
-                                    </tr>
-                                    <tr>
-                                        <th className="thTable">Ngày chiếu</th>
-                                        <td className="tdTable">{dataA.date}</td>
-                                    </tr>
-                                    <tr>
-                                        <th className="thTable">Giờ chiếu</th>
-                                        <td className="tdTable">{dataA.time}</td>
-                                    </tr>
-                                    <tr>
-                                        <th className="thTable">Ghế</th>
-                                        <td className="tdTable">
-                                            {dataA.seat && dataA.seat.map((seatN, index) => (
-                                                seatN + " "
-                                            ))}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th className="thTable">Giá</th>
-                                        {price && dataA.seat && <td style={{ whiteSpace: 'pre-line' }} className="tdTable">
-                                            {dataA.seat.map((seatN, index) => (
-                                                `${seatN} : ${price} \n`
+                                <tr>
+                                    <th colSpan="2" className="thTable">
+                                        <h4 style={{ fontWeight: "bold" }}>{dataA.movieName}</h4>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th className="thTable">Phòng chiếu</th>
+                                    <td className="tdTable">{dataA.screen}</td>
+                                </tr>
+                                <tr>
+                                    <th className="thTable">Ngày chiếu</th>
+                                    <td className="tdTable">{dataA.date}</td>
+                                </tr>
+                                <tr>
+                                    <th className="thTable">Giờ chiếu</th>
+                                    <td className="tdTable">{dataA.time}</td>
+                                </tr>
+                                <tr>
+                                    <th className="thTable">Ghế</th>
+                                    <td className="tdTable">
+                                        {dataA.seat && dataA.seat.map((seatN, index) => (
+                                            seatN + " "
+                                        ))}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th className="thTable">Giá</th>
+                                    {price && dataA.seat && <td style={{ whiteSpace: 'pre-line' }} className="tdTable">
+                                        {dataA.seat.map((seatN, index) => (
+                                            `${seatN} : ${price} \n`
 
-                                            ))}
-                                        </td>}
-                                    </tr>
-                                    <tr>
-                                        <th className="thTable">Tổng cộng</th>
-                                        {totalAmount && <td className="tdTable">{totalAmount}</td>}
-                                    </tr>
-                                    <tr>
-                                        <th className="thTable">Email</th>
-                                        <td className="tdTable">{dataA.email}</td>
-                                    </tr>
-                                    <tr>
-                                        <th colSpan={2} className="thTable">
-                                            {checkout ? <CountdownClock information={{
-                                                "totalAmount": dataA.sum,
-                                                "accountId": dataA.accountId,
-                                                "scheduleId": dataA.scheduleId,
-                                                "seat": dataA.seat,
-                                                "bookingId": dataA.bookingId
-                                            }} /> : null}
+                                        ))}
+                                    </td>}
+                                </tr>
+                                <tr>
+                                    <th className="thTable">Tổng cộng</th>
+                                    {totalAmount && <td className="tdTable">{totalAmount}</td>}
+                                </tr>
+                                <tr>
+                                    <th className="thTable">Email</th>
+                                    <td className="tdTable">{dataA.email}</td>
+                                </tr>
+                                <tr>
+                                    <th colSpan={2} className="thTable">
+                                        {checkout ? <CountdownClock information={{
+                                            "totalAmount": dataA.sum,
+                                            "accountId": dataA.accountId,
+                                            "scheduleId": dataA.scheduleId,
+                                            "seat": dataA.seat,
+                                            "bookingId": dataA.bookingId
+                                        }} /> : null}
 
-                                        </th>
-                                    </tr>
-                                    <tr>
-                                        <td className="tdTable">
-                                            <button className="btn__edit" onClick={() => handleBack()}>Quay lại</button>
-                                        </td>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th className="thTable">
+                                        <button className="btn__edit" onClick={() => handleBack()}>Quay lại</button>
+                                    </th>
 
-                                        <td className="tdTable">
-                                            {checkout ? (
-                                                <Paypal
-                                                    information={{
-                                                        "totalAmount": dataA.sum,
-                                                        "accountId": dataA.accountId,
-                                                        "scheduleId": dataA.scheduleId,
-                                                        "seat": dataA.seat,
-                                                        "bookingId": dataA.bookingId,
-                                                        "seatNumber": dataA.seatNumber,
-                                                        "vnd": { vnd }
-                                                    }
+                                    <th className="thTable">
+                                        {checkout ? (
+                                            <Paypal
+                                                information={{
+                                                    "totalAmount": dataA.sum,
+                                                    "accountId": dataA.accountId,
+                                                    "scheduleId": dataA.scheduleId,
+                                                    "seat": dataA.seat,
+                                                    "bookingId": dataA.bookingId,
+                                                    "seatNumber": dataA.seatNumber,
+                                                    "vnd": { vnd }
+                                                }
 
-                                                    }
-                                                />
-                                            ) : (
-                                                <button className="btn__add"
+                                                }
+                                            />
+                                        ) : (
+                                            <button className="btn__add"
 
                                                     onClick={() => {
                                                         handleCheck();
                                                     }}
-                                                >
-                                                    Xác nhận
-                                                </button>
-                                            )}
-                                        </td>
-                                    </tr>
+                                            >
+                                                Xác nhận
+                                            </button>
+                                        )}
+                                    </th>
+                                </tr>
                                 </tbody>
                             </table>
                         </div>

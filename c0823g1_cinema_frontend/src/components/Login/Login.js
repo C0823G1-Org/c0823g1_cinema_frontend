@@ -23,6 +23,7 @@ export default function Login() {
     const navigate = useNavigate();
     const [movieId, setMovieID] = useState(0);
     const [isBooking, setIsBooking] = useState(false);
+    const [isButtonTicket, setIsButtonTicket] = useState(false);
     useEffect(() => {
         const booking = sessionStorage.getItem("booking");
         if (booking === "booking") {
@@ -33,6 +34,10 @@ export default function Login() {
         const roleUser = sessionStorage.getItem("roleUser");
         if (roleUser !== null) {
             navigate(`/home`);
+        }
+        const buttonTicket = sessionStorage.getItem("buttonTicket");
+        if (buttonTicket !== null){
+            setIsButtonTicket(true);
         }
     }, []);
     const [status, setStatus] = useState(true);
@@ -85,7 +90,10 @@ export default function Login() {
                     }
                     if (isBooking){
                         navigate(`/home/detail/${movieId}`);
-                    } else {
+                    } else if (isButtonTicket){
+                        navigate(`/booking`);
+                    }
+                    else {
                         navigate('/home');
                     }
                     setError("");
@@ -123,6 +131,8 @@ export default function Login() {
             }
             if (isBooking){
                 navigate(`/home/detail/${movieId}`);
+            } else if (isButtonTicket){
+                navigate(`/booking`);
             } else {
                 navigate('/home');
             }
@@ -155,6 +165,8 @@ export default function Login() {
             }
             if (isBooking){
                 navigate(`/home/detail/${movieId}`);
+            } else if (isButtonTicket){
+                navigate(`/booking`);
             } else {
                 navigate('/home');
             }

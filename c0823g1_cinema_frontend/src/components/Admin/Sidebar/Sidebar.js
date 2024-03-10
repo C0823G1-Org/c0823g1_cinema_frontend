@@ -10,18 +10,18 @@ export function Sidebar() {
     }, [])
     return (
         <>
-            <div className="sidebar" style={{textAlign: "left"}}>
+            <div className="sidebar">
                 <div className="logo-details">
                     <i className='bx bxl-c-plus-plus'></i>
                     <span className="logo_name">C08 CINEMA</span>
                 </div>
                 <ul className="nav-links">
-                    {role === "ROLE_ADMIN" && (<li>
+                    <li>
                         <Link to={"/statistic/movie"}>
                             <i className='bx bx-line-chart'></i>
                             <span className="link_name">Thống kê phim</span>
                         </Link>
-                    </li>)}
+                    </li>
                     <li>
                         <Link to={"/statistic/member"}>
                             <i className="bx bx-line-chart"></i>
