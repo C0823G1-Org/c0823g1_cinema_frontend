@@ -88,6 +88,7 @@ export default function TicketList() {
         }
         setCurrentPage(0)
         console.log(currentPage)
+        console.log(result.data.content);
 
     }
 

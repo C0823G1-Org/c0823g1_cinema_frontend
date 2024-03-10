@@ -234,23 +234,23 @@ export default function DetailMovie() {
                     </div>
                 </div>
             </div>
-            {schedule.length === 0 &&
-                <div style={{marginTop: "73vh"}}>
-                    <Footer/>
-                </div>
-            }{schedule.length === 1 &&
-            <div style={{marginTop: "90vh"}}>
+        {/*    {schedule.length === 0 &&*/}
+        {/*        <div style={{marginTop: "73vh"}}>*/}
+        {/*            <Footer/>*/}
+        {/*        </div>*/}
+        {/*    }{schedule.length === 1 &&*/}
+        {/*    <div style={{marginTop: "90vh"}}>*/}
+        {/*        <Footer/>*/}
+        {/*    </div>*/}
+        {/*}{schedule.length === 2 &&*/}
+        {/*    <div style={{marginTop: "100vh"}}>*/}
+        {/*        <Footer/>*/}
+        {/*    </div>*/}
+        {/*}{schedule.length === 3 &&*/}
+            <div style={{marginTop: "132vh"}}>
                 <Footer/>
             </div>
-        }{schedule.length === 2 &&
-            <div style={{marginTop: "100vh"}}>
-                <Footer/>
-            </div>
-        }{schedule.length === 3 &&
-            <div style={{marginTop: "110vh"}}>
-                <Footer/>
-            </div>
-        }
+        {/*}*/}
         </div>
     )
 }

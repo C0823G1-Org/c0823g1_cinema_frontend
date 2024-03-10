@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import Figure from 'react-bootstrap/Figure';
 import Footer from "../Home/Footer";
 import HeaderTemplateAdmin from "../Home/HeaderTemplateAdmin";
+import MySwal from "sweetalert2";
 
 export default function BookingSeat() {
     const navigate = useNavigate();
@@ -52,37 +53,81 @@ export default function BookingSeat() {
 
     }, []);
     const handleBack = () => {
+        if (data.backId === 1) {
             navigate(`/home/detail/${data.movieId}`)
+        } else if (data.backId === 2) {
+            navigate("/booking")
+        }
+
     }
 
+
     const handleSubmit = async () => {
-        const newResult = {
-            "seatList": selected,
-            "scheduleId": schedule.id,
-            "accountId": userId,
-            "backId": data.backId,
-            "movieId": data.movieId,
-            "date": data.date,
-            "scheduleTimeId": data.scheduleTimeId
-        };
-
-        setResult(newResult);
-
         try {
-            // Example: await someAsyncFunction();
-            // You can perform API calls, data fetching, etc.
-            // Once the asynchronous operations are done, navigate
-            // navigate("/booking/checkout", { state: { myResult: newResult } });
-            navigate("/booking/checkout", { state: { myResult: newResult } });
+            const scheduleResult = await getSchedule(data.movieId, data.date, data.scheduleTimeId);
+            const seatResult = await getSeat(scheduleResult.id);
+
+            if (seatResult) {
+                const bookedSeats = seatResult.map((ticket) => ticket.seatNumber);
+
+                const hasBookedSeats = selected.some((seatNumber) => bookedSeats.includes(seatNumber));
+
+                if (hasBookedSeats) {
+                    MySwal.fire({
+                        text: "Ghế bạn chọn vừa có người đặt. Vui lòng chọn lại ghế khác",
+                        icon: "warning"
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    const newResult = {
+                        "seatList": selected,
+                        "scheduleId": scheduleResult.id,
+                        "accountId": userId,
+                        "backId": data.backId,
+                        "movieId": data.movieId,
+                        "date": data.date,
+                        "scheduleTimeId": data.scheduleTimeId
+                    };
+
+                    setResult(newResult);
+
+                    try {
+                        navigate("/booking/checkout", { state: { myResult: newResult } });
+                    } catch (error) {
+                        console.error("Error during asynchronous operations:", error);
+                    }
+                }
+            } else {
+                console.log("Seat data is not available");
+                const newResult = {
+                    "seatList": selected,
+                    "scheduleId": scheduleResult.id,
+                    "accountId": userId,
+                    "backId": data.backId,
+                    "movieId": data.movieId,
+                    "date": data.date,
+                    "scheduleTimeId": data.scheduleTimeId
+                };
+
+                setResult(newResult);
+
+                try {
+                    navigate("/booking/checkout", { state: { myResult: newResult } });
+                } catch (error) {
+                    console.error("Error during asynchronous operations:", error);
+                }
+            }
         } catch (error) {
-            console.error("Error during asynchronous operations:", error);
+            console.error(error);
         }
     };
+
     console.log(result)
     const handleClick = (e, seatNumber) => {
         if ((e.target.classList.contains('seat')
-            || e.target.classList.contains('vip')
-            || e.target.classList.contains('couple'))
+                || e.target.classList.contains('vip')
+                || e.target.classList.contains('couple'))
             && !e.target.classList.contains('occupied')) {
             const isCoupleSeat = e.target.classList.contains('couple');
             if (isCoupleSeat) {
@@ -232,7 +277,7 @@ export default function BookingSeat() {
                         <div className="col-span-1 xl:pl-4 xl:order-none order-first">
                             <div className="booking__summary md:mb-4">
                                 <div className="bg-white px-4 grid grid-cols-3 xl:gap-2 items-center"
-                                    style={{ paddingRight: '0 !important' }}>
+                                     style={{ paddingRight: '0 !important' }}>
                                     <div
                                         className="row-span-2 md:row-span-1 xl:row-span-2 block md:hidden xl:block d-flex justify-content-center"
                                         style={{ marginTop: '7%' }}>
@@ -265,19 +310,19 @@ export default function BookingSeat() {
                                     </div>
                                     <div className="xl:flex hidden justify-between col-span-3"><strong
                                         className="text-base"> Bạn đã chọn <span
-                                            className="inline-block font-bold text-primary "
-                                            style={{ fontSize: "large" }}>&nbsp;{selected.length}</span> vé.
+                                        className="inline-block font-bold text-primary "
+                                        style={{ fontSize: "large" }}>&nbsp;{selected.length}</span> vé.
                                         Tổng
                                         cộng</strong><strong
-                                            className="inline-block font-bold text-primary " style={{ fontSize: "large" }}>&nbsp;{formatNumberWithThousandSeparator(schedule.movie.ticketPrice * selected.length)}</strong> VNĐ
+                                        className="inline-block font-bold text-primary " style={{ fontSize: "large" }}>&nbsp;{formatNumberWithThousandSeparator(schedule.movie.ticketPrice * selected.length)}</strong> VNĐ
                                     </div>
                                     <div
                                         className="xl:flex mt-5 px-5 hidden d-flex justify-content-between align-items-center col-span-3">
 
-                                        <button style={{width: '100px'}} className="btn__edit" onClick={handleBack}>Quay lại</button>
+                                        <button style={{ width: '100px' }} className="btn__edit" onClick={handleBack}>Quay lại</button>
 
-                                        <button style={{width: '100px'}} className="btn__add"
-                                                disabled={selected.length === 0} onClick={()=>handleSubmit()}>Đặt vé
+                                        <button style={{ width: '100px' }} className="btn__add"
+                                                disabled={selected.length === 0} onClick={() => handleSubmit()}>Đặt vé
                                         </button>
                                     </div>
                                 </div>
