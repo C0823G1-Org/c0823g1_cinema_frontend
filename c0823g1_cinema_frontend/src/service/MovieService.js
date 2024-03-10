@@ -93,3 +93,11 @@ export async function getMovieInfoById(id) {
         return false
     }
 }
+export async function editMovie(data) {
+    try {
+        const result = await axios.patch("http://localhost:8080/movie/edit", data)
+        return result.status
+    } catch (e) {
+        return e.response.status
+    }
+}

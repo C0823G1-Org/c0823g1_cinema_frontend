@@ -21,12 +21,13 @@ export default function MovieCreate() {
     const [isTableUpdating, setIsTableUpdating] = useState(false)
     const [hallId, setHallId] = useState(-1)
     const [newSchedule, setNewSchedule] = useState([])
+    const [imagePreview, setImagePreview] = useState(null)
     const [imageUpload, setImageUpload] = useState(null)
     const [imageDownloaded, setImageDownloaded] = useState(null)
+    const [submitData, setSubmitData] = useState({})
 
     const posterFileSizeLimit = 5242880
     const initialValue = {
-        poster: "",
         name: "",
         actor: "",
         publisher: "",
@@ -42,7 +43,6 @@ export default function MovieCreate() {
     }
 
     const validationObject = {
-        poster: Yup.mixed().required("Phải có poster"),
         name: Yup.string().required("Tên không được để trống").min(2, "Tên phim ít nhất 2 ký tự").max(255, "Tên phim tối đa 255 ký tự"),
         actor: Yup.string().required("Tên diễn viên không được để trống").min(2, "Tên diễn viên ít nhất 2 ký tự").max(255, "Tên phim tối đa 255 ký tự"),
         publisher: Yup.string().required("Tên nhà sản xuất không được để trống").min(2, "Tên nhà sản xuất ít nhất 2 ký tự").max(255, "Tên nhà sản xuất tối đa 255 ký tự"),
@@ -56,11 +56,62 @@ export default function MovieCreate() {
         description: Yup.string().max(65535, "Nội dung tối đa 65535 ký tự"),
         ticketPrice: Yup.number().required("Giá vé không được để trống").min(1, "Giá vé phải lớn hơn 0").max(10000000, "Giá vé không quá 10 triệu VND"),
     }
+    useEffect(() => {
+        async function continueSubmit() {
+            if (imageDownloaded == null) return
+            submitData.poster = imageDownloaded
+            console.log(imageDownloaded)
+            console.log(submitData.poster)
+            let jsonObject = {}
+            jsonObject.movieDTO = submitData
+            jsonObject.scheduleDTO = newSchedule
+            console.log(jsonObject)
+            try {
+                const result = await createMovie(jsonObject);
+                Swal.close()
+                console.log("Result code: " + result)
+                if (result < 400) {
+                    let timerInterval;
+                    Swal.fire({
+                        title: "Phim đã được lưu thành công!",
+                        html: "Trở về màn hình danh sách phim sau <b></b>s.",
+                        timer: 2000,
+                        timerProgressBar: true,
+                        didOpen: () => {
+                            Swal.showLoading();
+                            const timer = Swal.getPopup().querySelector("b");
+                            timerInterval = setInterval(() => {
+                                timer.textContent = `${Math.ceil(Swal.getTimerLeft() / 1000)}`;
+                            }, 100);
+                        },
+                        willClose: () => {
+                            clearInterval(timerInterval);
+                            navigate("/movie")
+                        }
+                    }).then((result) => {
+                        /* Read more about handling dismissals below */
+                        if (result.dismiss === Swal.DismissReason.timer) {
+                            console.log("I was closed by the timer");
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Lỗi...",
+                        text: "Lưu phim vào database không thành công...",
+                    });
+                }
+            } catch (e) {
+                console.log(e)
+            }
+        }
+
+        continueSubmit()
+    }, [imageDownloaded]);
 
     useEffect(() => {
         updateScheduleTable();
         setIsTableUpdating(false)
-        console.log("Suất chiếu lưu")
         console.log(newSchedule)
     }, [schedulesList])
 
@@ -90,7 +141,7 @@ export default function MovieCreate() {
             return;
         }
         let cell = event.target
-        if (cell.style.backgroundColor === "grey") {
+        if (cell.style.backgroundColor == "grey" || cell.nodeName === "P") {
             console.log("DISABLE!")
             return
         }
@@ -144,6 +195,7 @@ export default function MovieCreate() {
             }
             const scheduleData = await getScheduleByHallId(id)
             setSchedulesList(scheduleData)
+            console.log(imageDownloaded)
         } catch (e) {
             console.log(e)
         }
@@ -175,14 +227,14 @@ export default function MovieCreate() {
         if (schedulesList.length === 0) return
         //update table
         let id
-        let label
+        let p
         let cell
         schedulesList.forEach((scheduleList) => {
             id = scheduleList.date + "," + scheduleList.scheduleTime.id
-            label = document.getElementById(id + " title")
-            label.innerText = scheduleList.movie.name
-            label.style.color = "white"
-            cell = label.parentElement
+            p = document.getElementById(id + " title")
+            p.innerText = scheduleList.movie.name
+            p.style.color = "white"
+            cell = p.parentElement
             cell.style.backgroundColor = "grey";
         })
         if (newSchedule.length === 0) return
@@ -196,7 +248,6 @@ export default function MovieCreate() {
 
     function uploadImage() {
         if (imageUpload === null) return
-        console.log(imageUpload.name)
         const imageRefLocal = ref(storage, `poster/${imageUpload.name + v4()}`)
         uploadBytes(imageRefLocal, imageUpload).then(() => {
             getDownloadURL(imageRefLocal).then((url) => {
@@ -211,12 +262,11 @@ export default function MovieCreate() {
             "load",
             () => {
                 // convert image file to base64 string
-                setImageUpload(reader.result);
+                setImagePreview(reader.result);
             },
             false,
         );
         let file = event.target.files[0]
-        console.log(file)
         if (file.size > posterFileSizeLimit) {
             Swal.fire({
                 icon: "error",
@@ -227,9 +277,8 @@ export default function MovieCreate() {
             return
         }
         reader.readAsDataURL(file)
-
+        setImageUpload(file)
     }
-
 
     return (
         <>
@@ -258,49 +307,8 @@ export default function MovieCreate() {
                                                     Swal.showLoading();
                                                 }
                                             })
-                                            data.poster = imageDownloaded
-                                            let jsonObject = {}
-                                            jsonObject.movieDTO = data
-                                            jsonObject.scheduleDTO = newSchedule
-                                            console.log(jsonObject)
-                                            try {
-                                                const result = await createMovie(jsonObject);
-                                                Swal.close()
-                                                console.log("Result code: " + result)
-                                                if (result < 400) {
-                                                    let timerInterval;
-                                                    Swal.fire({
-                                                        title: "Phim đã được lưu thành công!",
-                                                        html: "Trở về màn hình danh sách phim sau <b></b>s.",
-                                                        timer: 2000,
-                                                        timerProgressBar: true,
-                                                        didOpen: () => {
-                                                            Swal.showLoading();
-                                                            const timer = Swal.getPopup().querySelector("b");
-                                                            timerInterval = setInterval(() => {
-                                                                timer.textContent = `${Swal.getTimerLeft()}`;
-                                                            }, 100);
-                                                        },
-                                                        willClose: () => {
-                                                            clearInterval(timerInterval);
-                                                            navigate("/movie")
-                                                        }
-                                                    }).then((result) => {
-                                                        /* Read more about handling dismissals below */
-                                                        if (result.dismiss === Swal.DismissReason.timer) {
-                                                            console.log("I was closed by the timer");
-                                                        }
-                                                    });
-                                                } else {
-                                                    Swal.fire({
-                                                        icon: "error",
-                                                        title: "Lỗi...",
-                                                        text: "Lưu phim vào database không thành công...",
-                                                    });
-                                                }
-                                            } catch (e) {
-                                                console.log(e)
-                                            }
+                                            setSubmitData(data)
+                                            uploadImage()
                                         }}>
                                     <div className="container-fluid mb-5">
                                         <Form>
@@ -341,25 +349,21 @@ export default function MovieCreate() {
                                                                             id="inputPoster"
                                                                             name="poster"
                                                                             accept="image/*"
+                                                                            required={true}
                                                                         />
                                                                         <label
                                                                             className="custom-file-label"
                                                                             htmlFor="inputPoster">Chọn ảnh</label>
                                                                     </div>
-                                                                    <ErrorMessage name="poster" component='p'
-                                                                                  className="form-err"
-                                                                                  style={{
-                                                                                      color: 'red'
-                                                                                  }}/>
                                                                 </div>
                                                             </div>
-                                                            {imageUpload == null ? null :
+                                                            {imagePreview == null ? null :
                                                                 <div className="row mt-3 d-flex justify-content-center">
                                                                     <div className="col-3">
                                                                     </div>
                                                                     <div className="col">
                                                                         <img style={{maxWidth: "300px"}}
-                                                                             src={imageUpload}
+                                                                             src={imagePreview}
                                                                              alt=""/>
                                                                     </div>
                                                                 </div>}
@@ -639,7 +643,7 @@ export default function MovieCreate() {
                                                                                        type="checkbox"
                                                                                        name="schedules"
                                                                                        value={idValue}/>
-                                                                                <label id={idValue + " title"}></label>
+                                                                                <p id={idValue + " title"}></p>
                                                                             </td>
                                                                         )
                                                                     })}

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import {Link, useNavigate, useParams} from "react-router-dom";
 import {
-    createMovie,
+    createMovie, editMovie,
     getAllCountries,
     getAllMovieAttributes, getMovieInfoById,
     getScheduleByHallId
@@ -14,6 +14,7 @@ import {storage} from "../../config/config";
 import {v4} from "uuid";
 import Swal from 'sweetalert2'
 import {ThreeCircles} from "react-loader-spinner";
+import {getScheduleByMovieId} from "../../../service/BookingService";
 
 const MovieEdit = () => {
     const params = useParams();
@@ -30,9 +31,12 @@ const MovieEdit = () => {
     const [imageUpload, setImageUpload] = useState(null)
     const [imageDownloaded, setImageDownloaded] = useState(null)
     const [editingMovie, setEditingMovie] = useState({})
+    const [imagePreview, setImagePreview] = useState(null)
+    const [submitData, setSubmitData] = useState({})
 
     const posterFileSizeLimit = 5242880
     const initialValue = {
+        id: editingMovie.id,
         poster: editingMovie.poster,
         name: editingMovie.name,
         actor: editingMovie.actor,
@@ -63,6 +67,58 @@ const MovieEdit = () => {
         description: Yup.string().max(65535, "Nội dung tối đa 65535 ký tự"),
         ticketPrice: Yup.number().required("Giá vé không được để trống").min(1, "Giá vé phải lớn hơn 0").max(10000000, "Giá vé không quá 10 triệu VND"),
     }
+    useEffect(() => {
+        async function continueSubmit() {
+            if (imageDownloaded == null) return
+            submitData.poster = imageDownloaded
+            console.log(imageDownloaded)
+            console.log(submitData.poster)
+            let jsonObject = {}
+            jsonObject.movieDTO = submitData
+            jsonObject.scheduleDTO = newSchedule
+            console.log(jsonObject)
+            try {
+                const result = await createMovie(jsonObject);
+                Swal.close()
+                console.log("Result code: " + result)
+                if (result < 400) {
+                    let timerInterval;
+                    Swal.fire({
+                        title: "Phim đã được lưu thành công!",
+                        html: "Trở về màn hình danh sách phim sau <b></b>s.",
+                        timer: 2000,
+                        timerProgressBar: true,
+                        didOpen: () => {
+                            Swal.showLoading();
+                            const timer = Swal.getPopup().querySelector("b");
+                            timerInterval = setInterval(() => {
+                                timer.textContent = `${Math.ceil(Swal.getTimerLeft() / 1000)}`;
+                            }, 100);
+                        },
+                        willClose: () => {
+                            clearInterval(timerInterval);
+                            navigate("/movie")
+                        }
+                    }).then((result) => {
+                        /* Read more about handling dismissals below */
+                        if (result.dismiss === Swal.DismissReason.timer) {
+                            console.log("I was closed by the timer");
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Lỗi...",
+                        text: "Lưu phim vào database không thành công...",
+                    });
+                }
+            } catch (e) {
+                console.log(e)
+            }
+        }
+
+        continueSubmit()
+    }, [imageDownloaded]);
 
     useEffect(() => {
         updateScheduleTable();
@@ -75,6 +131,7 @@ const MovieEdit = () => {
                 const attributes = await getAllMovieAttributes()
                 const countriesData = await getAllCountries()
                 const movieData = await getMovieInfoById(params.id)
+                const movieSchedule = await getScheduleByMovieId(params.id)
                 if (!attributes || !movieData) {
                     Swal.fire({
                         icon: "error",
@@ -86,6 +143,23 @@ const MovieEdit = () => {
                 setMovieAtt(attributes)
                 setCountries(countriesData)
                 setEditingMovie(movieData)
+                let convertedSchedule = []
+                if (movieSchedule.length > 0) {
+                    movieSchedule.forEach((schedule) => {
+                        let scheduleValue = schedule.date + "," + schedule.scheduleTime.id
+                        let valueArray = scheduleValue.split(",")
+                        let idTempValue = scheduleValue + "," + schedule.hall.id
+                        let newScheduleDTO = {
+                            "idFind": scheduleValue,
+                            "idTemp": idTempValue,
+                            "date": valueArray[0],
+                            "scheduleTime": valueArray[1],
+                            "hall": schedule.hall.id.toString()
+                        }
+                        convertedSchedule.push(newScheduleDTO)
+                    })
+                }
+                setNewSchedule(convertedSchedule)
                 setIsLoading(false);
             } catch (e) {
                 console.log(e)
@@ -101,15 +175,50 @@ const MovieEdit = () => {
             return;
         }
         let cell = event.target
-        if (cell.style.backgroundColor === "grey") {
-            console.log("DISABLE!")
+        if (cell.style.backgroundColor === "grey" || cell.parentElement.style.backgroundColor === "grey") {
             return
         }
+        if (cell.nodeName !== "TD") {
+            cell = cell.parentElement
+        }
         let checkbox = cell.children[0]
+        let array = cell.id.split(",")
+        let scheduleTimeId = array[1]
         checkbox.checked = !checkbox.checked
         if (checkbox.checked) {
+            let durationCheck = 150
+            let currentDuration = editingMovie.duration
+            let currentScheduleTimeId = Number(scheduleTimeId)
+            while (currentDuration > durationCheck && currentScheduleTimeId < 9) {
+                console.log("2")
+                currentDuration -= durationCheck
+                currentScheduleTimeId++
+                let nextCell = document.getElementById(array[0] + "," + currentScheduleTimeId + ",cell")
+                if (nextCell.children[1].innerText !== "") {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Suất chiếu bị trùng!",
+                    });
+                    checkbox.checked = !checkbox.checked
+                    return;
+                }
+                nextCell.style.backgroundColor = "grey"
+            }
+            cell.children[1].innerText = editingMovie.name
+            cell.children[1].style.color = "white"
             cell.style.backgroundColor = "lightblue"
         } else {
+            let durationCheck = 150
+            let currentDuration = editingMovie.duration
+            let currentScheduleTimeId = Number(scheduleTimeId)
+            while (currentDuration > durationCheck && currentScheduleTimeId < 9) {
+                console.log("2")
+                currentDuration -= durationCheck
+                currentScheduleTimeId++
+                let nextCell = document.getElementById(array[0] + "," + currentScheduleTimeId + ",cell")
+                nextCell.style.backgroundColor = "white"
+            }
+            cell.children[1].innerText = ""
             cell.style.backgroundColor = "white"
         }
         updateNewSchedule(checkbox.value)
@@ -134,11 +243,9 @@ const MovieEdit = () => {
         }
 
         const found = newSchedule.findIndex((element) => element.idTemp === idTempValue)
-        console.log("length: " + newSchedule.length)
         if (found < 0) {
             setNewSchedule((prevState) => [newScheduleDTO, ...prevState])
         } else {
-            console.log("index to remove: " + found)
             newSchedule.splice(found, 1)
         }
     }
@@ -189,7 +296,6 @@ const MovieEdit = () => {
         let label
         let cell
         schedulesList.forEach((scheduleList) => {
-            console.log(scheduleList)
             id = scheduleList.date + "," + scheduleList.scheduleTime.id
             label = document.getElementById(id + " title")
             label.innerText = scheduleList.movie.name
@@ -208,7 +314,6 @@ const MovieEdit = () => {
 
     function uploadImage() {
         if (imageUpload === null) return
-        console.log(imageUpload.name)
         const imageRefLocal = ref(storage, `poster/${imageUpload.name + v4()}`)
         uploadBytes(imageRefLocal, imageUpload).then(() => {
             getDownloadURL(imageRefLocal).then((url) => {
@@ -223,12 +328,11 @@ const MovieEdit = () => {
             "load",
             () => {
                 // convert image file to base64 string
-                setImageUpload(reader.result);
+                setImagePreview(reader.result);
             },
             false,
         );
         let file = event.target.files[0]
-        console.log(file)
         if (file.size > posterFileSizeLimit) {
             Swal.fire({
                 icon: "error",
@@ -239,7 +343,7 @@ const MovieEdit = () => {
             return
         }
         reader.readAsDataURL(file)
-
+        setImageUpload(file)
     }
 
 
@@ -270,50 +374,8 @@ const MovieEdit = () => {
                                                     Swal.showLoading();
                                                 }
                                             })
-                                            data.poster = imageDownloaded
-                                            let jsonObject = {}
-                                            console.log(jsonObject)
-                                            jsonObject.movieDTO = data
-                                            jsonObject.scheduleDTO = newSchedule
-                                            console.log(jsonObject)
-                                            try {
-                                                const result = await createMovie(jsonObject);
-                                                Swal.close()
-                                                console.log("Result code: " + result)
-                                                if (result < 400) {
-                                                    let timerInterval;
-                                                    Swal.fire({
-                                                        title: "Phim đã được lưu thành công!",
-                                                        html: "Trở về màn hình danh sách phim sau <b></b>s.",
-                                                        timer: 2000,
-                                                        timerProgressBar: true,
-                                                        didOpen: () => {
-                                                            Swal.showLoading();
-                                                            const timer = Swal.getPopup().querySelector("b");
-                                                            timerInterval = setInterval(() => {
-                                                                timer.textContent = `${Swal.getTimerLeft()}`;
-                                                            }, 100);
-                                                        },
-                                                        willClose: () => {
-                                                            clearInterval(timerInterval);
-                                                            navigate("/movie")
-                                                        }
-                                                    }).then((result) => {
-                                                        /* Read more about handling dismissals below */
-                                                        if (result.dismiss === Swal.DismissReason.timer) {
-                                                            console.log("I was closed by the timer");
-                                                        }
-                                                    });
-                                                } else {
-                                                    Swal.fire({
-                                                        icon: "error",
-                                                        title: "Lỗi...",
-                                                        text: "Lưu phim vào database không thành công...",
-                                                    });
-                                                }
-                                            } catch (e) {
-                                                console.log(e)
-                                            }
+                                            setSubmitData(data)
+                                            uploadImage()
                                         }}>
                                     <div className="container-fluid mb-5">
                                         <Form>
@@ -364,7 +426,7 @@ const MovieEdit = () => {
                                                                                   style={{color: 'red'}}/>
                                                                 </div>
                                                             </div>
-                                                            {imageUpload == null ?
+                                                            {imagePreview == null ?
                                                                 <div className="row mt-3 d-flex justify-content-center">
                                                                     <div className="col-3">
                                                                     </div>
@@ -379,7 +441,7 @@ const MovieEdit = () => {
                                                                     </div>
                                                                     <div className="col">
                                                                         <img style={{maxWidth: "300px"}}
-                                                                             src={imageUpload}
+                                                                             src={imagePreview}
                                                                              alt=""/>
                                                                     </div>
                                                                 </div>}
@@ -469,7 +531,7 @@ const MovieEdit = () => {
                                                                 </div>
                                                                 <div className="col">
                                                                     <Field type="date" className="form-control"
-                                                                           name="startDate" value={editingMovie.date}/>
+                                                                           name="startDate"/>
                                                                     <ErrorMessage name="startDate" component='p'
                                                                                   className="form-err"
                                                                                   style={{color: 'red'}}/>
@@ -483,7 +545,7 @@ const MovieEdit = () => {
                                                                 </div>
                                                                 <div className="col">
                                                                     <Field type="number" className="form-control"
-                                                                           name="duration" value={editingMovie.duration}
+                                                                           name="duration"
                                                                            disabled/>
                                                                     <ErrorMessage name="duration" component='p'
                                                                                   className="form-err"
@@ -524,7 +586,7 @@ const MovieEdit = () => {
                                                                 </div>
                                                                 <div className="col">
                                                                     <Field type="text" className="form-control"
-                                                                           name="trailer" value={editingMovie.trailer}/>
+                                                                           name="trailer"/>
                                                                     <ErrorMessage name="trailer" component='p'
                                                                                   className="form-err"
                                                                                   style={{color: 'red'}}/>
@@ -667,13 +729,14 @@ const MovieEdit = () => {
                                                                         dayIncrease.setDate(curDate.getDate() + i)
                                                                         let idValue = dayIncrease.getFullYear() + "-" + ("0" + (dayIncrease.getMonth() + 1)).slice(-2) + "-" + ("0" + dayIncrease.getDate()).slice(-2) + "," + scheduleTime.id
                                                                         return (
-                                                                            <td key={i} onClick={tdOnClickHandler}>
+                                                                            <td id={idValue + ",cell"} key={i}
+                                                                                onClick={tdOnClickHandler}>
                                                                                 <input id={idValue}
                                                                                        hidden={true}
                                                                                        type="checkbox"
                                                                                        name="schedules"
                                                                                        value={idValue}/>
-                                                                                <label id={idValue + " title"}></label>
+                                                                                <p id={idValue + " title"}></p>
                                                                             </td>
                                                                         )
                                                                     })}
