@@ -1,8 +1,5 @@
-.movie-item.active {
-    background-color: #CFE1FE;
-    color: #fff;
-}
-.movie-item{
+/* Khi button có class .movie-item và không có thuộc tính disabled */
+.movie-item {
     color: black;
     padding: 6px 20px;
     position: relative;
@@ -15,10 +12,24 @@
     border-radius: 5px;
     background-color: white;
 }
-.movie:hover{
+
+/* Khi button có class .movie-item và không có thuộc tính disabled, được hover */
+.movie-item:not([disabled]):hover {
     background-color: #CFE1FE;
 }
-.movie-item:hover{
-    background-color: #CFE1FE;
 
+/* Khi button có class .movie-item và có class .active và không có thuộc tính disabled */
+.movie-item.active:not([disabled]) {
+    background-color: #CFE1FE;
+    color: #fff;
+}
+
+/* Khi button có class .movie-item và có class .active và không có thuộc tính disabled, được hover */
+.movie-item.active:not([disabled]):hover {
+    background-color: #CFE1FE;
+}
+
+/* Khi button có class .movie và không có thuộc tính disabled, được hover */
+.movie:not([disabled]):hover {
+    background-color: #CFE1FE;
 }

@@ -1,39 +1,63 @@
 import './DetailMovie.css'
-import {useEffect, useState} from "react";
-import {findAll, findByIdMovie, findByIdMovieHasGenre} from "../../service/MovieService";
+import {useEffect, useRef, useState} from "react";
+import {findByIdMovie, findByIdMovieHasGenre} from "../../service/MovieService";
 import {useNavigate, useParams} from "react-router-dom";
 import {getScheduleByMovieId} from "../../service/BookingService";
-import Header from "../Home/Header";
+import '../Home/Footer.css'
 import Footer from "../Home/Footer";
+import HeaderTemplateAdmin from "../Home/HeaderTemplateAdmin";
+import SweetAlert from "sweetalert";
 
 export default function DetailMovie() {
     const [movie, setMovie] = useState([]);
     const [typeMovie, setTypeMovie] = useState([]);
     const [schedule, setSchedule] = useState([]);
     const [actor, setActor] = useState([]);
+    const dateToday = new Date().toISOString().slice(0, 10);
     const {id} = useParams();
+    const [token,setToken] = useState("");
+    const [role, setRole] = useState("");
     const [selectedDateTime, setSelectedDateTime] = useState({
         movieId: id,
         date: null,
-        scheduleTimeId: null
+        scheduleTimeId: null,
+        backId: 1
     });
     const navigate = useNavigate();
+    const showtimeSectionRef = useRef(null); // Tham chiếu đến phần tử lịch chiếu
 
+    useEffect(()=>{
+        const isLogin = sessionStorage.getItem("isLogin");
+        if (isLogin !== null){
+            SweetAlert("Đăng nhập thành công!", `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`, "success")
+        }
+        sessionStorage.removeItem("isLogin");
+    })
 
     useEffect(() => {
+        const accessToken = sessionStorage.getItem("accessToken");
+        const roleUser = sessionStorage.getItem("roleUser");
+        setToken(accessToken);
+        setRole(roleUser);
         const fetchData = async () => {
-            const movie1 = await findByIdMovie(id);
-            const movie2 = await findByIdMovieHasGenre(id);
-            const dataResult = await getScheduleByMovieId(id)
-            setSchedule(dataResult)
-            setMovie(movie1);
-            setTypeMovie(movie2);
-            const listActor = movie1.actor.split(',');
-            setActor(listActor);
+            try {
+                const movie1 = await findByIdMovie(id);
+                const movie2 = await findByIdMovieHasGenre(id);
+                const dataResult = await getScheduleByMovieId(id)
+                setSchedule(dataResult)
+                setMovie(movie1);
+                setTypeMovie(movie2);
+                console.log(schedule)
+                const listActor = movie1.actor.split(',');
+                setActor(listActor);
+                document.title = movie1.name;
+            } catch (err) {
+                navigate(`/home`);
+            }
         };
         fetchData();
     }, []);
-    console.log(schedule)
+
     const formatTime = (timeString, currentDate, scheduleTimeId) => {
         const [hours, minutes] = timeString.split(':');
         const formattedHours = parseInt(hours, 10).toString();
@@ -54,7 +78,13 @@ export default function DetailMovie() {
                 {`${formattedHours}h${formattedMinutes}`}
             </button>
         );
+
     };
+    const formatDuration = (durationInMinutes) => {
+        const hours = Math.floor(durationInMinutes / 60);
+        const minutes = durationInMinutes % 60;
+        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:00`;
+    }
     //Format dates
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -64,12 +94,18 @@ export default function DetailMovie() {
         return `${day}/${month}/${year}`;
     };
     const handleClickScheduleTime = (date, scheduleTimeId) => {
-        setSelectedDateTime(prevState => ({
-            ...prevState,
-            date,
-            scheduleTimeId
-        }));
-        console.log(selectedDateTime);
+        if (role === null) {
+            sessionStorage.setItem("booking", "booking");
+            sessionStorage.setItem("movieId", id);
+            navigate(`/login`)
+        } else {
+
+            setSelectedDateTime(prevState => ({
+                ...prevState,
+                date,
+                scheduleTimeId
+            }));
+            console.log(selectedDateTime);}
     };
     useEffect(() => {
         console.log(selectedDateTime);
@@ -77,80 +113,81 @@ export default function DetailMovie() {
             navigate("/booking/seat", {state: {myResult: selectedDateTime}});
         }
     }, [selectedDateTime]);
-    return (
-        <><Header/>
-            <div style={{position: "absolute", top: "-39%", transform: "translateY(50%)", minWidth: "100%"}}>
-                <div className="fontText">
-                    <div className="movie-details">
-                        <div className="left_detail"></div>
-                        <div>
-                            <iframe className="mid_detail" src={movie.trailer}
-                                    frameBorder="0"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                    allowFullScreen></iframe>
-                        </div>
-                        <div className="right_detail"></div>
 
-                        <div className="left1_detail"></div>
-                        <div className="mid_detail">
-                            <div className="picture_detail">
-                                <img style={{width: '300px', height: '400px'}}
-                                     src={movie.poster}
-                                     alt="Movie Poster"/>
+
+    return (
+        <div>
+            <HeaderTemplateAdmin />
+
+            <div className="page-wrapper_detail">
+                <div className="container_detail ">
+                    <div style={{backgroundColor: "black"}} className="column_detail column1_detail"></div>
+                    <div className="column_detail column2_detail">
+                        <div className="video-wrapper">
+                            <div className="video-frame">
+                                <iframe src={movie.trailer} style={{width: "100%"}}
+                                        frameBorder="0"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                        allowFullScreen></iframe>
                             </div>
-                            <div style={{
-                                float: 'left',
-                                width: 'calc(100% - 220px)',
-                                marginLeft: '200px',
-                                marginTop: '0px'
-                            }}>
-                                <h1>{movie.name}</h1>
-                                <div style={{fontSize: 'large'}}>
-                                    <div style={{marginTop: "13px"}}>
+                            <table>
+                                <tbody>
+                                <tr>
+                                    <td style={{width: '300px', height: '400px'}}>
+                                        <img style={{width: '300px', height: '400px'}}
+                                             src={movie.poster}
+                                             alt="Movie Poster"/>
+                                    </td>
+                                    <td style={{ marginTop: "20px",padding: 0, paddingLeft: "10px", verticalAlign: "top"}}>
+                                        <h1>{movie.name}</h1>
                                         <i style={{color: 'orange'}} className="far fa-clock"></i>
                                         <p style={{display: 'inline-block', marginRight: '10px'}}><p
-                                            style={{marginLeft: '10px'}}>{movie.duration} Phút</p></p>
+                                            style={{marginLeft: '10px'}}>{formatDuration(movie.duration)}</p></p>
                                         <i style={{color: 'orange'}} className="fas fa-calendar-alt"></i>
                                         <p style={{display: 'inline-block'}}><p
                                             style={{marginLeft: '10px'}}>{formatDate(movie.startDate)}</p>
                                         </p>
-                                    </div>
-                                    <p>Quốc gia: {movie.country}</p>
-                                    <p>Nhà sản xuất: {movie.publisher}</p>
-                                    <p>
-                                        Thể loại:
-                                        {typeMovie.map((type) => (
+                                        <p>Quốc gia: {movie.country}</p>
+                                        <p>Nhà sản xuất: {movie.publisher}</p>
+                                        <p>
+                                            Thể loại:
+                                            {typeMovie.map((type) => (
 
-                                            <button style={{marginLeft: "10px"}} type="button" className="btn btn-light"
-                                            >{type[1]}</button>
-                                        ))}
-                                    </p>
+                                                <button type="button" className="btn btn-light"
+                                                >{type[1]}</button>
+                                            ))}
+                                        </p>
 
-                                    <p>Đạo diễn:
-                                        <button style={{marginLeft: "10px"}} type="button"
-                                                className="btn btn-light">{movie.director}</button>
-                                    </p>
-                                    <p>Diễn viên:
-                                        {actor.map((at) => (
-                                            <button style={{marginLeft: "10px"}} type="button"
-                                                    className="btn btn-light">{at}</button>
-                                        ))}
-                                    </p>
-                                    <button className="btn btn__add_detail my-2 my-sm-0" type="submit">Đặt
-                                        vé
-                                    </button>
-                                </div>
-                                <hr/>
-                                <h3>Nội dung phim</h3>
-                                <p style={{fontSize: "20px"}}>{movie.description}
-                                </p>
-                                <hr/>
-                                <h3>Lịch chiếu</h3>
+                                        <p>Đạo diễn:
+                                            <button type="button"
+                                                    className="btn btn-light">{movie.director}</button>
+                                        </p>
+                                        <p>Diễn viên:
+                                            {actor.map((at) => (
+                                                <button style={{marginLeft: "10px"}} type="button"
+                                                        className="btn btn-light">{at}</button>
+                                            ))}
+                                        </p>
+                                        {/*<button className="btn btn__add_detail my-2 my-sm-0" type="submit"*/}
+                                        {/*        onClick={handleScrollToSchedule}>Đặt*/}
+                                        {/*    vé*/}
+                                        {/*</button>*/}
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+
+                            <hr/>
+                            <h3>Nội dung phim</h3>
+                            <p style={{fontSize: "20px"}}>{movie.description}</p>
+                            <hr/>
+                            <h3 ref={showtimeSectionRef}>Lịch chiếu</h3>
+                            {schedule.length !== 0 &&
                                 <div className="showtime_detail">
-                                    { schedule.reduce((result, time) => {
+                                    {schedule.reduce((result, time) => {
                                         const currentDate = time.date;
                                         const existingDateIndex = result.findIndex(item => item.date === currentDate);
-
+                                        console.log(schedule);
                                         if (existingDateIndex === -1) {
                                             result.push({
                                                 date: currentDate,
@@ -168,8 +205,10 @@ export default function DetailMovie() {
 
                                         return result;
                                     }, []).map(({date, showtimes}) => (
+
                                         <div key={date}>
-                                            <div>Ngày {formatDate(date)}</div>
+                                            <div>{dateToday === date ? <p>Hôm nay ngày: {formatDate(date)}</p> :
+                                                <p>Ngày {formatDate(date)}</p>}</div>
                                             <div className="showtime_detail">
                                                 {showtimes.map(({scheduleTimeId, time}) => (
                                                     formatTime(time, date, scheduleTimeId)
@@ -178,15 +217,35 @@ export default function DetailMovie() {
                                         </div>
                                     ))}
                                 </div>
-                            </div>
+                            }
+                            {schedule.length === 0 &&
+                                <div className="showtime_detail">
+                                    <h5>Không có lịch chiếu</h5>
+                                </div>
+                            }
                         </div>
+                    </div>
+                    <div style={{backgroundColor: "black"}} className="column_detail column3_detail">
                     </div>
                 </div>
             </div>
-            <div style={{borderTop: "170vh solid white"}}>
+            {schedule.length === 0 &&
+                <div style={{marginTop: "73vh"}}>
+                    <Footer/>
+                </div>
+            }{schedule.length === 1 &&
+            <div style={{marginTop: "90vh"}}>
                 <Footer/>
             </div>
-        </>
-
+        }{schedule.length === 2 &&
+            <div style={{marginTop: "100vh"}}>
+                <Footer/>
+            </div>
+        }{schedule.length === 3 &&
+            <div style={{marginTop: "110vh"}}>
+                <Footer/>
+            </div>
+        }
+        </div>
     )
 }

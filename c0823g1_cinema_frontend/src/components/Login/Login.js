@@ -10,16 +10,26 @@ import {LoginLogoutService} from "../../service/LoginLogoutService";
 import {auth, provider} from "../config/config";
 import {signInWithPopup} from "firebase/auth";
 import SweetAlert from "sweetalert";
-import {Button, Modal} from "react-bootstrap";
+import {Modal} from "react-bootstrap";
 import {ColorRing} from "react-loader-spinner";
 import {register} from "../../service/AccountService";
 import * as Yup from 'yup';
 import {ErrorMessage, Field, Form, Formik} from "formik";
+import HeaderTemplateAdmin from "../Home/HeaderTemplateAdmin";
+import Footer from "../Home/Footer";
 
 export default function Login() {
 
     const navigate = useNavigate();
+    const [movieId, setMovieID] = useState(0);
+    const [isBooking, setIsBooking] = useState(false);
     useEffect(() => {
+        const booking = sessionStorage.getItem("booking");
+        if (booking === "booking") {
+            setIsBooking(true);
+        }
+        const mID = sessionStorage.getItem("movieId");
+        setMovieID(mID);
         const roleUser = sessionStorage.getItem("roleUser");
         if (roleUser !== null) {
             navigate(`/home`);
@@ -67,10 +77,19 @@ export default function Login() {
                     sessionStorage.setItem("user", req.data.iAccountDTO.fullName);
                     sessionStorage.setItem("userId", req.data.iAccountDTO.id);
                     sessionStorage.setItem("userPhoto", req.data.iAccountDTO.profilePicture);
-                    await SweetAlert("Đăng nhập thành công!", `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`, "success")
+                    sessionStorage.setItem("isLogin","isLogin");
+                    try{
+                        LoginLogoutService.resetTicket();
+                    } catch (err){
+                        console.log(err);
+                    }
+                    if (isBooking){
+                        navigate(`/home/detail/${movieId}`);
+                    } else {
+                        navigate('/home');
+                    }
                     setError("");
                     setIsSubmitLogin(false);
-                    navigate('/home');
                 }
             }
         } catch (err) {
@@ -88,14 +107,26 @@ export default function Login() {
                 value: req._tokenResponse.oauthAccessToken
             }
             const req1 = await LoginLogoutService.loginGoogle(param);
+            console.log(req1.data.accessToken)
+            console.log(req.user.accessToken)
+            console.log(req._tokenResponse.oauthAccessToken)
             sessionStorage.setItem("accessToken", req1.data.accessToken);
             sessionStorage.setItem("roleUser", req1.data.roleUser);
             sessionStorage.setItem("user", req1.data.iAccountDTO.fullName);
             sessionStorage.setItem("userId", req1.data.iAccountDTO.id);
             sessionStorage.setItem("userPhoto", req1.data.iAccountDTO.profilePicture);
-            await SweetAlert("Đăng nhập thành công!", `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`, "success")
+            sessionStorage.setItem("isLogin","isLogin");
+            try{
+                LoginLogoutService.resetTicket();
+            } catch (err){
+                console.log(err);
+            }
+            if (isBooking){
+                navigate(`/home/detail/${movieId}`);
+            } else {
+                navigate('/home');
+            }
             setIsSubmitLogin(false);
-            navigate('/home');
         } catch (err) {
             sessionStorage.clear();
             await SweetAlert("Đăng nhập thất bại!", `Tài khoản của bạn đã bị khóa bởi hệ thống, mọi thắc mắc xin liên hệ đến số điện thoại 090564325 để được giải đáp. Trân trọng cám ơn!`, "error")
@@ -116,9 +147,18 @@ export default function Login() {
             sessionStorage.setItem("user", res.data.iAccountDTO.fullName);
             sessionStorage.setItem("userId", res.data.iAccountDTO.id);
             sessionStorage.setItem("userPhoto", res.data.iAccountDTO.profilePicture);
-            await SweetAlert("Đăng nhập thành công!", `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`, "success")
+            sessionStorage.setItem("isLogin","isLogin");
+            try{
+                LoginLogoutService.resetTicket();
+            } catch (err){
+                console.log(err);
+            }
+            if (isBooking){
+                navigate(`/home/detail/${movieId}`);
+            } else {
+                navigate('/home');
+            }
             setIsSubmitLogin(false);
-            navigate('/home')
         } catch (err) {
             sessionStorage.clear();
             await SweetAlert("Đăng nhập thất bại!", `Tài khoản của bạn đã bị khóa bởi hệ thống, mọi thắc mắc xin liên hệ đến số điện thoại 090564325 để được giải đáp. Trân trọng cám ơn!`, "error")
@@ -161,8 +201,9 @@ export default function Login() {
         setPassword(e.target.value);
     };
     const handleForgetPassword = async () => {
-        if (email === "") {
-            setError1("Vui lòng nhập email để tìm kiếm tài khoản!");
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (email === "" || !emailRegex.test(email)) {
+            setError1("Vui lòng nhập email đúng định dạng để tìm kiếm tài khoản!");
         } else {
             try {
                 setIsSubmit(true);
@@ -213,14 +254,10 @@ export default function Login() {
                         "userPhoto",
                         req.data.iAccountDTO.profilePicture
                     );
-                    await SweetAlert(
-                        "Bạn đã lấy lại mật khẩu thành công!",
-                        `Hãy cập nhật mật khẩu để đảm bảo an toàn bảo mật bạn nhé!`,
-                        "success"
-                    );
+                    sessionStorage.setItem("forgetPassword","true");
+                    navigate("/user/information");
                     setError2("");
                     setIsSubmit(false);
-                    navigate("/user/information");
                 }
             }
         } catch (err) {
@@ -232,8 +269,6 @@ export default function Login() {
     //  --------------------------------------------------- Đăng Kí ---------------------------------------------------------------------------
 
 
-    // const [errors,setErrors] = useState()
-
     const registerAccount = async (values, {setErrors}) => {
         try {
             if (values.gender == "male") {
@@ -243,15 +278,15 @@ export default function Login() {
             }
             const result = await register(values);
             await SweetAlert(
-                "Đăng Kí Thành Công",
-                `Chào mừng ${sessionStorage.getItem("user")} đến với hệ thống!`,
+                "Đăng kí thành công!",
+                `Xin mời bạn đăng nhập để vào hệ thống!`,
                 "success"
             );
-            navigate("/login")
+            setStatus(true);
         } catch (err) {
             setErrors(err.data)
             await SweetAlert(
-                "Đăng Kí Thất Bại",
+                "Đăng kí thất bại!",
                 `Vui lòng nhập lại thông tin!`,
                 "error"
             );
@@ -289,6 +324,7 @@ export default function Login() {
             .required("Email Không được để rỗng")
             .matches(/^[\w\-.]+@([\w\-]+\.)+[\w\-]{2,}$/, "Email vui lòng nhập đúng định dạng"),
         address: Yup.string().required("Địa chỉ không được để rỗng"),
+        birthday: Yup.string().required("Ngày Sinh không được để rỗng")
 
 
     }
@@ -296,11 +332,12 @@ export default function Login() {
 
     return (
         <>
+            <HeaderTemplateAdmin/>
             <div className="body">
 
                 <div
                     className={`containerLogin ${status ? "" : "right-panel-active"}`}
-                    id="container"
+                    id="container" style={{marginTop: "10rem", marginBottom: "2rem"}}
                 >
                     <Formik initialValues={initValues} validationSchema={Yup.object(validateObject)}
                             onSubmit={(values, {setErrors}) => registerAccount(values, {setErrors})}>
@@ -315,62 +352,78 @@ export default function Login() {
                                     <Form className="form">
                                         <h1>Đăng Kí</h1>
                                         <span>
-                      Bạn Có Thể Quay Lại Trang Đăng Nhập Sử Dụng Email Và Facebook để
-                      đăng nhập
-                    </span>
+          Bạn Có Thể Quay Lại Trang Đăng Nhập Sử Dụng Email Và Facebook để
+          đăng nhập
+        </span>
                                         <table style={{width: "100%"}}>
                                             <tbody>
                                             <tr>
                                                 <td style={{width: 90}}>
-                                                    <h6>Tài Khoản </h6>
+                                                    <h6>Tài Khoản <sup style={{color: "red"}}>*</sup></h6>
                                                 </td>
                                                 <td>
                                                     <Field type="text" id="accountName" name="accountName"
                                                            placeholder="Ex: example123456" className="input"/> <br></br>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td className="tr-error">
                                                     <ErrorMessage name="accountName" component='span'
                                                                   className="form-err" style={{color: 'red'}}/>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    <h6>Mật Khẩu</h6>
+                                                    <h6>Mật Khẩu <sup style={{color: "red"}}>*</sup></h6>
                                                 </td>
                                                 <td>
                                                     <Field type="password" id="password" name="password"
                                                            className="input"/> <br></br>
-                                                    <ErrorMessage name="password" component='span' className="form-err"
-                                                                  style={{color: 'red'}}/>
                                                 </td>
                                             </tr>
                                             <tr>
+                                                <td></td>
+                                                <td className="tr-error"><ErrorMessage name="password" component='span'
+                                                                                       className="form-err"
+                                                                                       style={{color: 'red'}}/></td>
+                                            </tr>
+                                            <tr>
                                                 <td>
-                                                    <h6>Họ Và Tên</h6>
+                                                    <h6>Họ Và Tên <sup style={{color: "red"}}>*</sup></h6>
                                                 </td>
                                                 <td>
                                                     <Field type="text" id="fullName" name="fullName"
                                                            placeholder="Ex: Nguyễn Văn A" className="input"/> <br></br>
-                                                    <ErrorMessage name="fullName" component='span' className="form-err"
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+
+                                                <td className="tr-error"><ErrorMessage name="fullName" component='span'
+                                                                                       className="form-err"
+                                                                                       style={{color: 'red'}}/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <h6>Ngày Sinh <sup style={{color: "red"}}>*</sup></h6>
+                                                </td>
+                                                <td>
+                                                    <Field type="date" id="birthday" name="birthday" className="input"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td className="tr-error">
+                                                    <ErrorMessage name="birthday" component='span' className="form-err"
                                                                   style={{color: 'red'}}/>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    <h6>Ngày Sinh</h6>
+                                                    <h6>Giới Tính <sup style={{color: "red"}}>*</sup></h6>
                                                 </td>
-                                                <td>
-                                                    {/* <input
-            type="date"
-            value={dateOfBirth}
-            onChange={(event)=>handleDateChange(event)}
-        /> */}
-                                                    <Field type="date" id="birthday" name="birthday" className="input"/>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <h6>Giới Tính</h6>
-                                                </td>
-                                                <td>
+                                                <td style={{textAlign: "left"}}>
                                                     <div className="form-check form-check-inline">
                                                         <Field
                                                             className="form-check-input input"
@@ -378,6 +431,7 @@ export default function Login() {
                                                             name="gender"
                                                             id="inlineRadio1"
                                                             value="male"
+                                                            checked
                                                         />
                                                         <label
                                                             style={{marginBottom: 10}}
@@ -412,41 +466,58 @@ export default function Login() {
                                                 <td>
                                                     <Field className="input" type="text" id="idNumber" name="idNumber"/>
                                                     <br></br>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+
+                                                <td className="tr-error">
                                                     <ErrorMessage name="idNumber" component='span' className="form-err"
                                                                   style={{color: 'red'}}/>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    <h6>Email</h6>
+                                                    <h6>Email <sup style={{color: "red"}}>*</sup></h6>
                                                 </td>
                                                 <td>
                                                     <Field className="input" type="text" id="email" name="email"
                                                            placeholder="Ex: example@gmail.com"/> <br></br>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+
+                                                <td className="tr-error">
                                                     <ErrorMessage name="email" component='span' className="form-err"
                                                                   style={{color: 'red'}}/>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    <h6>Địa Chỉ</h6>
+                                                    <h6>Địa Chỉ <sup style={{color: "red"}}>*</sup></h6>
                                                 </td>
                                                 <td>
                                                     <Field className="input" type="text" id="address" name="address"
                                                            placeholder="Ex: 295 Nguyễn Tất Thành"/> <br></br>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+
+                                                <td className="tr-error">
                                                     <ErrorMessage name="address" component='span' className="form-err"
                                                                   style={{color: 'red'}}/>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    <h6 className="soDienThoaiTable">Số Điện Thoại</h6>
+                                                    <h6 className="soDienThoaiTable" style={{width: "93px"}}>Số Điện
+                                                        Thoại<sup style={{color: "red"}}>*</sup></h6>
                                                 </td>
                                                 <td>
                                                     <Field className="input" type="text" id="phoneNumber"
                                                            name="phoneNumber" placeholder="Ex:0387274038"/> <br></br>
-                                                    <ErrorMessage name="phoneNumber" component='span'
-                                                                  className="form-err" style={{color: 'red'}}/>
                                                 </td>
                                                 <td>
                                                     <Field className="input" type="hidden" id="verificationCode"
@@ -454,6 +525,16 @@ export default function Login() {
                                                     <ErrorMessage name="verificationCode" component='span'
                                                                   className="form-err" style={{color: 'red'}}/>
                                                 </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+
+                                                </td>
+
+                                                <td className="tr-error"><ErrorMessage name="phoneNumber"
+                                                                                       component='span'
+                                                                                       className="form-err"
+                                                                                       style={{color: 'red'}}/></td>
                                             </tr>
                                             </tbody>
                                         </table>
@@ -488,7 +569,7 @@ export default function Login() {
                                 <span style={{color: "red", fontSize: "1em"}}>{error}</span>
                             </div>
                             {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-                            <a href="#" onClick={handleShow}>
+                            <a style={{textDecoration: "none", color: "black"}} href="#" onClick={handleShow}>
                                 Quên Mật Khẩu?
                             </a>
                             {isSubmitLogin ? <button type="button" className="button">Đăng Nhập</button> :
@@ -523,24 +604,24 @@ export default function Login() {
                     <div className="overlay-container">
                         <div className="overlay">
                             <div className="overlay-panel overlay-left">
-                                <h1>Chào Bạn !</h1>
-                                <p>Hãy Điền Thông Tin Cá Nhân Đầy Đủ Để Đăng Kí Tài Khoản Nhé</p>
+                                <h1>Chào bạn !</h1>
+                                <p>Hãy điền đầy đủ thông tin cá nhân để đăng kí tài khoản nhé !</p>
                                 <button
                                     className="ghost button"
                                     id="signIn"
                                     onClick={handleGetLogin}
                                 >
-                                    Đăng Nhập
+                                    Đăng nhập
                                 </button>
                             </div>
                             <div className="overlay-panel overlay-right">
-                                <h1>Chào Bạn !</h1>
+                                <h1>Chào bạn !</h1>
                                 <p>
-                                    Hãy Tham Gia Cùng Chúng Tôi Và Đón Xem Những Bộ Phim Bom Tấn Nhé
+                                    Hãy tham gia cùng chúng tôi và đón xem những bộ phim bom tấn nhé !
                                 </p>
-                                {isSubmitLogin ? <button className="ghost button" id="signUp">Đăng Kí</button> :
+                                {isSubmitLogin ? <button className="ghost button" id="signUp">Đăng kí</button> :
                                     <button className="ghost button" id="signUp" onClick={handleGetRegister}>Đăng
-                                        Kí</button>}
+                                        kí</button>}
                             </div>
                         </div>
                     </div>
@@ -550,6 +631,7 @@ export default function Login() {
                     onHide={handleClose}
                     backdrop="static"
                     keyboard={false}
+                    style={{marginTop: "10rem"}}
                 >
                     <Modal.Header>
                         <Modal.Title>Tìm tài khoản của bạn</Modal.Title>
@@ -562,7 +644,7 @@ export default function Login() {
                             className="input"
                             id="email"
                             type="email"
-                            placeholder="Email"
+                            placeholder="example@gmail.com"
                             name="email"
                             onChange={handleEmailChange}
                         />
@@ -571,9 +653,6 @@ export default function Login() {
                         </div>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button className="button1" onClick={handleClose}>
-                            Đóng
-                        </Button>
                         {isSubmit ? (
                             <ColorRing
                                 visible={true}
@@ -584,10 +663,14 @@ export default function Login() {
                                 wrapperClass="color-ring-wrapper"
                                 colors={["#e15b64", "#f47e60", "#f8b26a", "#abbd81", "#849b87"]}
                             />
-                        ) : (
-                            <Button className="button" onClick={handleForgetPassword}>
-                                Gửi
-                            </Button>
+                        ) : (<>
+                                <button style={{width: "4rem"}} className="btn__add" onClick={handleClose}>
+                                    Đóng
+                                </button>
+                                <button style={{width: "4rem"}} className="btn__edit" onClick={handleForgetPassword}>
+                                    Gửi
+                                </button>
+                        </>
                         )}
                     </Modal.Footer>
                 </Modal>
@@ -596,6 +679,8 @@ export default function Login() {
                     onHide={handleClose1}
                     backdrop="static"
                     keyboard={false}
+                    className="Modal"
+                    style={{marginTop: "10rem"}}
                 >
                     <Modal.Header>
                         <Modal.Title>Xác nhận mật khẩu</Modal.Title>
@@ -618,9 +703,6 @@ export default function Login() {
                         </div>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={handleClose1}>
-                            Đóng
-                        </Button>
                         {isSubmit ? (
                             <ColorRing
                                 visible={true}
@@ -631,15 +713,19 @@ export default function Login() {
                                 wrapperClass="color-ring-wrapper"
                                 colors={["#e15b64", "#f47e60", "#f8b26a", "#abbd81", "#849b87"]}
                             />
-                        ) : (
-                            <Button className="button" onClick={handleForgetPassword1}>
-                                Gửi
-                            </Button>
+                        ) : (<>
+                                <button className="btn__add" style={{width: "4rem"}} onClick={handleClose1}>
+                                    Đóng
+                                </button>
+                                <button className="btn__edit" style={{width: "4rem"}} onClick={handleForgetPassword1}>
+                                    Gửi
+                                </button>
+                        </>
                         )}
                     </Modal.Footer>
                 </Modal>
             </div>
-
+            <Footer/>
         </>
     );
 }

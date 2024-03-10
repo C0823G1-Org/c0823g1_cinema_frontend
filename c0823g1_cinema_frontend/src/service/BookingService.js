@@ -10,33 +10,24 @@ export async function searchHistoryBooking(id, startDate, endDate, page) {
     return result.data;
 }
 
-export async function getListHistoryBooking(id, startDate, endDate, page) {
+export async function getListHistoryBooking(id, startDate, endDate, page, accessToken) {
     try {
-        const result = await axios.get(`http://localhost:8080/booking/getListBooking/${id}/${startDate}/${endDate}/${page}`)
+        const result = await axios.get(`http://localhost:8080/booking/getListBooking/${id}/${startDate}/${endDate}/${page}`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        })
         return result.data;
     } catch (err) {
         console.log(err)
     }
 }
-
-export const selectTicket = async (ticket) => {
+export const getSeat = async (scheduleId) => {
     try {
-
-        let result = await axios.post("http://localhost:8080/booking/confirm", ticket)
-        return result.data;
-    } catch (error) {
-        console.log(error)
-        return error;
-    }
-}
-
-export const handleSuccess = async (checkout) => {
-    console.log(checkout)
-    try {
-        let result = await axios.post("http://localhost:8080/booking/success", checkout)
-        return result.data
-    } catch (error) {
-        return error;
+        const response = await axios.get(`http://localhost:8080/api-ticket/ticket?scheduleId=${scheduleId}`);
+        return response.data;
+    } catch (e) {
+        console.log(e)
     }
 }
 export const handleFail = async (checkout) => {
@@ -46,15 +37,6 @@ export const handleFail = async (checkout) => {
         return result.data
     } catch (error) {
         return error;
-    }
-}
-
-export const getSeat = async (scheduleId) => {
-    try {
-        const response = await axios.get(`http://localhost:8080/api-ticket/ticket?scheduleId=${scheduleId}`);
-        return response.data;
-    } catch (e) {
-        console.log(e)
     }
 }
 export const getMovie = async (movieId) => {
@@ -81,6 +63,17 @@ export const getDate = async (movieId) => {
         console.log(e)
     }
 }
+export const selectTicket = async (ticket) => {
+    console.log("aaa", ticket)
+    try {
+
+        let result = await axios.post("http://localhost:8080/booking/confirm", ticket)
+        return result.data;
+    } catch (error) {
+        console.log(error)
+        return error;
+    }
+}
 export const getScheduleTime = async (movieId, date) => {
     try {
         const response = await axios.get(`http://localhost:8080/schedule/time?movieId=${movieId}&date=${encodeURIComponent(date)}`);
@@ -97,3 +90,23 @@ export const getScheduleByMovieId = async (movieId) => {
         console.log(e)
     }
 }
+
+export const checkExist = async (info) => {
+    try {
+        const response = await axios.post(`http://localhost:8080/booking/checkexist`, info);
+        return response;
+    } catch (e) {
+        return e;
+    }
+}
+
+export const handleSuccess = async (checkout) => {
+    console.log(checkout)
+    try {
+        let result = await axios.post("http://localhost:8080/booking/success", checkout)
+        return result.data
+    } catch (error) {
+        return error;
+    }
+}
+

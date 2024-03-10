@@ -1,57 +1,46 @@
 import {useLocation, useNavigate} from "react-router-dom";
-import '../../../src/css/HaiNT_TicketBooking.css';
 import '../../index.css';
 import {EmployeeService} from "../../service/EmployeeService";
 import SweetAlert from "sweetalert";
+import Footer from "../Home/Footer";
+import HeaderTemplateAdmin from "../Home/HeaderTemplateAdmin";
+import {useEffect, useState} from "react";
+
+
 
 
 export  default function ExportDetail(){
     const navigate = useNavigate();
     const location = useLocation();
     const data = location.state.listBooking;
-    console.log(data)
-const handleExportFile = async(id) => {
-    // const fileInput = document.createElement("input");
-    // fileInput.type = "dow";
-    // fileInput.style.display = "none";
-    // let resolveChange;
-    // const changePromise = new Promise((resolve) => {
-    //     resolveChange = resolve;
-    // });
-    // fileInput.addEventListener("change", async (event) => {
-    //     const selectedFile = event.target.files[0];
-    //     resolveChange(selectedFile);
-    // });
-    // fileInput.click();
-    // const selectedFile = await changePromise;
-    // console.log(selectedFile)
-
-    const rs = await EmployeeService.exportFile(id);
-
-    const downloadFile = (file) => {
-        const element = document.createElement('a');
-        element.setAttribute('href', "Download Btn");
-        element.setAttribute('download', file);
-        element.style.display = 'none';
-        document.body.appendChild(element);
-        element.click();
-        document.body.removeChild(element);
-    }
-
-    downloadFile("D:\\filePdf")
-
-    if (rs.flag === "OK"){
+    const [token,setToken] = useState("");
+    useEffect(() => {
+        const roleUser = sessionStorage.getItem("roleUser");
+        const accessToken = sessionStorage.getItem("accessToken");
+        setToken(accessToken);
+        if (roleUser === "ROLE_CUSTOMER" || roleUser === null) {
+            navigate(`/login`);
+        }
+    }, []);
+    const handleExportFile = async(id) => {
+        const rs = await EmployeeService.exportFile(id,token);
         navigate("/employee/ticketList");
-        await SweetAlert("Vé  được in thành công","", "success")
-    } else {
-        navigate("/employee/ticketList");
-        await SweetAlert("Vé đã có người in hoặc không tồn tại!","", "error");
-
+        if (rs.flag === "OK"){
+            const a = document.createElement("a");
+            a.href = "data:application/pdf;base64," + rs.base64;
+            a.download = ""
+            a.click()
+            navigate("/employee/ticketList");
+            SweetAlert("Vé  được in thành công","", "success")
+        } else {
+            navigate("/employee/ticketList");
+            await SweetAlert("Vé đã có người in hoặc không tồn tại!","", "error");
+        }
     }
-}
     return(
         <>
-            <h1 className="h1 text-center">Thông tin đặt vé</h1>
+            <HeaderTemplateAdmin />
+            <h1 className="h1 text-center" style={{marginTop:"26vh"}}>Thông tin đặt vé</h1>
             {data.map((item) => (
                 <div className="container-fluid">
                     <div className="row">
@@ -98,7 +87,9 @@ const handleExportFile = async(id) => {
                     onClick={() => handleExportFile(`${location.state.idBooking}`)}
             >Xuất file
             </button>
-
+            <div style={{borderTop: "5vh solid white"}}>
+                <Footer/>
+            </div>
         </>
     )
 }
