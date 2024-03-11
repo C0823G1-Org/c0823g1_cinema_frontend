@@ -32,6 +32,7 @@ function CountdownClock(props) {
         }
 
         return () => clearInterval(timer);
+
     }, [countdownTime]);
 
     const minutes = Math.floor(countdownTime / 60);
