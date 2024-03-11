@@ -26,7 +26,7 @@ export default function Header() {
                                     <Link to={'/home'} className="nav-link" >Trang chủ</Link>
                                 </li>
                                 <li className="nav-item">
-                                    <a className="nav-link" href="">Hổ trợ</a>
+                                    <a className="nav-link" href="">Hỗ trợ</a>
                                 </li>
                                 <li className="nav-item">
                                     <a className="nav-link" href="">Liên hệ</a>

@@ -53,7 +53,7 @@ export function Sidebar() {
                                      alt="profileImg"/>
                             </div>
                             <Link to={"/home"} style={{paddingRight: "4rem"}}>
-                                <i className="fas fa-sign-out-alt" style={{fontSize: "2rem", marginTop:"0.5rem" , color: "#EE5A24"}}></i>
+                                <i className="fas fa-sign-out-alt" style={{fontSize: "2rem", marginTop:"0.5rem" , color: "white"}}></i>
                             </Link>
                         </div>
                     </li>

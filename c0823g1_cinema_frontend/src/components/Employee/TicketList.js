@@ -200,8 +200,8 @@ export default function TicketList() {
                                             <td>{index + 1}</td>
                                             <td>DV-{item.bookingCode}</td>
                                             <td>{item.nameCustomer}</td>
-                                            <td>{item.idNumber}</td>
-                                            <td>{item.phoneNumber ? formatPhoneNumber(item.phoneNumber) : ""}</td>
+                                            <td>{item.idNumber || "Đang cập nhật"}</td>
+                                            <td>{item.phoneNumber ? formatPhoneNumber(item.phoneNumber) : "Đang cập nhật"}</td>
                                             <td>{format(new Date(item.dateBooking), 'dd/MM/yyyy')}</td>
                                             <td className="table_movie_ellipsis">{item.nameMovieFilm}</td>
 

@@ -265,13 +265,20 @@ https://www.galaxycine.vn/
                                 </tr>
                                 <tr>
                                     <th colSpan={2} className="thTable">
-                                        {checkout ? <CountdownClock information={{
+                                        {/*{checkout ? <CountdownClock information={{*/}
+                                        {/*    "totalAmount": dataA.sum,*/}
+                                        {/*    "accountId": dataA.accountId,*/}
+                                        {/*    "scheduleId": dataA.scheduleId,*/}
+                                        {/*    "seat": dataA.seat,*/}
+                                        {/*    "bookingId": dataA.bookingId*/}
+                                        {/*}} /> : null}*/}
+                                        <CountdownClock information={{
                                             "totalAmount": dataA.sum,
                                             "accountId": dataA.accountId,
                                             "scheduleId": dataA.scheduleId,
                                             "seat": dataA.seat,
                                             "bookingId": dataA.bookingId
-                                        }} /> : null}
+                                        }} />
 
                                     </th>
                                 </tr>

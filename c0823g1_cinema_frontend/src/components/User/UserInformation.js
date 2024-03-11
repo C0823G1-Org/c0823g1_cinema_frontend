@@ -192,13 +192,15 @@ export default function UserInformation() {
             "Xác nhận mật khẩu mới không được để trống!"
         ),
     };
+    const today = new Date();
+    const minAgeDate = new Date(today.getFullYear() - 16, today.getMonth(), today.getDate());
 
     const validateObject = {
-        accountName: Yup.string()
-            .required("Tên tài khoản không được để trống!")
-            .min(6, "Tên tài khoản từ 6 - 20 kí tự!")
-            .max(20, "Tên tài khoản từ 6 - 20 kí tự!")
-            .matches("^[a-z0-9_-]+$", "Tên tài khoản phải nhập đúng định dạng!"),
+        // accountName: Yup.string()
+        //     .required("Tên tài khoản không được để trống!")
+        //     .min(6, "Tên tài khoản từ 6 - 20 kí tự!")
+        //     .max(20, "Tên tài khoản từ 6 - 20 kí tự!")
+        //     .matches("^[a-z0-9_-]+$", "Tên tài khoản phải nhập đúng định dạng!"),
         phoneNumber: Yup.string()
             .required("Số điện thoại không được để trống!")
             .matches(
@@ -212,6 +214,10 @@ export default function UserInformation() {
                 "Vui lòng nhập email đúng định dạng!"
             ),
         address: Yup.string().required("Địa chỉ không được để trống!"),
+        birthday: Yup.date()
+            .max(minAgeDate, "Bạn phải từ 16 tuổi trở lên để đăng ký!")
+            .required("Ngày sinh không được để trống!")
+
     };
     if (!account1) {
         return null;
@@ -254,7 +260,7 @@ export default function UserInformation() {
                           style={{ color: "#EC7532" }}
                           className="fas fa-piggy-bank"
                       />{" "}
-                                                        Điểm tích luỹ: {account1.point}
+                                                        Điểm tích luỹ: {formatNumber(account1.point)}
                     </span>
                                                     <br />{" "}
                                                 </figure>
@@ -318,7 +324,8 @@ export default function UserInformation() {
                                                     }
                                                     }
                                                 >
-                                                    <Form>
+                                                    {({  isSubmitting, isValid, resetForm  }) => (
+                                                        <Form>
                                                         <div className="form-group">
                                                             <Field name="password" type="hidden"></Field>
                                                             <Field name="fullName" type="hidden"></Field>
@@ -349,6 +356,7 @@ export default function UserInformation() {
                                                                         name="accountName"
                                                                     /></>}</div>
                                                         </div>
+
                                                             {isSocial ?  <div className="form-group">
                                                                     <label className="form-label">Email</label>
                                                                     <Field
@@ -383,6 +391,12 @@ export default function UserInformation() {
                                                                 type="date"
                                                                 className="form-control"
                                                                 name="birthday"
+                                                            />
+                                                            <ErrorMessage
+                                                                name="birthday"
+                                                                component="span"
+                                                                className="form-err"
+                                                                style={{ color: "red" }}
                                                             />
                                                         </div>
                                                         <div className="form-group">
@@ -447,7 +461,7 @@ export default function UserInformation() {
                                                         </div>
                                                         <div className="text-right mt-3">
                                                             <button type="button" style={{width: "5rem"}} className="btn__add" onClick={() => {
-                                                                navigate("/user/information");
+                                                                resetForm();
                                                             }}>
                                                                 Huỷ
                                                             </button>
@@ -457,6 +471,7 @@ export default function UserInformation() {
                                                             </button>
                                                         </div>
                                                     </Form>
+                                                    )}
                                                 </Formik>
                                             </div>
                                         </div>

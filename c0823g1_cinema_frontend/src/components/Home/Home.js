@@ -8,6 +8,7 @@ import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import Spinner from 'react-bootstrap/Spinner';
 import SweetAlert from "sweetalert";
+import MySwal from "sweetalert2";
 
 
 
@@ -63,7 +64,7 @@ const Home = () => {
         }
     }, [listMovie]);
 
-    const handleSearch = () => {
+    const handleSearch = (event) => {
         // eslint-disable-next-line no-restricted-globals
         event.preventDefault();
         searchName(search, page).then(res => {
@@ -71,6 +72,26 @@ const Home = () => {
                 setListMovie(res)
             }
         )
+    }
+
+    const onhandleSearch = (e) => {
+        const check = /[!@#$%^&*()~+-_]/
+        if(check.test(e.target.value) ){
+            MySwal.fire({
+                text: "Không được nhập quá ký tự đặc biệt",
+                icon: "warning"
+            });
+            setSearch("")
+        } else if(e.target.value.length > 100) {
+            MySwal.fire({
+                text: "Không được nhập quá 100 ký tự",
+                icon: "warning"
+            });
+            setSearch("")
+        }
+        else {
+            setSearch(e.target.value)
+        }
     }
 
     if (!movies) return
@@ -147,14 +168,8 @@ const Home = () => {
             <section style={{ position: 'relative', marginTop: 50 }} className="newIn container py-5">
                 {/* LIST PHIM HOT */}
                 <h2 className="content__after">Phim hot</h2>
-                {/* <div className="container__input"> */}
-                {/* <input name='search' value={search} onChange={e => setSearch(e.target.value)} placeholder=" Tìm kiếm phim ..." type="text" />
-                    <button onClick={handleSearch} className="btn__edit-search">
-                        Tìm
-                        <i style={{ marginLeft: '4px' }} className="fas fa-search" />
-                    </button> */}
                 <form onSubmit={handleSearch} className="tesster">
-                    <input  style={{border: "0.1rem solid black"}} name='search' value={search} onChange={e => setSearch(e.target.value)} placeholder=" Tìm kiếm phim ..." type="text" className="input_tesst" />
+                    <input  style={{border: "0.1rem solid black"}} name='search' value={search} onChange={onhandleSearch} placeholder=" Tìm kiếm phim ..." type="text" className="input_tesst" />
                     <button type="submit"  className="new_btnn"><i className="fas fa-search" /></button>
                 </form>
                 {/* </div> */}
@@ -169,13 +184,13 @@ const Home = () => {
                                         <div className="newIn__play text-white">
                                             <span className="format-description">{value.description}</span>
                                             <div className="container__button-position">
-                                                <Link style={{ margin: '0px 10px' }} className="btn__add" to={`/home/detail/${value.movieId}`}>Đặt vé</Link>
+                                                <Link style={{ margin: '0px 10px', fontSize: "18px", padding:"15px 39px", borderRadius: "10px" }} className="btn__add" to={`/home/detail/${value.movieId}`}>Đặt vé</Link>
                                             </div>
                                         </div>
                                     </div>
-                                    <a className="container-title" href="*">
+                                    <Link className="container-title" to={`/home/detail/${value.movieId}`}>
                                         <h3 className="title__name-film">{value.name}</h3>
-                                    </a>
+                                    </Link>
                                 </div>
                             ))
                         }
@@ -205,20 +220,18 @@ const Home = () => {
                             moviesCurrent.map(value => (
                                 <div key={value.name} className="col-6 col-md-10">
                                     <div className="newIn__img">
-                                        {/* className="img-fluid" */}
-                                        {/* style={{maxWidth:'100%', maxHeight:'100%'}} */}
                                         <img className="img-fluid"  src={value.poster} />
                                         <div className="newIn__overlay" />
                                         <div className="newIn__play text-white">
                                             <span className="format-description">{value.description}</span>
                                             <div className="container__button-position">
-                                                <Link style={{ margin: '0px 10px' }}  className="btn__add" to={`/home/detail/${value.movieId}`}>Đặt vé</Link>
+                                                <Link style={{ margin: '0px 10px', fontSize: "18px", padding:"15px 39px", borderRadius: "10px" }}  className="btn__add" to={`/home/detail/${value.movieId}`}>Đặt vé</Link>
                                             </div>
                                         </div>
                                     </div>
-                                    <a className="container-title" href="*" style={{textAlign: "center"}}>
+                                    <Link className="container-title" to={`/home/detail/${value.movieId}`} style={{textAlign: "center"}}>
                                         <h3 className="title__name-film">{value.name}</h3>
-                                    </a>
+                                    </Link>
                                 </div>
                             ))
                         }

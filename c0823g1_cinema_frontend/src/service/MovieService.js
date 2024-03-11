@@ -90,6 +90,14 @@ export const deleteMovie = async (movie, accessToken) => {
         console.log(err)
     }
 }
+export const getScheduleByMovieId = async (movieId) => {
+    try {
+        const response = await axios.get(`http://localhost:8080/schedule/movie?movieId=${movieId}`);
+        return response;
+    } catch (e) {
+        console.log(e)
+    }
+}
 
 export async function getMovieInfoById(id) {
     try {

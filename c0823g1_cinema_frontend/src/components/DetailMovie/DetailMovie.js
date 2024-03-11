@@ -2,7 +2,7 @@ import './DetailMovie.css'
 import {useEffect, useRef, useState} from "react";
 import {findByIdMovie, findByIdMovieHasGenre} from "../../service/MovieService";
 import {useNavigate, useParams} from "react-router-dom";
-import {getScheduleByMovieId} from "../../service/BookingService";
+import {getSchedule3DayByMovieId, getScheduleByMovieId} from "../../service/BookingService";
 import '../Home/Footer.css'
 import Footer from "../Home/Footer";
 import HeaderTemplateAdmin from "../Home/HeaderTemplateAdmin";
@@ -48,7 +48,7 @@ export default function DetailMovie() {
             try {
                 const movie1 = await findByIdMovie(id);
                 const movie2 = await findByIdMovieHasGenre(id);
-                const dataResult = await getScheduleByMovieId(id)
+                const dataResult = await getSchedule3DayByMovieId(id)
                 setSchedule(dataResult)
                 setMovie(movie1);
                 setTypeMovie(movie2);
@@ -234,23 +234,42 @@ export default function DetailMovie() {
                     </div>
                 </div>
             </div>
-        {/*    {schedule.length === 0 &&*/}
-        {/*        <div style={{marginTop: "73vh"}}>*/}
-        {/*            <Footer/>*/}
-        {/*        </div>*/}
-        {/*    }{schedule.length === 1 &&*/}
-        {/*    <div style={{marginTop: "90vh"}}>*/}
-        {/*        <Footer/>*/}
-        {/*    </div>*/}
-        {/*}{schedule.length === 2 &&*/}
-        {/*    <div style={{marginTop: "100vh"}}>*/}
-        {/*        <Footer/>*/}
-        {/*    </div>*/}
-        {/*}{schedule.length === 3 &&*/}
-            <div style={{marginTop: "132vh"}}>
+            {schedule.length === 0 &&
+                <div style={{marginTop: "73vh"}}>
+                    <Footer/>
+                </div>
+            }{schedule.length === 1 &&
+            <div style={{marginTop: "90vh"}}>
                 <Footer/>
             </div>
-        {/*}*/}
+        }{schedule.length === 2 &&
+            <div style={{marginTop: "100vh"}}>
+                <Footer/>
+            </div>
+        }{schedule.length === 3 &&
+            <div style={{marginTop: "120vh"}}>
+                <Footer/>
+            </div>
+        }{schedule.length === 7 &&
+            <div style={{marginTop: "160vh"}}>
+                <Footer/>
+            </div>
+        }{schedule.length === 6 &&
+            <div style={{marginTop: "150vh"}}>
+                <Footer/>
+            </div>
+        }{schedule.length === 5 &&
+            <div style={{marginTop: "140"}}>
+                <Footer/>
+            </div>
+        }{schedule.length === 4 &&
+            <div style={{marginTop: "130vh"}}>
+                <Footer/>
+            </div>
+        }
+            {/*<div style={{marginTop: "132vh"}}>*/}
+            {/*    <Footer/>*/}
+            {/*</div>*/}
         </div>
     )
 }

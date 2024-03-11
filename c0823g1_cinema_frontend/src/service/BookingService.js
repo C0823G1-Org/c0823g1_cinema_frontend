@@ -98,6 +98,14 @@ export const getScheduleByMovieId = async (movieId) => {
         console.log(e)
     }
 }
+export const getSchedule3DayByMovieId = async (movieId) => {
+    try {
+        const response = await axios.get(`http://localhost:8080/schedule/movie3?movieId=${movieId}`);
+        return response.data;
+    } catch (e) {
+        console.log(e)
+    }
+}
 
 export const checkExist = async (info) => {
     try {

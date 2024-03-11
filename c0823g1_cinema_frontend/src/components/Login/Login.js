@@ -306,6 +306,8 @@ export default function Login() {
         }
 
     }
+    const today = new Date();
+    const minAgeDate = new Date(today.getFullYear() - 16, today.getMonth(), today.getDate());
 
     const initValues = {
         accountName: "",
@@ -336,7 +338,9 @@ export default function Login() {
             .required("Email Không được để rỗng")
             .matches(/^[\w\-.]+@([\w\-]+\.)+[\w\-]{2,}$/, "Email vui lòng nhập đúng định dạng"),
         address: Yup.string().required("Địa chỉ không được để rỗng"),
-        birthday: Yup.string().required("Ngày Sinh không được để rỗng")
+        birthday: Yup.date()
+            .max(minAgeDate, "Bạn phải từ 16 tuổi trở lên để đăng ký!")
+            .required("Ngày sinh không được để trống!")
 
 
     }

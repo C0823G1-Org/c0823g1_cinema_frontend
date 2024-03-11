@@ -1,7 +1,7 @@
 import '../Movie/MovieList.css';
 import {Link, useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
-import {deleteMovie, fillAllMovie} from "../../../service/MovieService";
+import {deleteMovie, fillAllMovie, getScheduleByMovieId} from "../../../service/MovieService";
 import ReactPaginate from "react-paginate";
 import MySwal from "sweetalert2";
 import {format} from 'date-fns';
@@ -109,34 +109,44 @@ export default function MovieList() {
             cancelButtonText: "Hủy bỏ"
         }).then(async (result) => {
             if (result.isConfirmed) {
-                if (movies.length === 1){
-                    await deleteMovie(movie, accessToken);
-                    MySwal.fire(
-                        "Xóa thành công!",
-                        `${movie.name} đã được xóa.`,
-                        "success"
-                    );
-                    if(currentPage>0) {
-                        const result = await fillAllMovie(currentPage - 1, nameSearch, nameSearch, startDate, endDate, accessToken);
+                const result = await getScheduleByMovieId(movie.id);
+                console.log(result.status);
+                if(result.status===204){
+                    if (movies.length === 1){
+                        await deleteMovie(movie, accessToken);
+                        MySwal.fire(
+                            "Xóa thành công!",
+                            `${movie.name} đã được xóa.`,
+                            "success"
+                        );
+                        if(currentPage>0) {
+                            const result = await fillAllMovie(currentPage - 1, nameSearch, nameSearch, startDate, endDate, accessToken);
+                            setMovies(result.content);
+                            setTotalPages(result.totalPages);
+                            setCurrentPage(currentPage - 1);
+                        }else{
+                            const result = await fillAllMovie(0, nameSearch, nameSearch, startDate, endDate, accessToken);
+                            setMovies(result.content);
+                            setTotalPages(result.totalPages);
+                            setCurrentPage(0);
+                        }
+                    }else {
+                        await deleteMovie(movie, accessToken);
+                        MySwal.fire(
+                            "Xóa thành công!",
+                            `${movie.name} đã được xóa.`,
+                            "success"
+                        );
+                        const result = await fillAllMovie(currentPage, nameSearch, nameSearch, startDate, endDate, accessToken);
                         setMovies(result.content);
                         setTotalPages(result.totalPages);
-                        setCurrentPage(currentPage - 1);
-                    }else{
-                        const result = await fillAllMovie(0, nameSearch, nameSearch, startDate, endDate, accessToken);
-                        setMovies(result.content);
-                        setTotalPages(result.totalPages);
-                        setCurrentPage(0);
                     }
-                }else {
-                    await deleteMovie(movie, accessToken);
+                }else{
                     MySwal.fire(
-                        "Xóa thành công!",
-                        `${movie.name} đã được xóa.`,
-                        "success"
+                        "Xóa thất bại!",
+                        `${movie.name} đang có lịch chiếu. Không được xóa.`,
+                        "error"
                     );
-                    const result = await fillAllMovie(currentPage, nameSearch, nameSearch, startDate, endDate, accessToken);
-                    setMovies(result.content);
-                    setTotalPages(result.totalPages);
                 }
             }
         });

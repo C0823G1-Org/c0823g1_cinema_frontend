@@ -98,13 +98,13 @@ const Search = () => {
                                             <div className="newIn__play text-white">
                                                 <span className="format-description">{value.description}</span>
                                                 <div className="container__button-position">
-                                                    <Link style={{ margin: '0px 10px' }} className="btn__add" to={`/home/detail/${value.movieId}`}>Đặt vé</Link>
+                                                    <Link style={{ margin: '0px 10px', fontSize: "18px", padding:"15px 39px", borderRadius: "10px" }} className="btn__add" to={`/home/detail/${value.movieId}`}>Đặt vé</Link>
                                                 </div>
                                             </div>
                                         </div>
-                                        <a className="container-title" href="*">
-                                            <h3 className="title__name-film">{value.name}</h3>
-                                        </a>
+                                        <Link to={`/home/detail/${value.movieId}`} className="container-title" >
+                                            <h3 style={{height:'40px'}} className="title__name-film">{value.name}</h3>
+                                        </Link>
 
                                     </div>
 
@@ -113,8 +113,8 @@ const Search = () => {
                             </div>
                         </div>
                         <div className='container_pageable'>
-                            <button style={{width: "4rem", marginRight: "1rem"}} className='btn__add' onClick={prevPage} disabled={pageCurrent === 0}>Trước</button>
-                            <button style={{width: "4rem"}} className='btn__edit' onClick={nextPage} disabled={pageCurrent === totalPages - 1}>Sau</button>
+                            <button style={{width: "4rem", marginRight: "1rem",borderRadius:"5px"}} className='btn__add' onClick={prevPage} disabled={pageCurrent === 0}>Trước</button>
+                            <button style={{width: "4rem" ,borderRadius:"5px"}} className='btn__edit' onClick={nextPage} disabled={pageCurrent === totalPages - 1}>Sau</button>
                         </div>
                     </div>
                 )

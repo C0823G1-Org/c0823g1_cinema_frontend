@@ -689,7 +689,7 @@ a {
 }
 
 .list__film {
-    margin-bottom: 10px
+    margin-bottom: 50px !important;
 }
 
 /* Pageable */
@@ -782,7 +782,7 @@ a {
 
 .new_btnn {
     position: absolute;
-    top: 34%;
+    top: 28%;
     transform: translateX(634%);
     width: 1.6rem;
     background-color: transparent;

@@ -86,7 +86,7 @@ export default function HeaderTemplateAdmin() {
                                             <Link to="/home" className="nav-link">Trang chủ</Link>
                                         </li>
                                         <li className="nav-item">
-                                            <a className="nav-link" href="#">Hổ trợ</a>
+                                            <a className="nav-link" href="#">Hỗ trợ</a>
                                         </li>
                                         <li className="nav-item">
                                             <a className="nav-link" href="#">Liên hệ</a>
@@ -95,10 +95,10 @@ export default function HeaderTemplateAdmin() {
                                             <Link to="/movie" className="nav-link">Quản lý</Link>
                                         </li>
                                     </ul>
-                                    <ul className="navbar-nav text-center ml-auto checkunder">
+                                    <ul  className="navbar-nav text-center ml-auto checkunder name_user">
                                         <p style={{color: "white", marginRight: "1rem", marginTop:"0.6rem"}} className="name--user">{userName}</p>
                                         <img onClick={handleGetInformation} src={`${img}`} alt="Profile" style={{borderRadius: "50%", height: "3rem", marginRight: "1rem"}}/>
-                                        <i onClick={logout} className="fas fa-sign-out-alt" style={{fontSize: "2rem", marginTop:"0.5rem" , color: "#EE5A24"}}></i>
+                                        <i onClick={logout} className="fas fa-sign-out-alt" style={{fontSize: "2rem", marginTop:"0.5rem" , color: "#EE5A24", cursor:'pointer'}}></i>
                                     </ul>
                                 </div>
                             )}
@@ -109,7 +109,7 @@ export default function HeaderTemplateAdmin() {
                                             <Link to="/home" className="nav-link">Trang chủ</Link>
                                         </li>
                                         <li className="nav-item">
-                                            <a className="nav-link" href="#">Hổ trợ</a>
+                                            <a className="nav-link" href="#">Hỗ trợ</a>
                                         </li>
                                         <li className="nav-item">
                                             <a className="nav-link" href="#">Liên hệ</a>
@@ -118,10 +118,10 @@ export default function HeaderTemplateAdmin() {
                                             <Link to="/employee/ticketList" className="nav-link">Quản lý</Link>
                                         </li>
                                     </ul>
-                                    <ul className="navbar-nav text-center ml-auto checkunder">
+                                    <ul  className="navbar-nav text-center ml-auto checkunder name_user">
                                         <p style={{color: "white", marginRight: "1rem", marginTop:"0.6rem"}} className="name--user">{userName}</p>
                                         <img onClick={handleGetInformation} src={`${img}`} alt="Profile" style={{borderRadius: "50%", height: "3rem", marginRight: "1rem"}}/>
-                                        <i onClick={logout} className="fas fa-sign-out-alt" style={{fontSize: "2rem", marginTop:"0.5rem" , color: "#EE5A24"}}></i>
+                                        <i onClick={logout} className="fas fa-sign-out-alt" style={{fontSize: "2rem", marginTop:"0.5rem" , color: "#EE5A24", cursor:'pointer'}}></i>
                                     </ul>
                                 </div>
                             )}
@@ -132,16 +132,16 @@ export default function HeaderTemplateAdmin() {
                                             <Link to="/home" className="nav-link">Trang chủ</Link>
                                         </li>
                                         <li className="nav-item">
-                                            <a className="nav-link" href="#">Hổ trợ</a>
+                                            <a className="nav-link" href="#">Hỗ trợ</a>
                                         </li>
                                         <li className="nav-item">
                                             <a className="nav-link" href="#">Liên hệ</a>
                                         </li>
                                     </ul>
-                                    <ul className="navbar-nav text-center ml-auto checkunder">
+                                    <ul className="navbar-nav text-center ml-auto checkunder name_user">
                                         <p style={{color: "white", marginRight: "1rem", marginTop:"0.6rem"}} className="name--user">{userName}</p>
                                         <img onClick={handleGetInformation} src={`${img}`} alt="Profile" style={{borderRadius: "50%", height: "3rem", marginRight: "1rem"}}/>
-                                        <i onClick={logout} className="fas fa-sign-out-alt" style={{fontSize: "2rem", marginTop:"0.5rem" , color: "#EE5A24"}}></i>
+                                        <i onClick={logout} className="fas fa-sign-out-alt" style={{fontSize: "2rem", marginTop:"0.5rem" , color: "#EE5A24",cursor:'pointer'}}></i>
                                     </ul>
                                 </div>
                             )}
