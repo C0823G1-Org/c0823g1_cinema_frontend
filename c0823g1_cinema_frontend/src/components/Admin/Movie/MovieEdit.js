@@ -14,6 +14,7 @@ import {v4} from "uuid";
 import Swal from 'sweetalert2'
 import {ThreeCircles} from "react-loader-spinner";
 import {getScheduleByMovieId} from "../../../service/BookingService";
+import css from "./movie.module.css"
 
 function MovieEdit({scheduleTab}) {
     const params = useParams();
@@ -70,8 +71,7 @@ function MovieEdit({scheduleTab}) {
         async function continueSubmit() {
             if (imageDownloaded == null) return
             submitData.poster = imageDownloaded
-            console.log(imageDownloaded)
-            console.log(submitData.poster)
+            console.log(submitData.name)
             let jsonObject = {}
             jsonObject.movieDTO = submitData
             jsonObject.scheduleDTO = newSchedule
@@ -354,7 +354,8 @@ function MovieEdit({scheduleTab}) {
 
 
     return (
-        <><Sidebar/>
+        <>
+            <Sidebar/>
             {
                 isLoading ? <ThreeCircles
                         visible={true}
@@ -365,417 +366,420 @@ function MovieEdit({scheduleTab}) {
                         wrapperStyle={{}}
                         wrapperClass=""
                     /> :
-                    <>
-                        <section className="home-section">
-                            <div className="container body_movie bg-white">
-                                <h1 style={{paddingTop: "20px"}}>Chỉnh sửa phim {editingMovie.name}</h1>
-                                <Formik initialValues={initialValue}
-                                        validationSchema={Yup.object(validationObject)}
-                                        onSubmit={async (data) => {
-                                            Swal.fire({
-                                                title: "Phim đang được lưu!",
-                                                timerProgressBar: true,
-                                                didOpen: () => {
-                                                    Swal.showLoading();
-                                                }
-                                            })
-                                            setSubmitData(data)
-                                            if (imageUpload == null) {
-                                                setImageDownloaded(editingMovie.poster)
-                                                return
+                    <section className="home-section">
+                        <div className="container body_movie bg-white">
+                            <h1 style={{paddingTop: "20px"}}>Chỉnh sửa phim {editingMovie.name}</h1>
+                            <Formik initialValues={initialValue}
+                                    validationSchema={Yup.object(validationObject)}
+                                    onSubmit={async (data) => {
+                                        Swal.fire({
+                                            title: "Phim đang được lưu!",
+                                            timerProgressBar: true,
+                                            didOpen: () => {
+                                                Swal.showLoading();
                                             }
-                                            uploadImage()
-                                        }}>
-                                    <div className="container-fluid mb-5">
-                                        <Form>
-                                            <ul className="nav nav-tabs d-flex justify-content-center" id="myTab"
-                                                role="tablist">
-                                                <li className="nav-item">
-                                                    <a className="nav-link active" id="info-tab" data-toggle="tab"
-                                                       href="#info"
-                                                       role="tab"
-                                                       aria-controls="home"
-                                                       aria-selected="true">Thông tin phim</a>
-                                                </li>
-                                                <li className="nav-item">
-                                                    <a className="nav-link" id="schedule-tab" data-toggle="tab"
-                                                       href="#schedule"
-                                                       role="tab"
-                                                       aria-controls="profile"
-                                                       aria-selected="false">Suất chiếu</a>
-                                                </li>
-                                            </ul>
-                                            <div className="tab-content" id="myTabContent">
-                                                <div className="tab-pane fade show active" id="info" role="tabpanel"
-                                                     aria-labelledby="info-tab">
-                                                    <div className="row mt-2 d-flex justify-content-center">
-                                                        <div className="col-6">
-                                                            <div className="row mt-3">
-                                                                <div className="col-3 d-flex align-items-center">
-                                                                    <b>Poster phim</b><span
-                                                                    className="red-dot">&nbsp;*</span>
-                                                                </div>
-                                                                <div className="col row"
-                                                                     style={{marginLeft: "initial"}}>
-                                                                    <div className="custom-file col">
-                                                                        <input
-                                                                            onChange={previewImage}
-                                                                            type="file"
-                                                                            className="custom-file-input"
-                                                                            id="inputPoster"
-                                                                            name="poster"
-                                                                            accept="image/*"
-                                                                        />
-                                                                        <label
-                                                                            className="custom-file-label"
-                                                                            htmlFor="inputPoster">Chọn ảnh</label>
-                                                                    </div>
-                                                                    <ErrorMessage name="poster" component='p'
-                                                                                  className="form-err"
-                                                                                  style={{color: 'red'}}/>
-                                                                </div>
+                                        })
+                                        data.name = data.name.replace(/\s+/g, ' ')
+                                        data.actor = data.actor.replace(/\s+/g, ' ')
+                                        data.director = data.director.replace(/\s+/g, ' ')
+                                        data.publisher = data.publisher.replace(/\s+/g, ' ')
+                                        data.description = data.description.replace(/\s+/g, ' ')
+                                        setSubmitData(data)
+                                        if (imageUpload == null) {
+                                            setImageDownloaded(editingMovie.poster)
+                                            return
+                                        }
+                                        uploadImage()
+                                    }}>
+                                <div className="container-fluid mb-5">
+                                    <Form>
+                                        <ul className="nav nav-tabs d-flex justify-content-center" id="myTab"
+                                            role="tablist">
+                                            <li className="nav-item">
+                                                <a className="nav-link active" id="info-tab" data-toggle="tab"
+                                                   href="#info"
+                                                   role="tab"
+                                                   aria-controls="home"
+                                                   aria-selected="true">Thông tin phim</a>
+                                            </li>
+                                            <li className="nav-item">
+                                                <a className="nav-link" id="schedule-tab" data-toggle="tab"
+                                                   href="#schedule"
+                                                   role="tab"
+                                                   aria-controls="profile"
+                                                   aria-selected="false">Suất chiếu</a>
+                                            </li>
+                                        </ul>
+                                        <div className="tab-content" id="myTabContent">
+                                            <div className="tab-pane fade show active" id="info" role="tabpanel"
+                                                 aria-labelledby="info-tab">
+                                                <div className="row mt-2 d-flex justify-content-center">
+                                                    <div className="col-6">
+                                                        <div className="row mt-3">
+                                                            <div className="col-3 d-flex align-items-center">
+                                                                <b>Poster phim</b><span
+                                                                className={css.dot}>&nbsp;*</span>
                                                             </div>
-                                                            {imagePreview == null ?
-                                                                <div className="row mt-3 d-flex justify-content-center">
-                                                                    <div className="col-3">
-                                                                    </div>
-                                                                    <div className="col">
-                                                                        <img style={{maxWidth: "300px"}}
-                                                                             src={editingMovie.poster}
-                                                                             alt=""/>
-                                                                    </div>
-                                                                </div> :
-                                                                <div className="row mt-3 d-flex justify-content-center">
-                                                                    <div className="col-3">
-                                                                    </div>
-                                                                    <div className="col">
-                                                                        <img style={{maxWidth: "300px"}}
-                                                                             src={imagePreview}
-                                                                             alt=""/>
-                                                                    </div>
-                                                                </div>}
-                                                            <div className="row mt-3">
-                                                                <div className="col-3 d-flex align-items-center">
-                                                                    <b>Tên phim</b><span
-                                                                    className="red-dot">&nbsp;*</span>
-                                                                </div>
-                                                                <div className="col">
-                                                                    <Field type="text" className="form-control"
-                                                                           name="name"/>
-                                                                    <ErrorMessage name="name" component='p'
-                                                                                  className="form-err"
-                                                                                  style={{color: 'red'}}/>
-                                                                </div>
-
-                                                            </div>
-                                                            <div className="row mt-3">
-                                                                <div className="col-3 d-flex align-items-center">
-                                                                    <b>Diễn viên</b><span
-                                                                    className="red-dot">&nbsp;*</span>
-                                                                </div>
-                                                                <div className="col">
-                                                                    <Field type="text" className="form-control"
-                                                                           name="actor"/>
-                                                                    <ErrorMessage name="actor" component='p'
-                                                                                  className="form-err"
-                                                                                  style={{color: 'red'}}/>
-                                                                </div>
-                                                            </div>
-
-                                                            <div className="row mt-3">
-                                                                <div className="col-3 d-flex align-items-center">
-                                                                    <b>Hãng phim</b><span
-                                                                    className="red-dot">&nbsp;*</span>
-                                                                </div>
-                                                                <div className="col">
-                                                                    <Field type="text" className="form-control"
-                                                                           name="publisher"
+                                                            <div className="col row"
+                                                                 style={{marginLeft: "initial"}}>
+                                                                <div className="custom-file col">
+                                                                    <input
+                                                                        onChange={previewImage}
+                                                                        type="file"
+                                                                        className="custom-file-input"
+                                                                        id="inputPoster"
+                                                                        name="poster"
+                                                                        accept="image/*"
                                                                     />
-                                                                    <ErrorMessage name="publisher" component='p'
-                                                                                  className="form-err"
-                                                                                  style={{color: 'red'}}/>
+                                                                    <label
+                                                                        className="custom-file-label"
+                                                                        htmlFor="inputPoster">Chọn ảnh</label>
                                                                 </div>
-                                                            </div>
-
-                                                            <div className="row mt-3">
-                                                                <div className="col-3 d-flex align-items-center">
-                                                                    <b>Đạo diễn</b><span
-                                                                    className="red-dot">&nbsp;*</span>
-                                                                </div>
-                                                                <div className="col">
-                                                                    <Field type="text" className="form-control"
-                                                                           name="director"
-                                                                    />
-                                                                    <ErrorMessage name="director" component='p'
-                                                                                  className="form-err"
-                                                                                  style={{color: 'red'}}/>
-                                                                </div>
-                                                            </div>
-
-                                                            <div className="row mt-3">
-                                                                <div className="col-3 d-flex align-items-center">
-                                                                    <b>Quốc gia</b><span
-                                                                    className="red-dot">&nbsp;*</span>
-                                                                </div>
-                                                                <div className="col">
-                                                                    <Field as="select" className="custom-select"
-                                                                           name="country">
-                                                                        {countries.map((country) => (
-                                                                            country
-                                                                                .name.common === editingMovie.country ?
-                                                                                <option key={country.name.common}
-                                                                                        value={country.name.common}
-                                                                                        defaultValue>{country.name.common}</option> :
-                                                                                <option key={country.name.common}
-                                                                                        value={country.name.common}>{country.name.common}</option>
-                                                                        ))}
-                                                                    </Field>
-                                                                </div>
-                                                            </div>
-
-                                                            <div className="row mt-3">
-                                                                <div className="col-3 d-flex align-items-center">
-                                                                    <b>Ngày bắt đầu chiếu</b><span
-                                                                    className="red-dot">&nbsp;*</span>
-                                                                </div>
-                                                                <div className="col">
-                                                                    <Field type="date" className="form-control"
-                                                                           name="startDate"/>
-                                                                    <ErrorMessage name="startDate" component='p'
-                                                                                  className="form-err"
-                                                                                  style={{color: 'red'}}/>
-                                                                </div>
-                                                            </div>
-
-                                                            <div className="row mt-3">
-                                                                <div className="col-3 d-flex align-items-center">
-                                                                    <b>Thời lượng (phút)</b><span
-                                                                    className="red-dot">&nbsp;*</span>
-                                                                </div>
-                                                                <div className="col">
-                                                                    <Field type="number" className="form-control"
-                                                                           name="duration"
-                                                                           disabled/>
-                                                                    <ErrorMessage name="duration" component='p'
-                                                                                  className="form-err"
-                                                                                  style={{color: 'red'}}/>
-                                                                </div>
-                                                            </div>
-                                                            <div className="row mt-3">
-                                                                <div className="col-3 d-flex align-items-center">
-                                                                    <b>Phiên bản</b><span
-                                                                    className="red-dot">&nbsp;*</span>
-                                                                </div>
-                                                                <div className="col">
-                                                                    {movieAtt.versions.map((version) => (
-                                                                            <div
-                                                                                className="form-check form-check-inline"
-                                                                                key={version.id}>
-                                                                                <Field className="form-check-input"
-                                                                                       id={"version" + version.id}
-                                                                                       type="checkbox"
-                                                                                       name="version"
-                                                                                       value={version.id.toString()}
-                                                                                />
-                                                                                <label className="form-check-label"
-                                                                                       htmlFor={"version" + version.id}>{version.name}</label>
-                                                                            </div>
-                                                                        )
-                                                                    )}
-                                                                    <ErrorMessage name="version" component='p'
-                                                                                  className="form-err"
-                                                                                  style={{color: 'red'}}/>
-                                                                </div>
-                                                            </div>
-
-                                                            <div className="row mt-3">
-                                                                <div className="col-3 d-flex align-items-center">
-                                                                    <b>Trailer</b><span
-                                                                    className="red-dot">&nbsp;*</span>
-                                                                </div>
-                                                                <div className="col">
-                                                                    <Field type="text" className="form-control"
-                                                                           name="trailer"/>
-                                                                    <ErrorMessage name="trailer" component='p'
-                                                                                  className="form-err"
-                                                                                  style={{color: 'red'}}/>
-                                                                </div>
-                                                            </div>
-
-                                                            <div className="row mt-3">
-                                                                <div className="col-3 d-flex align-items-center">
-                                                                    <b>Thể loại</b><span
-                                                                    className="red-dot">&nbsp;*</span>
-                                                                </div>
-                                                                <div className="col row"
-                                                                     style={{marginLeft: "initial"}}>
-                                                                    {movieAtt.genres.map((genre) => (
-                                                                            <div
-                                                                                className="form-check form-check-inline col-4 col-xl-3"
-                                                                                key={genre.id}>
-                                                                                <Field className="form-check-input"
-                                                                                       id={"genre" + genre.id}
-                                                                                       type="checkbox"
-                                                                                       name="genre"
-                                                                                       value={genre.id.toString()}/>
-                                                                                <label className="form-check-label"
-                                                                                       htmlFor={"genre" + genre.id}>{genre.name}</label>
-                                                                            </div>
-                                                                        )
-                                                                    )}
-                                                                    <ErrorMessage name="genre" component='p'
-                                                                                  className="form-err"
-                                                                                  style={{color: 'red'}}/>
-                                                                </div>
-                                                            </div>
-                                                            <div className="row mt-3">
-                                                                <div className="col-3 d-flex align-items-center">
-                                                                    <b>Nội dung</b>
-                                                                </div>
-                                                                <div className="col">
-                                                                    <Field name="description" type="text"
-                                                                           className="form-control"
-                                                                    />
-                                                                    <ErrorMessage name="description" component='p'
-                                                                                  className="form-err"
-                                                                                  style={{color: 'red'}}/>
-                                                                </div>
-                                                            </div>
-                                                            <div className="row mt-3">
-                                                                <div className="col-3 d-flex align-items-center">
-                                                                    <b>Giá vé (VND)</b><span
-                                                                    className="red-dot">&nbsp;*</span>
-                                                                </div>
-                                                                <div className="col">
-                                                                    <Field type="number" className="form-control"
-                                                                           name="ticketPrice"
-                                                                    />
-                                                                    <ErrorMessage name="ticketPrice" component='p'
-                                                                                  className="form-err"
-                                                                                  style={{color: 'red'}}/>
-                                                                </div>
+                                                                <ErrorMessage name="poster" component='p'
+                                                                              className="form-err"
+                                                                              style={{color: 'red'}}/>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                </div>
-                                                <div className="tab-pane fade" id="schedule" role="tabpanel"
-                                                     aria-labelledby="schedule-tab">
-                                                    <div>
-                                                        <h2>
-                                                            <b>Tháng {curDate.getMonth() + 1}</b> {curDate.getFullYear()}
-                                                        </h2>
-                                                        <div className="input-group mb-3">
-                                                            <Field as="select" className="custom-select" name="hall"
-                                                                   onChange={hallOnChangeHandler}>
-                                                                <option defaultValue value="-1">Chọn sảnh chiếu
-                                                                    phim...
-                                                                </option>
-                                                                {movieAtt.halls.map((hall) => (
-                                                                    <option key={hall.id} value={"" + hall.id}>
-                                                                        {hall.name}
-                                                                    </option>
-                                                                ))}
-                                                            </Field>
-                                                        </div>
-                                                    </div>
+                                                        {imagePreview == null ?
+                                                            <div className="row mt-3 d-flex justify-content-center">
+                                                                <div className="col-3">
+                                                                </div>
+                                                                <div className="col">
+                                                                    <img style={{maxWidth: "300px"}}
+                                                                         src={editingMovie.poster}
+                                                                         alt=""/>
+                                                                </div>
+                                                            </div> :
+                                                            <div className="row mt-3 d-flex justify-content-center">
+                                                                <div className="col-3">
+                                                                </div>
+                                                                <div className="col">
+                                                                    <img style={{maxWidth: "300px"}}
+                                                                         src={imagePreview}
+                                                                         alt=""/>
+                                                                </div>
+                                                            </div>}
+                                                        <div className="row mt-3">
+                                                            <div className="col-3 d-flex align-items-center">
+                                                                <b>Tên phim</b><span
+                                                                className={css.dot}>&nbsp;*</span>
+                                                            </div>
+                                                            <div className="col">
+                                                                <Field type="text" className="form-control"
+                                                                       name="name"/>
+                                                                <ErrorMessage name="name" component='p'
+                                                                              className="form-err"
+                                                                              style={{color: 'red'}}/>
+                                                            </div>
 
-                                                    <div className="row mt-2 d-flex justify-content-center">
-                                                        {isTableUpdating ? <ThreeCircles
-                                                            visible={true}
-                                                            height="100"
-                                                            width="100"
-                                                            color="#4fa94d"
-                                                            ariaLabel="three-circles-loading"
-                                                            wrapperStyle={{}}
-                                                            wrapperClass=""
-                                                        /> : <></>}
-                                                        <table className="table table-bordered" id="scheduleTable">
-                                                            <thead>
-                                                            <tr>
-                                                                <th style={{width: "3%"}}></th>
-                                                                {sevenLoop.map((i) => {
-                                                                    let dayResult;
-                                                                    let dayIncrease = new Date();
-                                                                    dayIncrease.setDate(curDate.getDate() + i)
-                                                                    let dayNumber = dayIncrease.getDay();
-                                                                    switch (dayNumber) {
-                                                                        case 0:
-                                                                            dayResult = "Chủ Nhật";
-                                                                            break;
-                                                                        case 1:
-                                                                            dayResult = "Thứ Hai";
-                                                                            break;
-                                                                        case 2:
-                                                                            dayResult = "Thứ Ba";
-                                                                            break;
-                                                                        case 3:
-                                                                            dayResult = "Thứ Tư";
-                                                                            break;
-                                                                        case 4:
-                                                                            dayResult = "Thứ Năm";
-                                                                            break;
-                                                                        case 5:
-                                                                            dayResult = "Thứ Sáu";
-                                                                            break;
-                                                                        case 6:
-                                                                            dayResult = "Thứ Bảy";
-                                                                            break;
-                                                                        default:
-                                                                            dayResult = "Lỗi"
-                                                                    }
-                                                                    return (
-                                                                        <th style={{width: "13%"}}
-                                                                            key={i}>{dayResult + ` / Ngày ${curDate.getDate() + i}`}</th>)
-                                                                })}
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            {movieAtt.scheduleTimes.map((scheduleTime) => (
-                                                                <tr key={scheduleTime.id}>
-                                                                    <td>{scheduleTime.scheduleTime}</td>
-                                                                    {sevenLoop.map((i) => {
-                                                                        let dayIncrease = new Date();
-                                                                        dayIncrease.setDate(curDate.getDate() + i)
-                                                                        let idValue = dayIncrease.getFullYear() + "-" + ("0" + (dayIncrease.getMonth() + 1)).slice(-2) + "-" + ("0" + dayIncrease.getDate()).slice(-2) + "," + scheduleTime.id
-                                                                        return (
-                                                                            <td id={idValue + ",cell"} key={i}
-                                                                                onClick={tdOnClickHandler}>
-                                                                                <input id={idValue}
-                                                                                       hidden={true}
-                                                                                       type="checkbox"
-                                                                                       name="schedules"
-                                                                                       value={idValue}/>
-                                                                                <p id={idValue + " title"}></p>
-                                                                            </td>
-                                                                        )
-                                                                    })}
-                                                                </tr>
-                                                            ))}
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                                <div className="d-flex justify-content-center mt-3">
-                                                    <div>
-                                                        <button type="submit" className="btn__add mr-2">
-                                                            Lưu lại
-                                                        </button>
-                                                    </div>
-                                                    <div>
-                                                        <Link to="/movie">
-                                                            <button type="button" className="btn__back">Quay lại
-                                                            </button>
-                                                        </Link>
+                                                        </div>
+                                                        <div className="row mt-3">
+                                                            <div className="col-3 d-flex align-items-center">
+                                                                <b>Diễn viên</b><span
+                                                                className={css.dot}>&nbsp;*</span>
+                                                            </div>
+                                                            <div className="col">
+                                                                <Field type="text" className="form-control"
+                                                                       name="actor"/>
+                                                                <ErrorMessage name="actor" component='p'
+                                                                              className="form-err"
+                                                                              style={{color: 'red'}}/>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="row mt-3">
+                                                            <div className="col-3 d-flex align-items-center">
+                                                                <b>Hãng phim</b><span
+                                                                className={css.dot}>&nbsp;*</span>
+                                                            </div>
+                                                            <div className="col">
+                                                                <Field type="text" className="form-control"
+                                                                       name="publisher"
+                                                                />
+                                                                <ErrorMessage name="publisher" component='p'
+                                                                              className="form-err"
+                                                                              style={{color: 'red'}}/>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="row mt-3">
+                                                            <div className="col-3 d-flex align-items-center">
+                                                                <b>Đạo diễn</b><span
+                                                                className={css.dot}>&nbsp;*</span>
+                                                            </div>
+                                                            <div className="col">
+                                                                <Field type="text" className="form-control"
+                                                                       name="director"
+                                                                />
+                                                                <ErrorMessage name="director" component='p'
+                                                                              className="form-err"
+                                                                              style={{color: 'red'}}/>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="row mt-3">
+                                                            <div className="col-3 d-flex align-items-center">
+                                                                <b>Quốc gia</b><span
+                                                                className={css.dot}>&nbsp;*</span>
+                                                            </div>
+                                                            <div className="col">
+                                                                <Field as="select" className="custom-select"
+                                                                       name="country">
+                                                                    {countries.map((country) => (
+                                                                        country
+                                                                            .name.common === editingMovie.country ?
+                                                                            <option key={country.name.common}
+                                                                                    value={country.name.common}
+                                                                                    defaultValue>{country.name.common}</option> :
+                                                                            <option key={country.name.common}
+                                                                                    value={country.name.common}>{country.name.common}</option>
+                                                                    ))}
+                                                                </Field>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="row mt-3">
+                                                            <div className="col-3 d-flex align-items-center">
+                                                                <b>Ngày bắt đầu chiếu</b><span
+                                                                className={css.dot}>&nbsp;*</span>
+                                                            </div>
+                                                            <div className="col">
+                                                                <Field type="date" className="form-control"
+                                                                       name="startDate"/>
+                                                                <ErrorMessage name="startDate" component='p'
+                                                                              className="form-err"
+                                                                              style={{color: 'red'}}/>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="row mt-3">
+                                                            <div className="col-3 d-flex align-items-center">
+                                                                <b>Thời lượng (phút)</b><span
+                                                                className={css.dot}>&nbsp;*</span>
+                                                            </div>
+                                                            <div className="col">
+                                                                <Field type="number" className="form-control"
+                                                                       name="duration"
+                                                                       disabled/>
+                                                                <ErrorMessage name="duration" component='p'
+                                                                              className="form-err"
+                                                                              style={{color: 'red'}}/>
+                                                            </div>
+                                                        </div>
+                                                        <div className="row mt-3">
+                                                            <div className="col-3 d-flex align-items-center">
+                                                                <b>Phiên bản</b><span
+                                                                className={css.dot}>&nbsp;*</span>
+                                                            </div>
+                                                            <div className="col">
+                                                                {movieAtt.versions.map((version) => (
+                                                                        <div
+                                                                            className="form-check form-check-inline"
+                                                                            key={version.id}>
+                                                                            <Field className="form-check-input"
+                                                                                   id={"version" + version.id}
+                                                                                   type="checkbox"
+                                                                                   name="version"
+                                                                                   value={version.id.toString()}
+                                                                            />
+                                                                            <label className="form-check-label"
+                                                                                   htmlFor={"version" + version.id}>{version.name}</label>
+                                                                        </div>
+                                                                    )
+                                                                )}
+                                                                <ErrorMessage name="version" component='p'
+                                                                              className="form-err"
+                                                                              style={{color: 'red'}}/>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="row mt-3">
+                                                            <div className="col-3 d-flex align-items-center">
+                                                                <b>Trailer</b><span
+                                                                className={css.dot}>&nbsp;*</span>
+                                                            </div>
+                                                            <div className="col">
+                                                                <Field type="text" className="form-control"
+                                                                       name="trailer"/>
+                                                                <ErrorMessage name="trailer" component='p'
+                                                                              className="form-err"
+                                                                              style={{color: 'red'}}/>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="row mt-3">
+                                                            <div className="col-3 d-flex align-items-center">
+                                                                <b>Thể loại</b><span
+                                                                className={css.dot}>&nbsp;*</span>
+                                                            </div>
+                                                            <div className="col row"
+                                                                 style={{marginLeft: "initial"}}>
+                                                                {movieAtt.genres.map((genre) => (
+                                                                        <div
+                                                                            className="form-check form-check-inline col-4 col-xl-3"
+                                                                            key={genre.id}>
+                                                                            <Field className="form-check-input"
+                                                                                   id={"genre" + genre.id}
+                                                                                   type="checkbox"
+                                                                                   name="genre"
+                                                                                   value={genre.id.toString()}/>
+                                                                            <label className="form-check-label"
+                                                                                   htmlFor={"genre" + genre.id}>{genre.name}</label>
+                                                                        </div>
+                                                                    )
+                                                                )}
+                                                                <ErrorMessage name="genre" component='p'
+                                                                              className="form-err"
+                                                                              style={{color: 'red'}}/>
+                                                            </div>
+                                                        </div>
+                                                        <div className="row mt-3">
+                                                            <div className="col-3 d-flex align-items-center">
+                                                                <b>Nội dung</b>
+                                                            </div>
+                                                            <div className="col">
+                                                                <Field name="description" type="text"
+                                                                       className="form-control"
+                                                                />
+                                                                <ErrorMessage name="description" component='p'
+                                                                              className="form-err"
+                                                                              style={{color: 'red'}}/>
+                                                            </div>
+                                                        </div>
+                                                        <div className="row mt-3">
+                                                            <div className="col-3 d-flex align-items-center">
+                                                                <b>Giá vé (VND)</b><span
+                                                                className={css.dot}>&nbsp;*</span>
+                                                            </div>
+                                                            <div className="col">
+                                                                <Field type="number" className="form-control"
+                                                                       name="ticketPrice"
+                                                                />
+                                                                <ErrorMessage name="ticketPrice" component='p'
+                                                                              className="form-err"
+                                                                              style={{color: 'red'}}/>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className="col-2"></div>
-                                        </Form>
-                                    </div>
-                                </Formik>
-                            </div>
-                        </section>
-                    </>
+                                            <div className="tab-pane fade" id="schedule" role="tabpanel"
+                                                 aria-labelledby="schedule-tab">
+                                                <div>
+                                                    <h2>
+                                                        <b>Tháng {curDate.getMonth() + 1}</b> {curDate.getFullYear()}
+                                                    </h2>
+                                                    <div className="input-group mb-3">
+                                                        <Field as="select" className="custom-select" name="hall"
+                                                               onChange={hallOnChangeHandler}>
+                                                            <option defaultValue value="-1">Chọn sảnh chiếu
+                                                                phim...
+                                                            </option>
+                                                            {movieAtt.halls.map((hall) => (
+                                                                <option key={hall.id} value={"" + hall.id}>
+                                                                    {hall.name}
+                                                                </option>
+                                                            ))}
+                                                        </Field>
+                                                    </div>
+                                                </div>
+
+                                                <div className="row mt-2 d-flex justify-content-center">
+                                                    {isTableUpdating ? <ThreeCircles
+                                                        visible={true}
+                                                        height="100"
+                                                        width="100"
+                                                        color="#4fa94d"
+                                                        ariaLabel="three-circles-loading"
+                                                        wrapperStyle={{}}
+                                                        wrapperClass=""
+                                                    /> : <></>}
+                                                    <table className="table table-bordered" id="scheduleTable">
+                                                        <thead>
+                                                        <tr>
+                                                            <th style={{width: "3%"}}></th>
+                                                            {sevenLoop.map((i) => {
+                                                                let dayResult;
+                                                                let dayIncrease = new Date();
+                                                                dayIncrease.setDate(curDate.getDate() + i)
+                                                                let dayNumber = dayIncrease.getDay();
+                                                                switch (dayNumber) {
+                                                                    case 0:
+                                                                        dayResult = "Chủ Nhật";
+                                                                        break;
+                                                                    case 1:
+                                                                        dayResult = "Thứ Hai";
+                                                                        break;
+                                                                    case 2:
+                                                                        dayResult = "Thứ Ba";
+                                                                        break;
+                                                                    case 3:
+                                                                        dayResult = "Thứ Tư";
+                                                                        break;
+                                                                    case 4:
+                                                                        dayResult = "Thứ Năm";
+                                                                        break;
+                                                                    case 5:
+                                                                        dayResult = "Thứ Sáu";
+                                                                        break;
+                                                                    case 6:
+                                                                        dayResult = "Thứ Bảy";
+                                                                        break;
+                                                                    default:
+                                                                        dayResult = "Lỗi"
+                                                                }
+                                                                return (
+                                                                    <th style={{width: "13%"}}
+                                                                        key={i}>{dayResult + ` / Ngày ${curDate.getDate() + i}`}</th>)
+                                                            })}
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        {movieAtt.scheduleTimes.map((scheduleTime) => (
+                                                            <tr key={scheduleTime.id}>
+                                                                <td>{scheduleTime.scheduleTime}</td>
+                                                                {sevenLoop.map((i) => {
+                                                                    let dayIncrease = new Date();
+                                                                    dayIncrease.setDate(curDate.getDate() + i)
+                                                                    let idValue = dayIncrease.getFullYear() + "-" + ("0" + (dayIncrease.getMonth() + 1)).slice(-2) + "-" + ("0" + dayIncrease.getDate()).slice(-2) + "," + scheduleTime.id
+                                                                    return (
+                                                                        <td id={idValue + ",cell"} key={i}
+                                                                            onClick={tdOnClickHandler}>
+                                                                            <input id={idValue}
+                                                                                   hidden={true}
+                                                                                   type="checkbox"
+                                                                                   name="schedules"
+                                                                                   value={idValue}/>
+                                                                            <p id={idValue + " title"}></p>
+                                                                        </td>
+                                                                    )
+                                                                })}
+                                                            </tr>
+                                                        ))}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div className="d-flex justify-content-center mt-3">
+                                                <div>
+                                                    <button type="submit" className="btn__add mr-2">
+                                                        Lưu lại
+                                                    </button>
+                                                </div>
+                                                <div>
+                                                    <Link to="/movie">
+                                                        <button type="button" className="btn__back">Quay lại
+                                                        </button>
+                                                    </Link>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="col-2"></div>
+                                    </Form>
+                                </div>
+                            </Formik>
+                        </div>
+                    </section>
             }
         </>
     )

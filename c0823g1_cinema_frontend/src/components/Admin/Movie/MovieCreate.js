@@ -14,6 +14,7 @@ import {v4} from "uuid";
 import {Sidebar} from "../Sidebar/Sidebar";
 import Swal from "sweetalert2";
 import {ThreeCircles} from "react-loader-spinner";
+import css from "./movie.module.css"
 
 export default function MovieCreate() {
     const navigate = useNavigate();
@@ -43,7 +44,7 @@ export default function MovieCreate() {
     }
 
     const validationObject = {
-        name: Yup.string().required("Tên không được để trống").min(2, "Tên phim ít nhất 2 ký tự").max(255, "Tên phim tối đa 255 ký tự"),
+        name: Yup.string().required("Tên không được để trống").min(2, "Tên phim ít nhất 2 ký tự").max(255, "Tên phim tối đa 255 ký tự").trim("Ký tự trống"),
         actor: Yup.string().required("Tên diễn viên không được để trống").min(2, "Tên diễn viên ít nhất 2 ký tự").max(255, "Tên phim tối đa 255 ký tự"),
         publisher: Yup.string().required("Tên nhà sản xuất không được để trống").min(2, "Tên nhà sản xuất ít nhất 2 ký tự").max(255, "Tên nhà sản xuất tối đa 255 ký tự"),
         director: Yup.string().required("Tên đạo diễn không được để trống").min(2, "Tên đạo diễn ít nhất 2 ký tự").max(255, "Tên đạo diễn tối đa 255 ký tự"),
@@ -203,6 +204,11 @@ export default function MovieCreate() {
                                                     Swal.showLoading();
                                                 }
                                             })
+                                            data.name = data.name.replace(/\s+/g, ' ')
+                                            data.actor = data.actor.replace(/\s+/g, ' ')
+                                            data.director = data.director.replace(/\s+/g, ' ')
+                                            data.publisher = data.publisher.replace(/\s+/g, ' ')
+                                            data.description = data.description.replace(/\s+/g, ' ')
                                             setSubmitData(data)
                                             uploadImage()
                                         }}>
@@ -226,7 +232,7 @@ export default function MovieCreate() {
                                                             <div className="row mt-3">
                                                                 <div className="col-3 d-flex align-items-center">
                                                                     <b>Poster phim</b><span
-                                                                    className="red-dot">&nbsp;*</span>
+                                                                    className={css.dot}>&nbsp;*</span>
                                                                 </div>
                                                                 <div className="col row"
                                                                      style={{marginLeft: "initial"}}>
@@ -259,7 +265,7 @@ export default function MovieCreate() {
                                                             <div className="row mt-3">
                                                                 <div className="col-3 d-flex align-items-center">
                                                                     <b>Tên phim</b><span
-                                                                    className="red-dot">&nbsp;*</span>
+                                                                    className={css.dot}>&nbsp;*</span>
                                                                 </div>
                                                                 <div className="col">
                                                                     <Field type="text" className="form-control"
@@ -273,7 +279,7 @@ export default function MovieCreate() {
                                                             <div className="row mt-3">
                                                                 <div className="col-3 d-flex align-items-center">
                                                                     <b>Diễn viên</b><span
-                                                                    className="red-dot">&nbsp;*</span>
+                                                                    className={css.dot}>&nbsp;*</span>
                                                                 </div>
                                                                 <div className="col">
                                                                     <Field type="text" className="form-control"
@@ -287,7 +293,7 @@ export default function MovieCreate() {
                                                             <div className="row mt-3">
                                                                 <div className="col-3 d-flex align-items-center">
                                                                     <b>Hãng phim</b><span
-                                                                    className="red-dot">&nbsp;*</span>
+                                                                    className={css.dot}>&nbsp;*</span>
                                                                 </div>
                                                                 <div className="col">
                                                                     <Field type="text" className="form-control"
@@ -301,7 +307,7 @@ export default function MovieCreate() {
                                                             <div className="row mt-3">
                                                                 <div className="col-3 d-flex align-items-center">
                                                                     <b>Đạo diễn</b><span
-                                                                    className="red-dot">&nbsp;*</span>
+                                                                    className={css.dot}>&nbsp;*</span>
                                                                 </div>
                                                                 <div className="col">
                                                                     <Field type="text" className="form-control"
@@ -315,7 +321,7 @@ export default function MovieCreate() {
                                                             <div className="row mt-3">
                                                                 <div className="col-3 d-flex align-items-center">
                                                                     <b>Quốc gia</b><span
-                                                                    className="red-dot">&nbsp;*</span>
+                                                                    className={css.dot}>&nbsp;*</span>
                                                                 </div>
                                                                 <div className="col">
                                                                     <Field as="select" className="custom-select"
@@ -334,7 +340,7 @@ export default function MovieCreate() {
                                                             <div className="row mt-3">
                                                                 <div className="col-3 d-flex align-items-center">
                                                                     <b>Ngày bắt đầu chiếu</b><span
-                                                                    className="red-dot">&nbsp;*</span>
+                                                                    className={css.dot}>&nbsp;*</span>
                                                                 </div>
                                                                 <div className="col">
                                                                     <Field type="date" className="form-control"
@@ -348,7 +354,7 @@ export default function MovieCreate() {
                                                             <div className="row mt-3">
                                                                 <div className="col-3 d-flex align-items-center">
                                                                     <b>Thời lượng (phút)</b><span
-                                                                    className="red-dot">&nbsp;*</span>
+                                                                    className={css.dot}>&nbsp;*</span>
                                                                 </div>
                                                                 <div className="col">
                                                                     <Field type="number" className="form-control"
@@ -361,7 +367,7 @@ export default function MovieCreate() {
                                                             <div className="row mt-3">
                                                                 <div className="col-3 d-flex align-items-center">
                                                                     <b>Phiên bản</b><span
-                                                                    className="red-dot">&nbsp;*</span>
+                                                                    className={css.dot}>&nbsp;*</span>
                                                                 </div>
                                                                 <div className="col">
                                                                     {movieAtt.versions.map((version) => (
@@ -385,7 +391,7 @@ export default function MovieCreate() {
                                                             <div className="row mt-3">
                                                                 <div className="col-3 d-flex align-items-center">
                                                                     <b>Trailer</b><span
-                                                                    className="red-dot">&nbsp;*</span>
+                                                                    className={css.dot}>&nbsp;*</span>
                                                                 </div>
                                                                 <div className="col">
                                                                     <Field type="text" className="form-control"
@@ -399,7 +405,7 @@ export default function MovieCreate() {
                                                             <div className="row mt-3">
                                                                 <div className="col-3 d-flex align-items-center">
                                                                     <b>Thể loại</b><span
-                                                                    className="red-dot">&nbsp;*</span>
+                                                                    className={css.dot}>&nbsp;*</span>
                                                                 </div>
                                                                 <div className="col row"
                                                                      style={{marginLeft: "initial"}}>
@@ -436,7 +442,7 @@ export default function MovieCreate() {
                                                             <div className="row mt-3">
                                                                 <div className="col-3 d-flex align-items-center">
                                                                     <b>Giá vé (VND)</b><span
-                                                                    className="red-dot">&nbsp;*</span>
+                                                                    className={css.dot}>&nbsp;*</span>
                                                                 </div>
                                                                 <div className="col">
                                                                     <Field type="number" className="form-control"
