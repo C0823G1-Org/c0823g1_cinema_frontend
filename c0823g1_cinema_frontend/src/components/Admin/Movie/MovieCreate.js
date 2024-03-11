@@ -181,7 +181,6 @@ export default function MovieCreate() {
                         wrapperStyle={{}}
                         wrapperClass=""
                     /> :
-                    <>
                         <section className="home-section">
                             <div className="container body_movie bg-white">
                                 <h1 style={{paddingTop: "20px"}}>Thêm mới phim</h1>
@@ -477,7 +476,6 @@ export default function MovieCreate() {
                                 </Formik>
                             </div>
                         </section>
-                    </>
             }
         </>
     )
