@@ -117,3 +117,12 @@ export const getTopMovie = async (page, name) => {
     const temp = await axios.get(`http://localhost:8080/movie/statistics?page=${page}&name=${name}`);
     return temp.data;
 }
+
+export async function checkIfMovieDuplicated(movie) {
+    try {
+        const result = await axios.post("http://localhost:8080/movie/check", movie)
+        return result.data
+    } catch (e) {
+        return e.response.status
+    }
+}
