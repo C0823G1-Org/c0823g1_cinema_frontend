@@ -1,5 +1,10 @@
 import React, {useEffect, useState} from "react";
-import {createMovie, getAllCountries, getAllMovieAttributes, getScheduleByHallId} from "../../../service/MovieService";
+import {
+    checkIfMovieDuplicated,
+    createMovie,
+    getAllCountries,
+    getAllMovieAttributes,
+} from "../../../service/MovieService";
 import {ErrorMessage, Field, Form, Formik} from "formik";
 import {Link, useNavigate} from "react-router-dom";
 import * as Yup from 'yup';
@@ -66,7 +71,7 @@ export default function MovieCreate() {
                     let timerInterval;
                     Swal.fire({
                         title: "Phim đã được lưu thành công!",
-                        html: "Trở về màn hình danh sách phim sau <b></b>s.",
+                        html: "Chuyển hướng màn hình sau <b></b>s.",
                         timer: 2000,
                         timerProgressBar: true,
                         didOpen: () => {
@@ -183,6 +188,15 @@ export default function MovieCreate() {
                                 <Formik initialValues={initialValue}
                                         validationSchema={Yup.object(validationObject)}
                                         onSubmit={async (data) => {
+                                            let isDuplicated = await checkIfMovieDuplicated(data)
+                                            if (isDuplicated) {
+                                                Swal.fire({
+                                                    icon: "error",
+                                                    title: "Lỗi...",
+                                                    text: "Đã có phim trùng tên và ngày trong cơ sở dữ liệu!",
+                                                });
+                                                return
+                                            }
                                             Swal.fire({
                                                 title: "Phim đang được lưu!",
                                                 timerProgressBar: true,
@@ -468,4 +482,3 @@ export default function MovieCreate() {
         </>
     )
 }
-

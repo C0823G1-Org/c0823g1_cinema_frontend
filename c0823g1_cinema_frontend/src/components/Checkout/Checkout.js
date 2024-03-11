@@ -154,7 +154,7 @@ https://v6.exchangerate-api.com/v6/21e06263576c496fe2175f9d/latest/USD
             navigate(`/booking/seat`, { state: { myResult: { "movieId": resl.movieId, "date": resl.date, "scheduleTimeId": resl.scheduleTimeId, "backId": resl.backId } } })
             swal({
                 title: "Lỗi",
-                text: "Ghế đã có người đặt!",
+                text: "Ghế đã có người đặt trước! Xin mời bạn chọn lại",
                 type: "error",
                 icon: "error",
                 button: {

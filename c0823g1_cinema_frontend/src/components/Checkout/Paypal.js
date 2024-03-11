@@ -36,15 +36,15 @@ export function Paypal(props) {
                     let result = await bookingService.handleFail(dataTicket)
                     console.log(err);
                     navigate("/user/information")
-                    swal({
-                        title: "Thông báo",
-                        text: "Thanh toán không thành công!",
-                        type: "error",
-                        icon: "error",
-                        button: {
-                            text: "OK",
-                        },
-                    });
+                    // swal({
+                    //     title: "Thông báo",
+                    //     text: "Thanh toán không thành công!",
+                    //     type: "error",
+                    //     icon: "error",
+                    //     button: {
+                    //         text: "OK",
+                    //     },
+                    // });
                 },
                 style: {
                     layout: 'horizontal',

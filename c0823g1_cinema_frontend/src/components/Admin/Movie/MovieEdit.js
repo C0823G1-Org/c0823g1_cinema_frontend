@@ -14,8 +14,6 @@ import {v4} from "uuid";
 import Swal from 'sweetalert2'
 import {ThreeCircles} from "react-loader-spinner";
 import {getScheduleByMovieId} from "../../../service/BookingService";
-import css from "./css/movie.module.css"
-import {getjQuery} from "bootstrap/js/src/util";
 
 function MovieEdit({scheduleTab}) {
     const params = useParams();
@@ -382,6 +380,10 @@ function MovieEdit({scheduleTab}) {
                                                 }
                                             })
                                             setSubmitData(data)
+                                            if (imageUpload == null) {
+                                                setImageDownloaded(editingMovie.poster)
+                                                return
+                                            }
                                             uploadImage()
                                         }}>
                                     <div className="container-fluid mb-5">
