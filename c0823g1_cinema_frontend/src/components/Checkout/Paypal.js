@@ -23,7 +23,7 @@ export function Paypal(props) {
 
                 onApprove: async (data, actions) => {
                     await bookingService.handleSuccess(dataTicket);
-                    navigate("/user/information")
+                    navigate(`/user/information`)
 
                     swal({
                         title: "Thông báo",
@@ -52,8 +52,20 @@ export function Paypal(props) {
                             text: "OK",
                         },
                     });
+                },
+                style: {
+                    layout: 'horizontal',
+                    color: 'gold',
+                    shape: 'rect',
+                    label: 'paypal',
+                    height: 40,
+                    'padding-top': '15px'
+                },
+                funding: {
+                    disallowed: [window.paypal.FUNDING.CARD, window.paypal.FUNDING.CREDIT]
                 }
             })
+
             .render(paypal.current);
     }, [sum, dataTicket]);
 

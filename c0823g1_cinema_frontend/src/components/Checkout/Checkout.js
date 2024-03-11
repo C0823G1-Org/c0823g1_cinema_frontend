@@ -192,6 +192,8 @@ https://v6.exchangerate-api.com/v6/21e06263576c496fe2175f9d/latest/USD
 
 
 
+
+
     const handleBack = async () => {
         let movieId = await bookingService.handleFail({
             "totalAmount": dataA.sum,
@@ -266,13 +268,20 @@ https://www.galaxycine.vn/
                                     </tr>
                                     <tr>
                                         <th colSpan={2} className="thTable">
-                                            {checkout ? <CountdownClock information={{
+                                            {/* {checkout ? <CountdownClock information={{
                                                 "totalAmount": dataA.sum,
                                                 "accountId": dataA.accountId,
                                                 "scheduleId": dataA.scheduleId,
                                                 "seat": dataA.seat,
                                                 "bookingId": dataA.bookingId
-                                            }} /> : null}
+                                            }} /> : null} */}
+                                            <CountdownClock information={{
+                                                "totalAmount": dataA.sum,
+                                                "accountId": dataA.accountId,
+                                                "scheduleId": dataA.scheduleId,
+                                                "seat": dataA.seat,
+                                                "bookingId": dataA.bookingId
+                                            }} />
 
                                         </th>
                                     </tr>
@@ -291,10 +300,12 @@ https://www.galaxycine.vn/
                                                         "seat": dataA.seat,
                                                         "bookingId": dataA.bookingId,
                                                         "seatNumber": dataA.seatNumber,
-                                                        "vnd": { vnd }
+                                                        "vnd": { vnd },
+                                                        "accountId": dataA.accountId,
                                                     }
 
                                                     }
+                                                    amount={null}
                                                 />
                                             ) : (
                                                 <button className="btn btn__edit"

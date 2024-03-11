@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import Figure from 'react-bootstrap/Figure';
 import Footer from "../Home/Footer";
 import HeaderTemplateAdmin from "../Home/HeaderTemplateAdmin";
+import MySwal from "sweetalert2";
 
 export default function BookingSeat() {
     const navigate = useNavigate();
@@ -60,29 +61,68 @@ export default function BookingSeat() {
 
     }
 
+
     const handleSubmit = async () => {
-        const newResult = {
-            "seatList": selected,
-            "scheduleId": schedule.id,
-            "accountId": userId,
-            "backId": data.backId,
-            "movieId": data.movieId,
-            "date": data.date,
-            "scheduleTimeId": data.scheduleTimeId
-        };
-
-        setResult(newResult);
-
         try {
-            // Example: await someAsyncFunction();
-            // You can perform API calls, data fetching, etc.
-            // Once the asynchronous operations are done, navigate
-            // navigate("/booking/checkout", { state: { myResult: newResult } });
-            navigate("/booking/checkout", { state: { myResult: newResult } });
+            const scheduleResult = await getSchedule(data.movieId, data.date, data.scheduleTimeId);
+            const seatResult = await getSeat(scheduleResult.id);
+
+            if (seatResult) {
+                const bookedSeats = seatResult.map((ticket) => ticket.seatNumber);
+
+                const hasBookedSeats = selected.some((seatNumber) => bookedSeats.includes(seatNumber));
+
+                if (hasBookedSeats) {
+                    MySwal.fire({
+                        text: "Ghế bạn chọn vừa có người đặt. Vui lòng chọn lại ghế khác",
+                        icon: "warning"
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    const newResult = {
+                        "seatList": selected,
+                        "scheduleId": scheduleResult.id,
+                        "accountId": userId,
+                        "backId": data.backId,
+                        "movieId": data.movieId,
+                        "date": data.date,
+                        "scheduleTimeId": data.scheduleTimeId
+                    };
+
+                    setResult(newResult);
+
+                    try {
+                        navigate("/booking/checkout", { state: { myResult: newResult } });
+                    } catch (error) {
+                        console.error("Error during asynchronous operations:", error);
+                    }
+                }
+            } else {
+                console.log("Seat data is not available");
+                const newResult = {
+                    "seatList": selected,
+                    "scheduleId": scheduleResult.id,
+                    "accountId": userId,
+                    "backId": data.backId,
+                    "movieId": data.movieId,
+                    "date": data.date,
+                    "scheduleTimeId": data.scheduleTimeId
+                };
+
+                setResult(newResult);
+
+                try {
+                    navigate("/booking/checkout", { state: { myResult: newResult } });
+                } catch (error) {
+                    console.error("Error during asynchronous operations:", error);
+                }
+            }
         } catch (error) {
-            console.error("Error during asynchronous operations:", error);
+            console.error(error);
         }
     };
+
     console.log(result)
     const handleClick = (e, seatNumber) => {
         if ((e.target.classList.contains('seat')

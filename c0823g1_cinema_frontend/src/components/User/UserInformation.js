@@ -1,9 +1,9 @@
 import "./User.css";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import {
     getListHistoryBooking,
 } from "../../service/BookingService";
-import {ErrorMessage, Field, Form, Formik} from "formik";
+import { ErrorMessage, Field, Form, Formik } from "formik";
 import {
     changeInfoUser,
     changePasswordUser,
@@ -14,28 +14,28 @@ import * as Yup from "yup";
 import ReactPaginate from "react-paginate";
 import Footer from "../Home/Footer";
 import HeaderTemplateAdmin from "../Home/HeaderTemplateAdmin";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function UserInformation() {
     const navigate = useNavigate();
-    const [forgetPassword,setForgetPassword] = useState(false);
+    const [forgetPassword, setForgetPassword] = useState(false);
     const [isSocial, setIsSocial] = useState(false);
-    const [role,setRole] = useState("");
-    const [member,setMember] = useState("Admin-");
+    const [role, setRole] = useState("");
+    const [member, setMember] = useState("Admin-");
     useEffect(() => {
         const roleUser = sessionStorage.getItem("roleUser");
         setRole(roleUser);
-        if (roleUser === "ROLE_CUSTOMER"){
+        if (roleUser === "ROLE_CUSTOMER") {
             setMember("TV-");
         }
-        if (roleUser === "ROLE_EMPLOYEE"){
+        if (roleUser === "ROLE_EMPLOYEE") {
             setMember("NV-");
         }
         if (roleUser === null) {
             navigate(`/login`);
         }
         const forgetPassword = sessionStorage.getItem("forgetPassword");
-        if (forgetPassword !== null){
+        if (forgetPassword !== null) {
             setForgetPassword(true);
             SweetAlert(
                 "Bạn đã lấy lại mật khẩu thành công!",
@@ -46,21 +46,22 @@ export default function UserInformation() {
         }
         const accessTokenFB = sessionStorage.getItem("accessTokenFB");
         const accessTokenGG = sessionStorage.getItem("accessTokenGG");
-        if (accessTokenFB !== null || accessTokenGG !== null){
+        if (accessTokenFB !== null || accessTokenGG !== null) {
             setIsSocial(true);
         }
     }, []);
     const [accessToken, setAccessToken] = useState("");
     const [historyBooking, setHistoryBooking] = useState([]);
     const [id, setId] = useState(0);
-    const [photo,setPhoto] = useState("");
+    const [photo, setPhoto] = useState("");
     const date = new Date().toISOString().slice(0, 19);
     const dateTest = new Date().toISOString().slice(0, 10);
     console.log(date);
+    const dateToday = new Date().toISOString().slice(0, 10);
     const [startDate, setStartDate] = useState("2020-01-01T00:00:00");
-    const [endDate, setEndDate] = useState("2024-03-10T00:00:00");
+    const [endDate, setEndDate] = useState(dateToday + "T23:59:59");
     const [totalPages, settotalPages] = useState(0);
-
+    console.log(endDate)
     useEffect(() => {
         const userId = sessionStorage.getItem("userId");
         const userPhoto = sessionStorage.getItem("userPhoto");
@@ -110,7 +111,7 @@ export default function UserInformation() {
     function formatDate(inputDate) {
         const date = new Date(inputDate);
 
-        const options = {day: "2-digit", month: "2-digit", year: "numeric"};
+        const options = { day: "2-digit", month: "2-digit", year: "numeric" };
 
         return date.toLocaleDateString("en-GB", options);
     }
@@ -140,7 +141,7 @@ export default function UserInformation() {
         getAccountById(token);
     }, [id]);
     const handleGenderChange = (e) => {
-        setAccount1({...account1 , gender: e})
+        setAccount1({ ...account1, gender: e })
         console.log(account1.gender);
     }
     const editAccount = async (values, { setErrors }) => {
@@ -163,7 +164,7 @@ export default function UserInformation() {
     };
     const editPassword = async (values, { setErrors }) => {
         try {
-            await changePasswordUser(values,accessToken);
+            await changePasswordUser(values, accessToken);
             await SweetAlert(
                 "Sửa mật khẩu thành công!",
                 `Xin mời bạn đăng nhập lại để vào hệ thống!`,
@@ -216,11 +217,11 @@ export default function UserInformation() {
     }
     return (
         <>
-            <div style={{marginTop: "0px"}}>
+            <div style={{ marginTop: "0px" }}>
                 <HeaderTemplateAdmin />
             </div>
             {
-                <div className="containerOfUser"  style={{marginTop: "10rem"}}>
+                <div className="containerOfUser" style={{ marginTop: "10rem" }}>
                     <div className="container light-style flex-grow-1 container-p-y">
                         <h4 className="font-weight-bold py-3 mb-4">Thông tin tài khoản</h4>
                         <div className="card overflow-hidden">
@@ -241,19 +242,19 @@ export default function UserInformation() {
                                                         }}
                                                         id="chosen-image"
                                                         src={`${photo}`}
-                                                     alt={"Profile"}/>
-                                                    <p style={{ marginTop: 10 , fontWeight : "bold" , fontSize : "18px"}}> {!account1.gender ? <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gender-female" viewBox="0 0 16 16">
-                                                        <path fillRule="evenodd" d="M8 1a4 4 0 1 0 0 8 4 4 0 0 0 0-8M3 5a5 5 0 1 1 5.5 4.975V12h2a.5.5 0 0 1 0 1h-2v2.5a.5.5 0 0 1-1 0V13h-2a.5.5 0 0 1 0-1h2V9.975A5 5 0 0 1 3 5"/>
-                                                    </svg> : <svg style={{color : "blue"}} xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gender-male" viewBox="0 0 16 16">
-                                                        <path fillRule="evenodd" d="M9.5 2a.5.5 0 0 1 0-1h5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-1 0V2.707L9.871 6.836a5 5 0 1 1-.707-.707L13.293 2zM6 6a4 4 0 1 0 0 8 4 4 0 0 0 0-8"/>
-                                                    </svg> } {account1.fullName}</p>
+                                                        alt={"Profile"} />
+                                                    <p style={{ marginTop: 10, fontWeight: "bold", fontSize: "18px" }}> {!account1.gender ? <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gender-female" viewBox="0 0 16 16">
+                                                        <path fillRule="evenodd" d="M8 1a4 4 0 1 0 0 8 4 4 0 0 0 0-8M3 5a5 5 0 1 1 5.5 4.975V12h2a.5.5 0 0 1 0 1h-2v2.5a.5.5 0 0 1-1 0V13h-2a.5.5 0 0 1 0-1h2V9.975A5 5 0 0 1 3 5" />
+                                                    </svg> : <svg style={{ color: "blue" }} xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gender-male" viewBox="0 0 16 16">
+                                                        <path fillRule="evenodd" d="M9.5 2a.5.5 0 0 1 0-1h5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-1 0V2.707L9.871 6.836a5 5 0 1 1-.707-.707L13.293 2zM6 6a4 4 0 1 0 0 8 4 4 0 0 0 0-8" />
+                                                    </svg>} {account1.fullName}</p>
                                                     <span>
-                      <i
-                          style={{ color: "#EC7532" }}
-                          className="fas fa-piggy-bank"
-                      />{" "}
+                                                        <i
+                                                            style={{ color: "#EC7532" }}
+                                                            className="fas fa-piggy-bank"
+                                                        />{" "}
                                                         Điểm tích luỹ: {account1.point}
-                    </span>
+                                                    </span>
                                                     <br />{" "}
                                                 </figure>
                                             </div>
@@ -265,7 +266,7 @@ export default function UserInformation() {
                                         >
                                             <i className="far fa-address-card" /> Thông tin tài khoản
                                         </a>
-                                        {isSocial ? "" :  <a
+                                        {isSocial ? "" : <a
                                             className="list-group-item list-group-item-action"
                                             data-toggle="list"
                                             href="#account-change-password"
@@ -308,7 +309,7 @@ export default function UserInformation() {
                                                     }}
                                                     validationSchema={Yup.object(validateObject)}
                                                     onSubmit={(values, { setErrors }) => {
-                                                        values = {...values, "gender":account1.gender}
+                                                        values = { ...values, "gender": account1.gender }
                                                         editAccount(values, { setErrors })
 
                                                         console.log(values)
@@ -326,20 +327,20 @@ export default function UserInformation() {
                                                             ></Field>
                                                             <Field name="id" type="hidden"></Field>
                                                             <div className="form-group">
-                                                            <label className="form-label">
-                                                                Mã thành viên
-                                                            </label>
-                                                            <Field
-                                                                type="text"
-                                                                className="form-control"
-                                                                disabled
-                                                                name="memberCode"
+                                                                <label className="form-label">
+                                                                    Mã thành viên
+                                                                </label>
+                                                                <Field
+                                                                    type="text"
+                                                                    className="form-control"
+                                                                    disabled
+                                                                    name="memberCode"
 
-                                                            /></div>
-                                                                <div className="form-group">
-                                                                    {isSocial ? "" : <><label className="form-label">
-                                                                        Tên đăng nhập
-                                                                    </label>
+                                                                /></div>
+                                                            <div className="form-group">
+                                                                {isSocial ? "" : <><label className="form-label">
+                                                                    Tên đăng nhập
+                                                                </label>
                                                                     <Field
                                                                         type="text"
                                                                         className="form-control"
@@ -347,34 +348,34 @@ export default function UserInformation() {
                                                                         name="accountName"
                                                                     /></>}</div>
                                                         </div>
-                                                            {isSocial ?  <div className="form-group">
-                                                                    <label className="form-label">Email</label>
-                                                                    <Field
-                                                                        type="text"
-                                                                        name="email"
-                                                                        className="form-control mb-1"
-                                                                        disabled
-                                                                    />
-                                                                    <ErrorMessage
-                                                                        name="email"
-                                                                        component="span"
-                                                                        className="form-err"
-                                                                        style={{ color: "red" }}
-                                                                    />
-                                                                </div> : <div className="form-group">
-                                                                <label className="form-label">Email</label>
-                                                                <Field
-                                                                    type="text"
-                                                                    name="email"
-                                                                    className="form-control mb-1"
-                                                                />
-                                                                <ErrorMessage
-                                                                    name="email"
-                                                                    component="span"
-                                                                    className="form-err"
-                                                                    style={{ color: "red" }}
-                                                                />
-                                                            </div>}
+                                                        {isSocial ? <div className="form-group">
+                                                            <label className="form-label">Email</label>
+                                                            <Field
+                                                                type="text"
+                                                                name="email"
+                                                                className="form-control mb-1"
+                                                                disabled
+                                                            />
+                                                            <ErrorMessage
+                                                                name="email"
+                                                                component="span"
+                                                                className="form-err"
+                                                                style={{ color: "red" }}
+                                                            />
+                                                        </div> : <div className="form-group">
+                                                            <label className="form-label">Email</label>
+                                                            <Field
+                                                                type="text"
+                                                                name="email"
+                                                                className="form-control mb-1"
+                                                            />
+                                                            <ErrorMessage
+                                                                name="email"
+                                                                component="span"
+                                                                className="form-err"
+                                                                style={{ color: "red" }}
+                                                            />
+                                                        </div>}
                                                         <div className="form-group">
                                                             <label className="form-label">Ngày sinh</label>
                                                             <Field
@@ -384,19 +385,19 @@ export default function UserInformation() {
                                                             />
                                                         </div>
                                                         <div className="form-group">
-                                                            <label className="form-label" style={{marginRight: "1rem"}}>Giới tính </label>
+                                                            <label className="form-label" style={{ marginRight: "1rem" }}>Giới tính </label>
                                                             <div className="custom-control custom-radio custom-control-inline">
                                                                 <Field type="radio" id="customRadioInline1" name="gender" value={true}
-                                                                       checked={account1.gender === true}
-                                                                       onChange={() => handleGenderChange(true)}
-                                                                       className="custom-control-input" />
+                                                                    checked={account1.gender === true}
+                                                                    onChange={() => handleGenderChange(true)}
+                                                                    className="custom-control-input" />
                                                                 <label className="custom-control-label" htmlFor="customRadioInline1">Nam</label>
                                                             </div>
                                                             <div className="custom-control custom-radio custom-control-inline">
                                                                 <Field type="radio" id="customRadioInline2" name="gender" value={false}
-                                                                       checked={account1.gender === false}
-                                                                       onChange={() => handleGenderChange(false)}
-                                                                       className="custom-control-input"/>
+                                                                    checked={account1.gender === false}
+                                                                    onChange={() => handleGenderChange(false)}
+                                                                    className="custom-control-input" />
                                                                 <label className="custom-control-label" htmlFor="customRadioInline2">Nữ</label>
                                                             </div>
                                                         </div>
@@ -444,13 +445,13 @@ export default function UserInformation() {
                                                             />
                                                         </div>
                                                         <div className="text-right mt-3">
-                                                            <button type="button" style={{width: "5rem"}} className="btn__add" onClick={() => {
+                                                            <button type="button" style={{ width: "5rem" }} className="btn__add" onClick={() => {
                                                                 navigate("/user/information");
                                                             }}>
                                                                 Huỷ
                                                             </button>
                                                             &nbsp;
-                                                            <button type="submit" style={{width: "5rem"}} className="btn__edit">
+                                                            <button type="submit" style={{ width: "5rem" }} className="btn__edit">
                                                                 Lưu
                                                             </button>
                                                         </div>
@@ -521,11 +522,11 @@ export default function UserInformation() {
                                                                 style={{ color: "red" }}
                                                             />
                                                         </div>
-                                                        <div style={{marginLeft: "80%" , marginTop: "35%"}}>
-                                                            <button type="button" style={{marginRight: "0.5rem",width: "5rem"}} className="btn__add">
+                                                        <div style={{ marginLeft: "80%", marginTop: "35%" }}>
+                                                            <button type="button" style={{ marginRight: "0.5rem", width: "5rem" }} className="btn__add">
                                                                 Huỷ
                                                             </button>
-                                                            <button type="submit" className="btn__edit" style={{marginRight: "0.5rem",width: "5rem"}}>
+                                                            <button type="submit" className="btn__edit" style={{ marginRight: "0.5rem", width: "5rem" }}>
                                                                 Lưu
                                                             </button>
                                                         </div>
@@ -553,71 +554,71 @@ export default function UserInformation() {
                                                         console.log(values.endDate);
                                                         console.log(values.startDate);
                                                         const submitValue = async () => {
-                                                            setEndDate(values.endDate + "T00:00:00");
+                                                            setEndDate(values.endDate + "T23:59:59");
                                                             setStartDate(values.startDate + "T00:00:00");
                                                         };
                                                         submitValue();
                                                     }}
                                                 >
-                                                    {({handleSubmit}) => (
+                                                    {({ handleSubmit }) => (
                                                         <form onSubmit={handleSubmit}>
                                                             <div className="d-flex">
                                                                 <table>
                                                                     <tbody>
-                                                                    <tr>
-                                                                        <td>
-                                                                            <label htmlFor="startDate">
-                                                                                Từ ngày:{" "}
-                                                                            </label>
-                                                                        </td>
-                                                                        <td style={{paddingLeft: "30px"}}>
-                                                                            <Field
-                                                                                className="form-control"
-                                                                                type="date"
-                                                                                id="startDate"
-                                                                                name="startDate"
-                                                                            />
-                                                                        </td>
-                                                                        <td style={{paddingLeft: "30px"}}>
-                                                                            <label htmlFor="endDate">
-                                                                                Đến ngày:{" "}
-                                                                            </label>
-                                                                        </td>
-                                                                        <td style={{paddingLeft: "30px"}}>
-                                                                            <Field
-                                                                                className="form-control"
-                                                                                type="date"
-                                                                                id="endDate"
-                                                                                name="endDate"
-                                                                            />
-                                                                        </td>
-                                                                        <td style={{paddingLeft: "30px"}}>
-                                                                            <button
-                                                                                className="btn__add" style={{width: "6rem"}}
+                                                                        <tr>
+                                                                            <td>
+                                                                                <label htmlFor="startDate">
+                                                                                    Từ ngày:{" "}
+                                                                                </label>
+                                                                            </td>
+                                                                            <td style={{ paddingLeft: "30px" }}>
+                                                                                <Field
+                                                                                    className="form-control"
+                                                                                    type="date"
+                                                                                    id="startDate"
+                                                                                    name="startDate"
+                                                                                />
+                                                                            </td>
+                                                                            <td style={{ paddingLeft: "30px" }}>
+                                                                                <label htmlFor="endDate">
+                                                                                    Đến ngày:{" "}
+                                                                                </label>
+                                                                            </td>
+                                                                            <td style={{ paddingLeft: "30px" }}>
+                                                                                <Field
+                                                                                    className="form-control"
+                                                                                    type="date"
+                                                                                    id="endDate"
+                                                                                    name="endDate"
+                                                                                />
+                                                                            </td>
+                                                                            <td style={{ paddingLeft: "30px" }}>
+                                                                                <button
+                                                                                    className="btn__add" style={{ width: "6rem" }}
 
-                                                                                type="submit"
+                                                                                    type="submit"
+                                                                                >
+                                                                                    Tìm kiếm
+                                                                                </button>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td colSpan={2}>
+                                                                                <ErrorMessage name="startDate"
+                                                                                    className="form-err"
+                                                                                    style={{ color: "red" }}
+                                                                                />
+                                                                            </td>
+                                                                            <td
+                                                                                style={{ paddingLeft: "30px" }}
+                                                                                colSpan={2}
                                                                             >
-                                                                                Tìm kiếm
-                                                                            </button>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td colSpan={2}>
-                                                                            <ErrorMessage name="startDate"
-                                                                                          className="form-err"
-                                                                                          style={{color: "red"}}
-                                                                            />
-                                                                        </td>
-                                                                        <td
-                                                                            style={{paddingLeft: "30px"}}
-                                                                            colSpan={2}
-                                                                        >
-                                                                            <ErrorMessage name="endDate"
-                                                                                          className="form-err"
-                                                                                          style={{color: "red"}}
-                                                                            />
-                                                                        </td>
-                                                                    </tr>
+                                                                                <ErrorMessage name="endDate"
+                                                                                    className="form-err"
+                                                                                    style={{ color: "red" }}
+                                                                                />
+                                                                            </td>
+                                                                        </tr>
                                                                     </tbody>
                                                                 </table>
                                                             </div>
@@ -625,30 +626,30 @@ export default function UserInformation() {
                                                     )}
                                                 </Formik>
                                             </div>
-                                            <hr className="border-light m-0"/>
+                                            <hr className="border-light m-0" />
                                             <div className="card-body pb-2">
                                                 {historyBooking.length !== 0 && (
                                                     <table className="table table-bordered">
                                                         <thead>
-                                                        <tr>
-                                                            <th style={{width: "300px"}} scope="col">Tên phim</th>
-                                                            <th scope="col">Ngày đặt vé</th>
-                                                            <th scope="col">Tổng tiền</th>
-                                                            <th scope="col">Điểm</th>
-                                                        </tr>
+                                                            <tr>
+                                                                <th style={{ width: "300px" }} scope="col">Tên phim</th>
+                                                                <th scope="col">Ngày đặt vé</th>
+                                                                <th scope="col">Tổng tiền</th>
+                                                                <th scope="col">Điểm</th>
+                                                            </tr>
                                                         </thead>
                                                         <tbody>
-                                                        {historyBooking.map((booking) => (
-                                                            <tr key={booking.id}>
-                                                                <td style={{fontWeight: "bold", width: "300px"}}
-                                                                    scope="row">
-                                                                    {booking.nameMovie}
-                                                                </td>
-                                                                <td>{formatDate(booking.dateBooking)}</td>
-                                                                <td>{formatNumber(booking.price)}</td>
-                                                                <td>{formatNumber(booking.price % 3)}</td>
-                                                            </tr>
-                                                        ))}
+                                                            {historyBooking.map((booking) => (
+                                                                <tr key={booking.id}>
+                                                                    <td style={{ fontWeight: "bold", width: "300px" }}
+                                                                        scope="row">
+                                                                        {booking.nameMovie}
+                                                                    </td>
+                                                                    <td>{formatDate(booking.dateBooking)}</td>
+                                                                    <td>{formatNumber(booking.price)}</td>
+                                                                    <td>{formatNumber(booking.price * 0.03)}</td>
+                                                                </tr>
+                                                            ))}
                                                         </tbody>
                                                     </table>
                                                 )}
@@ -660,7 +661,7 @@ export default function UserInformation() {
                                                 {historyBooking.length !== 0 && (
                                                     <div
                                                         className="clearfix"
-                                                        style={{paddingLeft: "50%"}}
+                                                        style={{ paddingLeft: "50%" }}
                                                     >
                                                         <div className="hint-text"></div>
                                                         <div className="page">
@@ -687,7 +688,7 @@ export default function UserInformation() {
                                                     </div>
                                                 )}
                                                 <div></div>
-                                                {}
+                                                { }
                                             </div>
                                         </div>
                                     </div>
@@ -697,8 +698,8 @@ export default function UserInformation() {
                     </div>
                 </div>
             }
-            <div style={{borderTop: "10vh solid #f5f5f5"}}>
-                <Footer/>
+            <div style={{ borderTop: "10vh solid #f5f5f5" }}>
+                <Footer />
             </div>
         </>
     );
