@@ -10,6 +10,11 @@ export async function findByIdMovieHasGenre(idMovie) {
     return result.data;
 }
 
+export const getTopMovie = async (page) => {
+    const temp = await axios.get(`http://localhost:8080/movie/statistics?page=${page}`);
+    return temp.data;
+}
+
 export async function findAll() {
     const result = await axios.get("http://localhost:8080/movie/list")
     return result.data;

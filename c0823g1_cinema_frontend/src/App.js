@@ -25,6 +25,7 @@ import Search from './components/Home/Search';
 import HeaderTemplateAdmin from './components/Home/HeaderTemplateAdmin';
 import BookingMovieSchedule from "./components/Booking/BookingMovieSchedule";
 import {NotFound} from "./components/NotFound/NotFound";
+import MovieStatisticChart from "./components/Admin/Statistic/MovieStatisticChart";
 
 function App() {
     return (
