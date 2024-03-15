@@ -55,9 +55,9 @@ function MovieEdit({scheduleTab}) {
     const validationObject = {
         poster: Yup.mixed().required("Phải có poster"),
         name: Yup.string().required("Tên không được để trống").min(2, "Tên phim ít nhất 2 ký tự").max(255, "Tên phim tối đa 255 ký tự"),
-        actor: Yup.string().required("Tên diễn viên không được để trống").min(2, "Tên diễn viên ít nhất 2 ký tự").max(255, "Tên phim tối đa 255 ký tự"),
-        publisher: Yup.string().required("Tên nhà sản xuất không được để trống").min(2, "Tên nhà sản xuất ít nhất 2 ký tự").max(255, "Tên nhà sản xuất tối đa 255 ký tự"),
-        director: Yup.string().required("Tên đạo diễn không được để trống").min(2, "Tên đạo diễn ít nhất 2 ký tự").max(255, "Tên đạo diễn tối đa 255 ký tự"),
+        actor: Yup.string().required("Tên diễn viên không được để trống").min(2, "Tên diễn viên ít nhất 2 ký tự").max(255, "Tên phim tối đa 255 ký tự").matches(/^[a-zA-Z_,\s]+$/,"Tên diễn viên không được có ký tự đặc biệt"),
+        publisher: Yup.string().required("Tên nhà sản xuất không được để trống").min(2, "Tên nhà sản xuất ít nhất 2 ký tự").max(255, "Tên nhà sản xuất tối đa 255 ký tự").matches(/^[a-zA-Z_,\s.]+$/,"Tên nhà sản xuất không được có ký tự đặc biệt"),
+        director: Yup.string().required("Tên đạo diễn không được để trống").min(2, "Tên đạo diễn ít nhất 2 ký tự").max(255, "Tên đạo diễn tối đa 255 ký tự").matches(/^[a-zA-Z_,\s.]+$/,"Tên đạo diễn không được có ký tự đặc biệt"),
         country: null,
         startDate: Yup.date().required("Ngày khởi chiếu không được để trống"),
         duration: Yup.number().required("Thời lượng phim không được để trống"),
